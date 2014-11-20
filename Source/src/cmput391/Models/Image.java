@@ -1,4 +1,4 @@
-package cmput391.Classes;
+package cmput391.Models;
 
 import java.util.Date;
 

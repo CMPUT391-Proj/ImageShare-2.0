@@ -1,3 +1,5 @@
 .DS_STORE
 .class
-
+.classpath
+bin/cmput391
+.metadata

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="OracleHandlerTests" project="Source" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="cmput391.OracleHandler.JUnitTests.OracleHandlerTests" time="0.0">
-    <testcase name="insert" classname="cmput391.OracleHandler.JUnitTests.OracleHandlerTests" time="0.0"/>
-    <testcase name="test" classname="cmput391.OracleHandler.JUnitTests.OracleHandlerTests" time="0.0"/>
-    <testcase name="insert2" classname="cmput391.OracleHandler.JUnitTests.OracleHandlerTests" time="0.0"/>
-  </testsuite>
-</testrun>

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename package &apos;cmput391.OracleHandler.UnitTests&apos; to &apos;cmput391.OracleHandler.JUnitTests&apos;&#x0A;- Original project: &apos;Source&apos;&#x0A;- Original element: &apos;Source/src/cmput391.OracleHandler.UnitTests&apos;&#x0A;- Renamed element: &apos;Source/src/cmput391.OracleHandler.JUnitTests&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;cmput391.OracleHandler.UnitTests&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;cmput391.OracleHandler.UnitTests" name="cmput391.OracleHandler.JUnitTests" qualified="false" references="true" stamp="1416459307507" textual="false" version="1.0"/>
-</session>

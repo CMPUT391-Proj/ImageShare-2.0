@@ -2,7 +2,11 @@ package imageshare.model;
 
 import java.util.Date;
 
-
+/**
+ * Represents a image with a name, subject, location, date, and permission
+ * settings.
+ *
+ */
 public class Image {
 	
 	private int photoId;		// primary key
@@ -11,18 +15,25 @@ public class Image {
 	private String subject;		// 128 char max
 	private String place;		// 128 char max
 	private Date timing;
+	private String description; // 2048 char max
 	private byte[] blob;		// binary object  narr = new byte[len];
 	
 	public Image(String ownerName, int permitted, String subject,
-			String place, Date timing, byte[] blob) {
+			String place, Date timing, String description, byte[] blob) {
 		this.photoId = 0;
 		this.ownerName = ownerName;
 		this.permitted = permitted;
 		this.subject = subject;
 		this.place = place;
 		this.timing = timing;
+		this.description = description;
 		this.blob = blob;
 	}
+	
+    public Image(String ownerName, int permitted, String subject, String place,
+            Date timing, String description) {
+        this(ownerName, permitted, subject, place, timing, description, null);
+    }
 
 	// getters
 	
@@ -50,6 +61,10 @@ public class Image {
 		return timing;
 	}
 
+	public String getDescription() {
+	    return description;
+	}
+	
 	public byte[] getBlob() {
 		return blob;
 	}
@@ -76,6 +91,10 @@ public class Image {
 		this.timing = timing;
 	}
 
+	public void setDescription(String description) {
+	    this.description = description;
+	}
+	
 	public void setBlob(byte[] blob) {
 		this.blob = blob;
 	}

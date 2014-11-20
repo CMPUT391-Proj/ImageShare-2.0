@@ -19,6 +19,10 @@ public class OracleHandler {
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 	
+	/*
+	 * @param	statement	Insert statement to insert a record into the Oracle database
+	 * @return				Returns 0 if true or -1 if false
+	 */
 	public static int insertRecord(String statement) {
 		try {
 			Connection conn = getConnected(ORACLE_DRIVER, CONNECTION_STRING, USERNAME, PASSWORD);
@@ -41,6 +45,10 @@ public class OracleHandler {
 		return 0;
 	}
 
+	/*
+	 * @param	statement	Query statement use to query Oracle database
+	 * @return				Returns a two dimensional vector which consists of the record and its corresponding column records 						
+	 */
 	public static Vector<Vector<String>> retrieveResultSet(String statement) {
 		Vector<Vector<String>> resultVector = null;
 		
@@ -55,6 +63,9 @@ public class OracleHandler {
 
 			int colCount = rsmd.getColumnCount();
 			
+			// algorithm could be improved.
+			// if unknown oracle type comes up, google the type number and add it
+			// to the else if statements
 			while (rset.next()) {
 				Vector<String> resultRow = new Vector<String>();
 				
@@ -88,13 +99,20 @@ public class OracleHandler {
 		return resultVector;
 	}
 	
+	/*
+	 * @param	driverName	Oracle driver name
+	 * @param	connString	Oracle connection string
+	 * @param	username	Oracle database username
+	 * @param	password	Oracle database password
+	 * @return				Connection object
+	 */
 	private static Connection getConnected(
-		String drivername, String dbstring, String username, String password) throws Exception {
+		String driverName, String connString, String username, String password) throws Exception {
 		
 		@SuppressWarnings("rawtypes")
-		Class drvClass = Class.forName(drivername);
+		Class drvClass = Class.forName(driverName);
 		DriverManager.registerDriver((Driver) drvClass.newInstance());
 		
-		return DriverManager.getConnection(dbstring,username,password);
+		return DriverManager.getConnection(connString,username,password);
 	}
 }

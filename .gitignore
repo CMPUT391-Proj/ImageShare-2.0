@@ -1,6 +1,6 @@
 .DS_STORE
 .class
-.classpath
-Source/bin
-Source/doc
+src/.classpath
+src/bin
+src/doc
 .metadata

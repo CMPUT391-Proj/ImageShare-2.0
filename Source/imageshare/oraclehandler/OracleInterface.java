@@ -1,4 +1,4 @@
-package cmput391.OracleHandler;
+package imageshare.oraclehandler;
 
 public interface OracleInterface {
 	public void create();

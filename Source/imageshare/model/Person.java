@@ -1,4 +1,4 @@
-package cmput391.Models;
+package imageshare.model;
 
 public class Person {
 	

@@ -1,4 +1,4 @@
-package cmput391.OracleHandler;
+package imageshare.oraclehandler;
 
 import java.sql.Connection;
 import java.sql.Driver;

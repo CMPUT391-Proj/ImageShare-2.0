@@ -1,6 +1,7 @@
-package cmput391.Models;
+package imageshare.model;
 
-import cmput391.OracleHandler.*;
+import imageshare.oraclehandler.*;
+
 import java.util.Date;
 
 

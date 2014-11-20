@@ -1,13 +1,12 @@
-package cmput391.OracleHandler.JUnitTests;
+package imageshare.oraclehandler.junittests;
 
 import static org.junit.Assert.*;
+import imageshare.oraclehandler.OracleHandler;
 
 import java.util.Random;
 import java.util.Vector;
 
 import org.junit.Test;
-
-import cmput391.OracleHandler.OracleHandler;
 
 public class OracleHandlerTests {
 	

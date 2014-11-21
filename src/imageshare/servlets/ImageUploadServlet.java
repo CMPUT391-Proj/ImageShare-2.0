@@ -124,7 +124,7 @@ public class ImageUploadServlet extends HttpServlet {
 
         try {
             // store image
-            OracleHandler.storeImage(image);
+            OracleHandler.getInstance().storeImage(image);
         } catch (Exception e) {
             req.getSession().setAttribute("error", e.toString());
         }

@@ -15,36 +15,42 @@ public class OracleHandlerTests {
 	
 	@Test
 	public void oracleInsertUsers() {
-		int returnVal = OracleHandler.insertRecord(
-			"INSERT INTO USERS (USER_NAME,PASSWORD,DATE_REGISTERED) "+
-			"VALUES ('"+randInt+"','testpass',SYSTIMESTAMP)");
-		
-		assertEquals(returnVal, 0);
+		try {
+            OracleHandler.getInstance().insertRecord(
+            	"INSERT INTO USERS (USER_NAME,PASSWORD,DATE_REGISTERED) "+
+            	"VALUES ('"+randInt+"','testpass',SYSTIMESTAMP)");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		
 		System.out.println("FINISHED oracleInsertUsers");
 	}
 	
 	@Test
 	public void oracleSelectUsers() {
-		Vector<Vector<String>> users = 
-			OracleHandler.retrieveResultSet("SELECT * FROM USERS");
-		
-		for (Vector<String> record : users) {
-			String recordString = "";
-			
-			for (String recordCol : record) {
-				if (recordString.isEmpty() == false) {
-					recordString = recordString.concat(", "+recordCol);
-				} else {
-					recordString = recordCol;
-				}
-			}
-			
-			System.out.println(record.size()+" : "+recordString);
-		}
-	
-		assertNotNull(users);
-		assertTrue(users.size() > 0);
+		Vector<Vector<String>> users;
+            try {
+                users = OracleHandler.getInstance().retrieveResultSet("SELECT * FROM USERS");
+    		
+    		for (Vector<String> record : users) {
+    			String recordString = "";
+    			
+    			for (String recordCol : record) {
+    				if (recordString.isEmpty() == false) {
+    					recordString = recordString.concat(", "+recordCol);
+    				} else {
+    					recordString = recordCol;
+    				}
+    			}
+    			
+    			System.out.println(record.size()+" : "+recordString);
+    		}
+    	
+    		assertNotNull(users);
+    		assertTrue(users.size() > 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	
 		System.out.println("FINISHED oracleSelectUsers");
 	}

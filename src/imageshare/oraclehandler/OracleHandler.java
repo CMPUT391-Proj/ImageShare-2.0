@@ -1,5 +1,6 @@
 package imageshare.oraclehandler;
 
+import imageshare.model.Group;
 import imageshare.model.Image;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -177,5 +180,23 @@ public class OracleHandler {
         ResultSet rs = executeQuery(sql);
         rs.next();
         return rs.getInt(1);
+    }
+    
+    public List<Group> getGroups(String user) throws Exception {
+        List<Group> groups = new ArrayList<Group>();
+        
+        String query = "SELECT * FROM groups g WHERE g.user_name = ?";
+        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        stmt.setString(1, user);
+        
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            String name = rs.getString("group_name");
+            int id = rs.getInt("group_id");
+            Date date = rs.getDate("date_added");
+            groups.add(new Group(id, user, name, date));
+        }
+        
+        return groups;
     }
 }

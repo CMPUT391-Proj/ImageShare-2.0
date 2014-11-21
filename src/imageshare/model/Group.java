@@ -1,6 +1,6 @@
 package imageshare.model;
 
-import imageshare.oraclehandler.*;
+import imageshare.oraclehandler.OracleInterface;
 
 import java.util.Date;
 
@@ -12,13 +12,14 @@ public class Group implements OracleInterface {
 	private String groupname;
 	private Date dateCreated;
 	
-	public Group(String username, String groupname, Date dateCreated) {
-		this.groupId = 0;
-		this.username = username;
-		this.groupname = groupname;
-		this.dateCreated = dateCreated;
-	}
-
+    public Group(int groupId, String username, String groupname,
+            Date dateCreated) {
+        this.groupId = groupId;
+        this.username = username;
+        this.groupname = groupname;
+        this.dateCreated = dateCreated;
+    }
+    
 	// getters
 	
 	public int getGroupId() {

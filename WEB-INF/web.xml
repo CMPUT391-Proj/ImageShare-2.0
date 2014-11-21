@@ -6,12 +6,12 @@
  version="2.4">
 
 	<servlet>
-		<servlet-name></servlet-name>
-		<servlet-class></servlet-class>
+		<servlet-name>Registration</servlet-name>
+		<jsp-file>/webapp/jsp/registration.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name></servlet-name>
-		<url-pattern></url-pattern>
+		<servlet-name>Registration</servlet-name>
+		<url-pattern>/registration</url-pattern>
 	</servlet-mapping>
 
 </web-app>

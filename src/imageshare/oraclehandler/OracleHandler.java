@@ -1,6 +1,12 @@
 package imageshare.oraclehandler;
 
+import imageshare.model.Image;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +15,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
 
 public class OracleHandler {
 	
@@ -19,31 +27,18 @@ public class OracleHandler {
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 	
-	/*
-	 * @param	statement	Insert statement to insert a record into the Oracle database
-	 * @return				Returns 0 if true or -1 if false
-	 */
-	public static int insertRecord(String statement) {
-		try {
-			Connection conn = getConnected(ORACLE_DRIVER, CONNECTION_STRING, USERNAME, PASSWORD);
-			
-			PreparedStatement stmt = conn.prepareStatement(statement);
-			
-			stmt.executeUpdate();
-			stmt.execute("commit");
-			conn.close();
-		} catch (SQLException e) {
-			System.err.println("SQL ERROR: "+e.getMessage());
-			
-			return -1;
-		} catch (Exception e) {
-			System.err.println("ERROR: "+e.getMessage());
-			
-			return -1;
-		}
-		
-		return 0;
-	}
+    /**
+     * @param statement
+     *            Insert statement to insert a record into the Oracle database
+     */
+    public static void insertRecord(String statement) throws Exception {
+        Connection conn = getConnected(ORACLE_DRIVER, CONNECTION_STRING,
+                USERNAME, PASSWORD);
+        PreparedStatement stmt = conn.prepareStatement(statement);
+        stmt.executeUpdate();
+        stmt.execute("commit");
+        conn.close();
+    }
 
 	/*
 	 * @param	statement	Query statement use to query Oracle database
@@ -98,6 +93,74 @@ public class OracleHandler {
 		
 		return resultVector;
 	}
+
+    /**
+     * Executes a generic query.
+     * 
+     * @param query
+     *            sql to execute
+     * @return the result set
+     * @throws Exception
+     *             exception if there was trouble executed the query. Caller
+     *             expected to handle.
+     */
+    public static ResultSet executeQuery(String query) throws Exception {
+        Connection conn = getConnected(ORACLE_DRIVER, CONNECTION_STRING,
+                USERNAME, PASSWORD);
+        PreparedStatement stmt = conn.prepareStatement(query);
+        return stmt.executeQuery(query);
+    }
+	
+    /**
+     * Stores the image into the database
+     * 
+     * @param image
+     *            The image to store
+     */
+    public static void storeImage(Image image) throws Exception {
+        Connection conn = getConnected(ORACLE_DRIVER, CONNECTION_STRING,
+                USERNAME, PASSWORD);
+
+        String query = "INSERT INTO IMAGES VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        int imageID = OracleHandler.nextImageID();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        ImageIO.write(image.getImage(), "jpg", baos);
+        InputStream imageInputStream = new ByteArrayInputStream(
+                baos.toByteArray());
+
+        ImageIO.write(image.getThumbnail(), "jpg", baos);
+        InputStream thumbnailInputStream = new ByteArrayInputStream(
+                baos.toByteArray());
+
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, imageID);
+        stmt.setString(2, image.getOwnerName());
+        stmt.setInt(3, image.getPermitted());
+        stmt.setString(4, image.getSubject());
+        stmt.setString(5, image.getPlace());
+        stmt.setDate(6, new Date(image.getDate().getTime()));
+        stmt.setString(7, image.getDescription());
+        stmt.setBinaryStream(8, imageInputStream);
+        stmt.setBinaryStream(9, thumbnailInputStream);
+
+        stmt.executeUpdate();
+        conn.close();
+    }
+    
+    /**
+     * Retrieve the next image id
+     * @return
+     * @throws Exception
+     */
+    public static int nextImageID() throws Exception {
+        String sql = "SELECT image_sequence.nextval from dual";
+        ResultSet rs = executeQuery(sql);
+        rs.next();
+        return rs.getInt(1);
+    }
 	
 	/*
 	 * @param	driverName	Oracle driver name

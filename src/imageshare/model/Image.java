@@ -1,5 +1,6 @@
 package imageshare.model;
 
+import java.awt.image.BufferedImage;
 import java.util.Date;
 
 /**
@@ -14,25 +15,23 @@ public class Image {
 	private int permitted;
 	private String subject;		// 128 char max
 	private String place;		// 128 char max
-	private Date timing;
+	private Date date;
 	private String description; // 2048 char max
-	private byte[] blob;		// binary object  narr = new byte[len];
-	
-	public Image(String ownerName, int permitted, String subject,
-			String place, Date timing, String description, byte[] blob) {
-		this.photoId = 0;
-		this.ownerName = ownerName;
-		this.permitted = permitted;
-		this.subject = subject;
-		this.place = place;
-		this.timing = timing;
-		this.description = description;
-		this.blob = blob;
-	}
+	private BufferedImage thumbnail;
+	private BufferedImage image;
 	
     public Image(String ownerName, int permitted, String subject, String place,
-            Date timing, String description) {
-        this(ownerName, permitted, subject, place, timing, description, null);
+            Date date, String description, BufferedImage thumbnail,
+            BufferedImage image) {
+        this.photoId = 0;
+        this.ownerName = ownerName;
+        this.permitted = permitted;
+        this.subject = subject;
+        this.place = place;
+        this.date = date;
+        this.description = description;
+        this.thumbnail = thumbnail;
+        this.image = image;
     }
 
 	// getters
@@ -57,21 +56,33 @@ public class Image {
 		return place;
 	}
 
-	public Date getTiming() {
-		return timing;
+	public Date getDate() {
+		return date;
 	}
 
 	public String getDescription() {
 	    return description;
 	}
 	
-	public byte[] getBlob() {
-		return blob;
-	}
+    public BufferedImage getThumbnail() {
+        return thumbnail;
+    }
 
+    public BufferedImage getImage() {
+        return image;
+    }
+    
 	// setters
 	
-	public void setOwnerName(String ownerName) {
+    public void setThumbnail(BufferedImage thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
 	}
 
@@ -87,16 +98,11 @@ public class Image {
 		this.place = place;
 	}
 
-	public void setTiming(Date timing) {
-		this.timing = timing;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public void setDescription(String description) {
 	    this.description = description;
 	}
-	
-	public void setBlob(byte[] blob) {
-		this.blob = blob;
-	}
-
 }

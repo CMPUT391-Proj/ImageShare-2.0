@@ -1,7 +1,9 @@
 package imageshare.servlets;
 
 import imageshare.model.Image;
+import imageshare.oraclehandler.OracleHandler;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +42,10 @@ public class ImageUploadServlet extends HttpServlet {
     private static final String FILE_ERROR = "A file with the correct extension (.jpg / .gif) must be used.";
     private static final String RETRIEVE_USER_ERROR = "Unable to get the current logged in user.";
 
+    private static final int THUMBNAIL_SHRINK_FACTOR = 10;
+    
+    private static final String IMAGE_UPLOAD_JSP = "ImageUpload.jsp";
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -48,8 +55,8 @@ public class ImageUploadServlet extends HttpServlet {
         String location = null;
         String description = null;
         Date date = null;
-        int security = 0;
-        FileItem file;
+        int security = 2;
+        FileItem file = null;
 
         ServletFileUpload upload = new ServletFileUpload();
 
@@ -87,12 +94,11 @@ public class ImageUploadServlet extends HttpServlet {
 
                     String fileName = fileItem.getName().trim().toLowerCase();
 
-                    if (!fileName.endsWith(EXT_JPG)
-                            && !fileName.endsWith(EXT_GIF)) {
+                    if (!fileName.endsWith(EXT_JPG) && !fileName.endsWith(EXT_GIF)) {
                         // file has an incorrect extension - must stop the
                         // request.
                         req.getSession().setAttribute("error", FILE_ERROR);
-                        // TODO send response to .jsp
+                        resp.sendRedirect(IMAGE_UPLOAD_JSP);
                         return;
                     }
 
@@ -107,12 +113,38 @@ public class ImageUploadServlet extends HttpServlet {
             
         } catch (FileUploadException | ParseException e) {  // getting errors here? Check that you have java 7.
             req.getSession().setAttribute("error", e.toString());
-            // TODO send response to .jsp
+            resp.sendRedirect(IMAGE_UPLOAD_JSP);
         }
 
-        Image image = new Image(user, security, subject, location, date, description);
+        BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+        BufferedImage thumbnail = ImageUploadServlet.shrink(bufferedImage);
+
+        Image image = new Image(user, security, subject, location, date,
+                description, thumbnail, bufferedImage);
+
+        try {
+            // store image
+            OracleHandler.storeImage(image);
+        } catch (Exception e) {
+            req.getSession().setAttribute("error", e.toString());
+        }
         
-        // TODO image upload 
-        // TODO send response to .jsp
+        resp.sendRedirect(IMAGE_UPLOAD_JSP);
+    }
+
+    private static BufferedImage shrink(BufferedImage image) {
+        int width = image.getWidth() / THUMBNAIL_SHRINK_FACTOR;
+        int height = image.getHeight() / THUMBNAIL_SHRINK_FACTOR;
+
+        BufferedImage shrunkImage = new BufferedImage(width, height,
+                image.getType());
+
+        for (int i = 0; i < height; ++i)
+            for (int j = 0; j < width; ++j)
+                shrunkImage.setRGB(j, i,
+                        image.getRGB(j * THUMBNAIL_SHRINK_FACTOR, i
+                                * THUMBNAIL_SHRINK_FACTOR));
+        
+        return shrunkImage;
     }
 }

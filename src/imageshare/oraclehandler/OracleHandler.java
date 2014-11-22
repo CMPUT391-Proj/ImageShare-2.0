@@ -2,6 +2,8 @@ package imageshare.oraclehandler;
 
 import imageshare.model.Group;
 import imageshare.model.Image;
+import imageshare.model.Person;
+import imageshare.model.User;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,8 +26,8 @@ import javax.imageio.ImageIO;
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1521:CRS"; // use for SSH
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1521:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -199,4 +201,76 @@ public class OracleHandler {
         
         return groups;
     }
+    
+    
+    /**
+     * 
+     * @param User model
+     * @throws Exception
+     */
+	public void storeUser(User user) throws Exception {
+        String query = "INSERT INTO USERS VALUES (?, ?, ?)";
+
+        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        stmt.setString(1, user.getUsername());
+        stmt.setString(2, user.getPassword());
+        stmt.setDate(3, user.getRegisteredDate());
+  
+        stmt.executeUpdate();
+    }
+	
+    /**
+     * 
+     * @param Person model
+     * @throws Exception
+     */
+	public void storePerson(Person person) throws Exception {
+        String query = "INSERT INTO PERSONS VALUES (?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        stmt.setString(1, person.getUsername());
+        stmt.setString(2, person.getFirstname());
+        stmt.setString(3, person.getLastname());
+        stmt.setString(4, person.getAddress());
+        stmt.setString(5, person.getEmail());
+        stmt.setString(6, person.getPhone());
+  
+        stmt.executeUpdate();
+    }
+	
+	/**
+	 * 
+	 * @param Person model
+	 * @return returns true if table constraints are not violated
+	 * @throws Exception
+	 */
+	public boolean isSatisfiesConstraint(Person person) throws Exception {
+		String query = "SELECT COUNT(1) AS COUNT FROM PERSONS WHERE EMAIL = ?";
+		
+		PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+		stmt.setString(1, person.getEmail());
+		
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		
+		return rs.getInt(1) == 0;
+	}
+	
+	/**
+	 * 
+	 * @param User model
+	 * @return returns true if table constraints are not violated
+	 * @throws Exception
+	 */
+	public boolean isSatisfiesConstraint(User user) throws Exception {
+		String query = "SELECT COUNT(1) AS COUNT FROM USERS WHERE USER_NAME = ?";
+		
+		PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+		stmt.setString(1, user.getUsername());
+		
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		
+		return rs.getInt(1) == 0;
+	}
 }

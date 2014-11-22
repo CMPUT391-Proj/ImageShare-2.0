@@ -1,6 +1,8 @@
 package imageshare.oraclehandler.junittests;
 
 import static org.junit.Assert.*;
+import imageshare.model.Person;
+import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 
 import java.util.Random;
@@ -53,5 +55,33 @@ public class OracleHandlerTests {
         }
 	
 		System.out.println("FINISHED oracleSelectUsers");
+	}
+	
+	@Test
+	public void oracleCheckConstraints() {
+		try {
+			Person person = new Person("t123","t123","t123","t123","t1@g.com","t123");
+			
+			boolean t = OracleHandler.getInstance().isSatisfiesConstraint(person);
+			
+			assertTrue(t);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("FINISHED oracleCheckConstraints");
+	}
+	
+	@Test
+	public void CreateUser() {
+		try {
+			User user = new User("user", "pass");
+			
+			assertNotNull(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("FINISHED CreateUser");
 	}
 }

@@ -14,5 +14,23 @@
 		<url-pattern>/imageUpload</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>Registration</servlet-name>
+		<jsp-file>/webapp/jsp/registration.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Registration</servlet-name>
+		<url-pattern>/registration</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RegistrationServlet</servlet-name>
+		<servlet-class>imageshare.servlets.RegistrationServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RegistrationServlet</servlet-name>
+		<url-pattern>/registerservlet</url-pattern>
+	</servlet-mapping>
+
 </web-app>
 

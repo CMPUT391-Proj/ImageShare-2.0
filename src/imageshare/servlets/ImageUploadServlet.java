@@ -33,7 +33,7 @@ public class ImageUploadServlet extends HttpServlet {
     private static final String LOCATION = "location";
     private static final String DATE = "date";
     private static final String DESCRIPTION = "description";
-    private static final String SECURITY = "security";
+    private static final String SECURITY = "permissions";
     private static final String USER = "user";
 
     private static final String EXT_JPG = ".jpg";

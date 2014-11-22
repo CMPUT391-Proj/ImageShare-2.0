@@ -6,12 +6,12 @@
  version="2.4">
 
 	<servlet>
-		<servlet-name></servlet-name>
-		<servlet-class></servlet-class>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<servlet-class>servlets.ImageUploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name></servlet-name>
-		<url-pattern></url-pattern>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<url-pattern>/imageUpload</url-pattern>
 	</servlet-mapping>
 
 </web-app>

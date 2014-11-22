@@ -45,8 +45,8 @@ public class ImageUploadServlet extends HttpServlet {
 
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
     
-    private static final String IMAGE_UPLOAD_JSP = "imageupload.jsp";
-
+    private static final String IMAGE_UPLOAD_JSP = "imageupload";
+    
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {

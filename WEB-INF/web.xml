@@ -7,11 +7,20 @@
 
 	<servlet>
 		<servlet-name>ImageUpload</servlet-name>
-		<servlet-class>imageshare.servlets.ImageUploadServlet</servlet-class>
+		<jsp-file>/webapp/jsp/imageupload.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ImageUpload</servlet-name>
-		<url-pattern>/imageUpload</url-pattern>
+		<url-pattern>/imageupload</url-pattern>
+	</servlet-mapping> 	
+
+	<servlet>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<servlet-class>imageshare.servlets.ImageUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<url-pattern>/singleImageUpload</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

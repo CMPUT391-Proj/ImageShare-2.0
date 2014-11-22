@@ -13,7 +13,7 @@
 </head>
 <body>
 	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
-	<form name="imageUpload" action="imageUpload" enctype="multipart/form-data" method="POST">
+	<form name="singleImageUpload" action="singleImageUpload" enctype="multipart/form-data" method="POST">
 		<table>
 		<tr>
 			<th>File path: </th>

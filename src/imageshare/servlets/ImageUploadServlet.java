@@ -5,7 +5,6 @@ import imageshare.oraclehandler.OracleHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
@@ -44,7 +45,7 @@ public class ImageUploadServlet extends HttpServlet {
 
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
     
-    private static final String IMAGE_UPLOAD_JSP = "ImageUpload.jsp";
+    private static final String IMAGE_UPLOAD_JSP = "imageupload.jsp";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -57,8 +58,9 @@ public class ImageUploadServlet extends HttpServlet {
         Date date = null;
         int security = 2;
         FileItem file = null;
-
-        ServletFileUpload upload = new ServletFileUpload();
+        
+        FileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
 
         /*
          * Attempt to read in the file items from the .jsp form
@@ -80,7 +82,8 @@ public class ImageUploadServlet extends HttpServlet {
                         location = fileItem.getString();
 
                     else if (label.equalsIgnoreCase(DATE))
-                        date = new SimpleDateFormat("mm/dd/yyyy",
+                        date = fileItem.getString().equals("") ? 
+                                new Date() : new SimpleDateFormat("yyyy-MM-dd",
                                 Locale.ENGLISH).parse(fileItem.getString());
 
                     else if (label.equalsIgnoreCase(DESCRIPTION))
@@ -97,9 +100,7 @@ public class ImageUploadServlet extends HttpServlet {
                     if (!fileName.endsWith(EXT_JPG) && !fileName.endsWith(EXT_GIF)) {
                         // file has an incorrect extension - must stop the
                         // request.
-                        req.getSession().setAttribute("error", FILE_ERROR);
-                        resp.sendRedirect(IMAGE_UPLOAD_JSP);
-                        return;
+                        throw new FileUploadException(FILE_ERROR);
                     }
 
                     file = fileItem;
@@ -107,13 +108,17 @@ public class ImageUploadServlet extends HttpServlet {
             }
 
             // Get the logged in user
-            user = (String) req.getSession().getAttribute(USER);
+            //user = (String) req.getSession().getAttribute(USER);
+            user = "admin";
             if (user == null)
                 throw new FileUploadException(RETRIEVE_USER_ERROR);
+            if (file == null)
+                throw new FileUploadException(FILE_ERROR);
             
-        } catch (FileUploadException | ParseException e) {  // getting errors here? Check that you have java 7.
-            req.getSession().setAttribute("error", e.toString());
+        } catch (Exception e) { 
+            req.getSession(true).setAttribute("error", e.toString());
             resp.sendRedirect(IMAGE_UPLOAD_JSP);
+            return;
         }
 
         BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
@@ -126,9 +131,9 @@ public class ImageUploadServlet extends HttpServlet {
             // store image
             OracleHandler.getInstance().storeImage(image);
         } catch (Exception e) {
-            req.getSession().setAttribute("error", e.toString());
+            req.getSession(true).setAttribute("error", e.toString());
         }
-        
+
         resp.sendRedirect(IMAGE_UPLOAD_JSP);
     }
 

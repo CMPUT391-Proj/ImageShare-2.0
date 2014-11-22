@@ -26,8 +26,8 @@ import javax.imageio.ImageIO;
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1521:CRS"; // use for SSH
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -65,7 +65,7 @@ public class OracleHandler {
     // TODO call on logout?
     public void closeConnection() {
         try {
-            oracleHandler.conn.close();
+            OracleHandler.getInstance().conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class OracleHandler {
      *            Insert statement to insert a record into the Oracle database
      */
     public void insertRecord(String statement) throws Exception {
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(statement);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(statement);
         stmt.executeUpdate();
         stmt.execute("commit");
     }
@@ -88,7 +88,7 @@ public class OracleHandler {
 	public Vector<Vector<String>> retrieveResultSet(String statement) throws Exception {
         Vector<Vector<String>> resultVector = null;
 
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(statement);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(statement);
         ResultSet rset = stmt.executeQuery(statement);
 
         ResultSetMetaData rsmd = rset.getMetaData();
@@ -134,7 +134,7 @@ public class OracleHandler {
      *             expected to handle.
      */
     public ResultSet executeQuery(String query) throws Exception {
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         return stmt.executeQuery(query);
     }
 	
@@ -159,7 +159,7 @@ public class OracleHandler {
         InputStream thumbnailInputStream = new ByteArrayInputStream(
                 baos.toByteArray());
 
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setInt(1, imageID);
         stmt.setString(2, image.getOwnerName());
         stmt.setInt(3, image.getPermitted());
@@ -187,9 +187,10 @@ public class OracleHandler {
     public List<Group> getGroups(String user) throws Exception {
         List<Group> groups = new ArrayList<Group>();
         
-        String query = "SELECT * FROM groups g WHERE g.user_name = ?";
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        String query = "SELECT * FROM groups WHERE user_name = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setString(1, user);
+        
         
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
@@ -211,7 +212,7 @@ public class OracleHandler {
 	public void storeUser(User user) throws Exception {
         String query = "INSERT INTO USERS VALUES (?, ?, ?)";
 
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setString(1, user.getUsername());
         stmt.setString(2, user.getPassword());
         stmt.setDate(3, user.getRegisteredDate());
@@ -227,7 +228,7 @@ public class OracleHandler {
 	public void storePerson(Person person) throws Exception {
         String query = "INSERT INTO PERSONS VALUES (?, ?, ?, ?, ?, ?)";
 
-        PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setString(1, person.getUsername());
         stmt.setString(2, person.getFirstname());
         stmt.setString(3, person.getLastname());
@@ -247,7 +248,7 @@ public class OracleHandler {
 	public boolean isSatisfiesConstraint(Person person) throws Exception {
 		String query = "SELECT COUNT(1) AS COUNT FROM PERSONS WHERE EMAIL = ?";
 		
-		PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		stmt.setString(1, person.getEmail());
 		
 		ResultSet rs = stmt.executeQuery();
@@ -265,7 +266,7 @@ public class OracleHandler {
 	public boolean isSatisfiesConstraint(User user) throws Exception {
 		String query = "SELECT COUNT(1) AS COUNT FROM USERS WHERE USER_NAME = ?";
 		
-		PreparedStatement stmt = oracleHandler.conn.prepareStatement(query);
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		stmt.setString(1, user.getUsername());
 		
 		ResultSet rs = stmt.executeQuery();

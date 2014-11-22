@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<%@ page import="model.Group,oraclehandler.OracleHandler,java.util.List"%>
+<%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-	String user = (String) session.getAttribute("user");
+	//String user = (String) session.getAttribute("user");
+	String user = "admin";
 	List<Group> groups = OracleHandler.getInstance().getGroups(user);
+	String error = (String) session.getAttribute("error");
+	session.setAttribute("error", null);
 %>
 <html>
 <head>
 	<title>Image Upload</title>
 </head>
 <body>
+	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 	<form name="imageUpload" action="imageUpload" enctype="multipart/form-data" method="POST">
 		<table>
 		<tr>
@@ -20,7 +24,7 @@
 		<tr>
 			<th>Date: </th>
 			<td>
-				<input name="date" type="date" placeholder="MM/DD/YYYY"></input>
+				<input name="date" type="date" placeholder="YYYY-MM-DD"></input>
 			</td>
 		</tr>
 		<tr>

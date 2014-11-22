@@ -1,6 +1,6 @@
 package imageshare.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 
 public class User {
@@ -15,6 +15,10 @@ public class User {
 		this.registeredDate = registeredDate;
 	}
 
+	public User(String username, String password) {
+		this(username, password, new Date(0,0,0));
+	}
+	
 	// getters
 	
 	public String getUsername() {

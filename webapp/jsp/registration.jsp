@@ -16,7 +16,7 @@
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3">
 			<!-- Registration Form -->
-			<form class="form-horizontal" action="/registration" method="post" role="form">
+			<form class="form-horizontal" action="registerservlet" method="post" role="form">
 				<div class="panel panel-default">
 					<div class="panel-heading">Please fill in your information</div>
 					<div class="panel-body">

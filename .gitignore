@@ -1,6 +1,8 @@
 .DS_STORE
-.class
+*.class
 src/.classpath
 src/bin
 src/doc
 .metadata
+*.*~
+

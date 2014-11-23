@@ -60,9 +60,24 @@ public class OracleHandlerTests {
 	@Test
 	public void CreateUser() {
 		try {
-			User user = new User("user", "pass");
+			User user = new User(""+randInt, "pass");
+			
+			System.out.println("Created new "+user.getUsername());
 			
 			assertNotNull(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("FINISHED CreateUser");
+	}
+	
+	@Test
+	public void UpdateUser() {
+		try {
+			User user = new User(""+randInt, "newpass");
+			
+			OracleHandler.getInstance().updateUser(user);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -37,6 +37,9 @@ public class UserProfileServlet extends HttpServlet {
 		String phone = req.getParameter(PHONE);
 		
 		try {
+			if (username == null)
+				throw new Exception("Username is null.");
+			
 			User user = new User(username, password);
 			Person person = new Person(username, firstname, lastname, address, email, phone);
 			

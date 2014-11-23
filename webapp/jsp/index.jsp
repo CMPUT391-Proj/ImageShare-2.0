@@ -46,7 +46,7 @@
 						</form>
 					</div>
 					<div class="panel-footer" >
-						Not Registered? <a data-toggle="modal" href="/ImageShare-2.0/registration">Register here</a>
+						Not Registered? <a href="registration">Register here</a>
 					</div>
 			</div>
 		</div>

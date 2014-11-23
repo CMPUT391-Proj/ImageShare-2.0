@@ -33,6 +33,15 @@
 		<url-pattern>/registration</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>UserProfile</servlet-name>
+		<jsp-file>/webapp/jsp/userprofile.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserProfile</servlet-name>
+		<url-pattern>/userprofile</url-pattern>
+	</servlet-mapping>
+
 <!-- Servlets -->
 	<servlet>
 		<servlet-name>LoginServlet</servlet-name>

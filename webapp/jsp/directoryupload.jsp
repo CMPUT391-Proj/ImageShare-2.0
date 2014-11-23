@@ -6,8 +6,8 @@
   //String user = (String) session.getAttribute("user");
   String user = "admin";
   List<Group> groups = OracleHandler.getInstance().getGroups(user);
-  String dirURL = request.getRequestURL().toString();
-  dirURL = dirURL.substring(0, dirURL.lastIndexOf("/")) + "/directoryUpload";
+  String uploadURL = request.getRequestURL().toString();
+  uploadURL = uploadURL.substring(0, uploadURL.lastIndexOf("/")) + "/directoryUpload";
   String error = (String) session.getAttribute("error");
   session.setAttribute("error", null);
 %>
@@ -40,7 +40,7 @@
     <div class="col-lg-6 col-lg-offset-3">
 
     <!-- Image Upload Form -->
-    <% out.println(dirURL); %>
+    <% out.println(uploadURL); %>
     <form class="form-horizontal" action="directoryUploadDetails" enctype="multipart/form-data" method="post" role="form">
 
       <div class="panel panel-default">
@@ -48,12 +48,12 @@
         <div class="panel-body">
 
           <div class="form-group" id="uploadApplet">
-            <applet code="applet-basic_files/wjhk.JUploadApplet" name="JUpload" archive="applet-basic_files/wjhk.jar" mayscript="" height="300" width="600">
+            <applet code="applet-basic_files/wjhk.JUploadApplet" name="JUpload" archive="applet-basic_files/wjhk.jar" mayscript="" height="300" width="640">
             <param name="CODE" value="wjhk.jupload2.JUploadApplet">
             <param name="ARCHIVE" value="wjhk.jupload.jar">
             <param name="type" value="application/x-java-applet;version=1.4">
             <param name="scriptable" value="false">    
-            <param name="postURL" value=<%=dirURL%>>
+            <param name="postURL" value=<%=uploadURL%>>
             <param name="nbFilesPerRequest" value="2">    
               Java 1.4 or higher plugin required.
             </applet>

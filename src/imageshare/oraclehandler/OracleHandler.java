@@ -220,6 +220,57 @@ public class OracleHandler {
         stmt.executeUpdate();
     }
 	
+	/**
+	 * 
+	 * @param username
+	 * @return User model of username, null if it doesn't exist
+	 * @throws Exception
+	 */
+	public User getUser(String username) throws Exception {
+		String query = "SELECT * FROM USERS WHERE USER_NAME = ?";
+		User user = null;
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		stmt.setString(1, username);
+		
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			String password = rs.getString(2);
+			Date date = rs.getDate(3);
+			
+			user = new User(username, password, date);
+		}
+		
+		return user;
+	}
+	
+	/**
+	 * 
+	 * @param email
+	 * @return Person model of email, null if it doesn't exist
+	 * @throws Exception
+	 */
+	public Person getPerson(String email) throws Exception {
+		String query = "SELECT * FROM PERSONS WHERE EMAIL = ?";
+		Person person = null;
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		stmt.setString(1, email);
+		
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			String username = rs.getString(1);
+			String firstname = rs.getString(2);
+			String lastname = rs.getString(3);
+			String address = rs.getString(4);
+			String phone = rs.getString(6);
+			
+			person = new Person(username, firstname, lastname, address, email, phone);
+		}
+		
+		return person;
+	}
+	
     /**
      * 
      * @param Person model
@@ -238,40 +289,4 @@ public class OracleHandler {
   
         stmt.executeUpdate();
     }
-	
-	/**
-	 * 
-	 * @param Person model
-	 * @return returns true if table constraints are not violated
-	 * @throws Exception
-	 */
-	public boolean isSatisfiesConstraint(Person person) throws Exception {
-		String query = "SELECT COUNT(1) AS COUNT FROM PERSONS WHERE EMAIL = ?";
-		
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		stmt.setString(1, person.getEmail());
-		
-		ResultSet rs = stmt.executeQuery();
-		rs.next();
-		
-		return rs.getInt(1) == 0;
-	}
-	
-	/**
-	 * 
-	 * @param User model
-	 * @return returns true if table constraints are not violated
-	 * @throws Exception
-	 */
-	public boolean isSatisfiesConstraint(User user) throws Exception {
-		String query = "SELECT COUNT(1) AS COUNT FROM USERS WHERE USER_NAME = ?";
-		
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		stmt.setString(1, user.getUsername());
-		
-		ResultSet rs = stmt.executeQuery();
-		rs.next();
-		
-		return rs.getInt(1) == 0;
-	}
 }

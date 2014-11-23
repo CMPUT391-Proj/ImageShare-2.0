@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@include file="header.jsp" %>
+<%
+	String error = (String) session.getAttribute("error");
+	session.setAttribute("error", null);
+%>
 <body>
 	<div class="jumbotron">
 		<div class="container">
@@ -8,6 +12,8 @@
 			<p id="titleLeft">Please log in</p>
 		</div>
 	</div>
+
+	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
 	<div class="row">
 		<div class="col-md-6  col-lg-offset-3">
@@ -39,7 +45,7 @@
 							</div>
 						</form>
 					</div>
-					<div class="panel-footer">
+					<div class="panel-footer" >
 						Not Registered? <a data-toggle="modal" href="/ImageShare-2.0/registration">Register here</a>
 					</div>
 			</div>

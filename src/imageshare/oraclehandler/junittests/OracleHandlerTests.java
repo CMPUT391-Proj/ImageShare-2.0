@@ -58,21 +58,6 @@ public class OracleHandlerTests {
 	}
 	
 	@Test
-	public void oracleCheckConstraints() {
-		try {
-			Person person = new Person("t123","t123","t123","t123","t1@g.com","t123");
-			
-			boolean t = OracleHandler.getInstance().isSatisfiesConstraint(person);
-			
-			assertTrue(t);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println("FINISHED oracleCheckConstraints");
-	}
-	
-	@Test
 	public void CreateUser() {
 		try {
 			User user = new User("user", "pass");

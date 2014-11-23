@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet{
     private static final String LOGIN_ERROR = "The credentials that have been given does not match any login record.";
     
     private static final String INDEX_JSP = "index";
-    private static final String DASHBOARD_JSP = "imageupload";
+    private static final String USER_PROFILE_JSP = "userprofile";
     
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -42,12 +42,13 @@ public class LoginServlet extends HttpServlet{
 			if (!password.equals(user.getPassword()))
 				throw new Exception(LOGIN_ERROR);
 			
+			req.getSession(true).setAttribute("user", username);
 		} catch (Exception e) {
-			req.getSession().setAttribute("error", e.toString());
+			req.getSession(true).setAttribute("error", e.toString());
 			resp.sendRedirect(INDEX_JSP);
 			return;
 		}
 		
-		resp.sendRedirect(DASHBOARD_JSP);
+		resp.sendRedirect(USER_PROFILE_JSP);
 	}
 }

@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
 	private static final String INSERT_PERSON_ERROR = "A person with the same email already exists.";
     
 	private static final String REGISTRATION_JSP = "registration";
-	private static final String DASHBOARD_JSP = "imageupload"; // should be changed
+	private static final String IMAGE_UPLOAD_JSP = "imageupload"; // should be changed
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -51,7 +51,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		try {
 			User user = OracleHandler.getInstance().getUser(username);
-			Person person = OracleHandler.getInstance().getPerson(email);
+			Person person = OracleHandler.getInstance().getPersonByEmail(email);
 			
 			if (user != null) {
 				throw new Exception(INSERT_USER_ERROR);
@@ -71,14 +71,14 @@ public class RegistrationServlet extends HttpServlet {
 			OracleHandler.getInstance().storeUser(user);
 			OracleHandler.getInstance().storePerson(person);
 			
+			req.getSession(true).setAttribute("user", username);
 		} catch (Exception e) {
-			req.getSession().setAttribute("error", e.toString());
+			req.getSession(true).setAttribute("error", e.toString());
 			resp.sendRedirect(REGISTRATION_JSP);
 			return;
 		}
 		
-		// should 
-		resp.sendRedirect(DASHBOARD_JSP);
+		resp.sendRedirect(IMAGE_UPLOAD_JSP);
 	}
 
 }

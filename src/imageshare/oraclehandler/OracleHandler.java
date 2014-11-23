@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -218,6 +219,22 @@ public class OracleHandler {
   
         stmt.executeUpdate();
     }
+
+	/**
+	 * 
+	 * @param User model
+	 * @throws Exception
+	 */
+	public void updateUser(User user) throws Exception {
+		String query = "UPDATE USERS SET PASSWORD = ? WHERE USER_NAME = ?";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+
+		stmt.setString(1, user.getPassword());
+		stmt.setString(2, user.getUsername());
+		
+		stmt.executeUpdate();
+	}
 	
 	/**
 	 * 
@@ -249,7 +266,7 @@ public class OracleHandler {
 	 * @return Person model of email, null if it doesn't exist
 	 * @throws Exception
 	 */
-	public Person getPerson(String email) throws Exception {
+	public Person getPersonByEmail(String email) throws Exception {
 		String query = "SELECT * FROM PERSONS WHERE EMAIL = ?";
 		Person person = null;
 		
@@ -268,6 +285,56 @@ public class OracleHandler {
 		}
 		
 		return person;
+	}
+	
+	/**
+	 * 
+	 * @param email
+	 * @return Person model of username, null if it doesn't exist
+	 * @throws Exception
+	 */
+	public Person getPerson(String username) throws Exception {
+		String query = "SELECT * FROM PERSONS WHERE USER_NAME = ?";
+		Person person = null;
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		stmt.setString(1, username);
+		
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			String firstname = rs.getString(2);
+			String lastname = rs.getString(3);
+			String address = rs.getString(4);
+			String email = rs.getString(5);
+			String phone = rs.getString(6);
+			
+			person = new Person(username, firstname, lastname, address, email, phone);
+		}
+		
+		return person;
+	}
+	
+	/**
+	 * 
+	 * @param Person model
+	 * @throws Exception
+	 */
+	public void updatePerson(Person person) throws Exception {
+		String query = 
+			"UPDATE PERSONS "+
+			"SET FIRST_NAME = ?, LAST_NAME = ?, ADDRESS = ?, EMAIL = ?, PHONE = ? "+
+			"WHERE USER_NAME = ?";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+
+		stmt.setString(1, person.getFirstname());
+		stmt.setString(2, person.getLastname());
+		stmt.setString(3, person.getAddress());
+		stmt.setString(4, person.getEmail());
+		stmt.setString(5, person.getPhone());
+		stmt.setString(6, person.getUsername());
+		
+		stmt.executeUpdate();
 	}
 	
     /**

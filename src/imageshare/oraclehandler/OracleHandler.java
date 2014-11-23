@@ -191,12 +191,11 @@ public class OracleHandler {
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setString(1, user);
         
-        
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             String name = rs.getString("group_name");
             int id = rs.getInt("group_id");
-            Date date = rs.getDate("date_added");
+            Date date = rs.getDate("date_created");
             groups.add(new Group(id, user, name, date));
         }
         

@@ -81,7 +81,7 @@
 								</label>
 							</div>
 							<% for (Group group : groups) {
-								out.println("<div class='radio'><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></div>");
+								out.println("<div class='radio'><label><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></label></div>");
 							} %>
 						</div>
 					</div>

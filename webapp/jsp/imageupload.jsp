@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<html lang="en">
+<%@include file="header.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	//String user = (String) session.getAttribute("user");
@@ -7,61 +9,96 @@
 	String error = (String) session.getAttribute("error");
 	session.setAttribute("error", null);
 %>
-<html>
-<head>
-	<title>Image Upload</title>
-</head>
+<style>
+	#upload {
+		float: right;
+	}
+	.panel-footer {
+		min-height: 65px;
+	}
+</style>
 <body>
+	<%@include file="navbar.jsp" %>
+
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Image Upload</h1>
+			<p id="titleLeft">.jpg and .gif files are currently supported.</p>
+		</div>
+	</div>	
+
 	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
-	<form name="singleImageUpload" action="singleImageUpload" enctype="multipart/form-data" method="POST">
-		<table>
-		<tr>
-			<th>File path: </th>
-			<td>
-				<input name="filepath" type="file" size="30" ></input>
-			</td>
-		</tr>
-		<tr>
-			<th>Date: </th>
-			<td>
-				<input name="date" type="date" placeholder="YYYY-MM-DD"></input>
-			</td>
-		</tr>
-		<tr>
-			<th>Subject: </th>
-			<td>
-				<input name="subject" type="text" placeholder="subject"></input>
-			</td>
-		</tr>		
-		<tr>
-			<th>Location: </th>
-			<td>
-				<input name="location" type="text" placeholder="location"></input>
-			</td>
-		</tr>
-		<tr>
-			<th>Description: </th>
-			<td>
-				<textarea name="description" cols="25" rows="5"
-				placeholder="Description"></textarea>
-			</td>
-		</tr>
-		<tr>
-			<th>Permissions: </th>
-			<td>
-				<p><input type="radio" name="permissions" value="1">public</input></p>
-				<p><input type="radio" name="permissions" value="2" checked="checked">private</input></p>
-				<% for (Group group : groups) {
-					out.println("<p><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></p>");
-				} %>
-			</td>
-		</tr>
-		<tr>
-			<td ALIGN=CENTER COLSPAN="2"><input type="submit" name=".submit"
-				value="Upload">
-			</td>
-		</tr>
-		</table>
-	</form>
+
+	<div class="row">
+		<div class="col-lg-6 col-lg-offset-3">
+
+		<!-- Image Upload Form -->
+		<form class="form-horizontal" action="singleImageUpload" enctype="multipart/form-data" method="post" role="form">
+			<div class="panel panel-default">
+				<div class="panel-heading">Please fill in the image upload details.</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label for="filepath" class="col-sm-3 control-label">File Path</label>
+						<div class="col-sm-9">
+							<input type="file" name="filepath" class="form-control" placeholder="filepath" id="filepath">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="date" class="col-sm-3 control-label">Date</label>
+						<div class="col-sm-9">
+							<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="subject" class="col-sm-3 control-label">Subject</label>
+						<div class="col-sm-9">
+							<input type="text" name="subject" class="form-control" placeholder="Who / What is in this photo?" id="subject">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="location" class="col-sm-3 control-label">Location</label>
+						<div class="col-sm-9">
+							<input type="text" name="location" class="form-control" placeholder="Where was this photo taken?" id="location">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description" class="col-sm-3 control-label">Description</label>
+						<div class="col-sm-9">
+							<input type="text" name="description" class="form-control" placeholder="Give some details about this image." id="description">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-3 control-label">Permissions</label>
+						<div class="col-xs-9">
+							<div class="radio">
+								<label>
+									<input type="radio" name="permissions" value="1">public</input>
+								</label>
+							</div>
+							<div class="radio">
+								<label>
+									<input type="radio" name="permissions" value="2" checked="checked">private</input>
+								</label>
+							</div>
+							<% for (Group group : groups) {
+								out.println("<div class='radio'><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></div>");
+							} %>
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<button id="upload" type="submit" class="btn btn-primary">Upload</button>
+				</div>
+			</div>
+		</form>
+
+		</div>
+	</div>
+
+	<div class="container">
+		<hr>
+			<%@include file="footer.jsp"%>
+			<!--% include footer %-->
+	</div>
 </body>
 </html>

@@ -20,13 +20,15 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="dropdown">
               <span class="glyphicon glyphicon-list pull-right"></span></a>
               <ul class="dropdown-menu">
-                    <li><a href="/ImageShare-2.0/imageupload"><span class="glyphicon glyphicon-picture pull-right"></span>Upload Image</a></li>
+                    <li><a href="imageupload"><span class="glyphicon glyphicon-picture pull-right"></span>Upload Image</a></li>
                     <li class="divider"></li>
-                    <li><a href="/ImageShare-2.0/groups"><span class="glyphicon glyphicon-user pull-right"></span>Groups</a></li>
+                    <li><a href="directoryupload"><span class="glyphicon glyphicon-folder-open pull-right"></span>Upload Folder</a></li>
+                    <li class="divider"></li>
+                    <li><a href="groups"><span class="glyphicon glyphicon-user pull-right"></span>Groups</a></li>
                     <li class="divider"></li>
                     <li><a href="#"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
                     <li class="divider"></li>
-                    <li><a href="/logout"><span class="glyphicon glyphicon-log-out pull-right"></span>Sign Out</a></li>
+                    <li><a href="logout"><span class="glyphicon glyphicon-log-out pull-right"></span>Sign Out</a></li>
               </ul>
             </li>
         </ul>

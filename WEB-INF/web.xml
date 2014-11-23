@@ -34,6 +34,7 @@
 	</servlet-mapping>
 
 	<servlet>
+
 		<servlet-name>UserProfile</servlet-name>
 		<jsp-file>/webapp/jsp/userprofile.jsp</jsp-file>
 	</servlet>
@@ -42,7 +43,34 @@
 		<url-pattern>/userprofile</url-pattern>
 	</servlet-mapping>
 
+		<servlet-name>DirectoryUpload</servlet-name>
+		<jsp-file>/webapp/jsp/directoryupload.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DirectoryUpload</servlet-name>
+		<url-pattern>/directoryupload</url-pattern>
+	</servlet-mapping> 	
+
 <!-- Servlets -->
+
+	<servlet>
+		<servlet-name>DirectoryUploadServlet</servlet-name>
+		<servlet-class>imageshare.servlets.DirectoryUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DirectoryUploadServlet</servlet-name>
+		<url-pattern>/directoryUpload</url-pattern>
+	</servlet-mapping>	
+
+	<servlet>
+		<servlet-name>DirectoryUploadDetailsServlet</servlet-name>
+		<servlet-class>imageshare.servlets.DirectoryUploadDetailsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DirectoryUploadDetailsServlet</servlet-name>
+		<url-pattern>/directoryUploadDetails</url-pattern>
+	</servlet-mapping>		
+
 	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
 		<servlet-class>imageshare.servlets.LoginServlet</servlet-class>

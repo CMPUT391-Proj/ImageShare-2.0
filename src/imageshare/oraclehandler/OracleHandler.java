@@ -1,6 +1,7 @@
 package imageshare.oraclehandler;
 
 import imageshare.model.Group;
+import imageshare.model.GroupList;
 import imageshare.model.Image;
 import imageshare.model.Person;
 import imageshare.model.User;
@@ -184,6 +185,11 @@ public class OracleHandler {
         return rs.getInt(1);
     }
     
+    /**
+     * Get's a user's groups
+     * @param String user
+     * @returns List<Group>
+     */
     public List<Group> getGroups(String user) throws Exception {
         List<Group> groups = new ArrayList<Group>();
         
@@ -203,6 +209,108 @@ public class OracleHandler {
         return groups;
     }
     
+    /**
+     * Adds groups to the database
+     * @param List<Group> groups
+     */
+    public void storeGroups(List<Group> groups) throws Exception {
+    	String query = "INSERT INTO GROUP VALUES (?, ?, ?, ?)";
+        PreparedStatement stmt = null;
+
+        stmt = getInstance().conn.prepareStatement(query);
+
+    	for (Group group: groups) {
+    		stmt.setInt(1, group.getGroupId());
+    		stmt.setString(2, group.getUsername());
+    		stmt.setString(3, group.getGroupname());
+    		stmt.setDate(3, new Date(group.getDateCreated().getTime()));
+    		stmt.addBatch();
+        }
+    	stmt.executeBatch();
+    }
+    
+    /**
+     * Deletes a friend from a group
+     * @param int group_id
+     * @param String friend
+     * @throws Exception 
+     */
+    public void delete_friend(int group_id, String friend) throws Exception {
+    	String query = "delete from group_lists where group_id = " + group_id
+	               + " and friend_id = '" + friend + "'";
+    	
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+	    
+		stmt.executeUpdate();
+    }
+
+    /**
+     * Adds a friend to a group
+     * @param int group_id
+     * @param String friend
+     * @throws Exception 
+     */
+    public void add_friend(int group_id, String friend) throws Exception {
+	String query = "insert into group_lists values(" + group_id
+	               + ", '" + friend + "', sysdate, null)";
+	
+    	PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+    
+    	stmt.executeUpdate();
+    }
+    
+    /**
+     * Deletes a group from the group_lists and groups tables
+     * Updates images permitted = 2 where permitted = group_id
+     * @param String group_id
+     * @throws Exception 
+     */
+    public void delete_group(String group_id) throws Exception {
+		// change permissions in images
+		String query_images = "update images set permitted = 2 "
+		    + "where permitted = " + group_id;
+		PreparedStatement stmt1 = getInstance().conn.prepareStatement(query_images);
+	        
+		// delete group_lists where group_id == group_id
+		String query_group_lists = "delete from group_lists where group_id = "
+		    + group_id;
+		PreparedStatement stmt2 = getInstance().conn.prepareStatement(query_group_lists);
+		
+		// delete groups where group_id == group_id
+		String query_groups = "delete groups where group_id = " + group_id;
+		PreparedStatement stmt3 = getInstance().conn.prepareStatement(query_groups);
+		
+		stmt1.executeUpdate();
+		stmt2.executeUpdate();
+		stmt3.executeUpdate();
+    }
+    
+    /**
+     * Returns all groupLists in a group
+     * @param int group_id
+     * @throws Exception 
+     * @returns ArrayList<String>
+     */
+    public List<GroupList> getGroupsLists(int group_id) throws Exception {
+    	
+        List<GroupList> groupLists = new ArrayList<GroupList>();
+        
+		String query = "SELECT * "
+			    + "FROM group_lists "
+			    + "WHERE group_id = "
+			    + group_id;
+		
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            String friendId = rs.getString("friend_id");
+            Date dateAdded = rs.getDate("date_added");
+            String notice = rs.getString("notice");
+            groupLists.add(new GroupList(friendId, dateAdded, notice));
+        }
+        return groupLists;
+    }
     
     /**
      * 

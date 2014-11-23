@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@include file="header.jsp" %>
-<!--% include header %-->
+<%
+	String error = (String) session.getAttribute("error");
+	session.setAttribute("error", null);
+%>
 <body>
 	<%@include file="navbar.jsp" %>
-	<!--% include navbar %-->
 
 	<div class="jumbotron">
 		<div class="container">
@@ -12,7 +14,9 @@
 			<p id="titleLeft">Registration is always free!</p>
 		</div>
 	</div>
-		
+	
+	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
+
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3">
 			<!-- Registration Form -->
@@ -30,6 +34,12 @@
 							<label for="password" class="col-sm-3 control-label">Password</label>
 							<div class="col-sm-9">
 								<input type="password" name="password" class="form-control" placeholder="Password" id="password">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="passwordconfirm" class="col-sm-3 control-label">Password Confirmation</label>
+							<div class="col-sm-9">
+								<input type="password" name="passwordconfirm" class="form-control" placeholder="password confirmation" id="passwordconfirm">
 							</div>
 						</div>
 						<div class="form-group">
@@ -76,7 +86,6 @@
 	<div class="container">
 		<hr>
 			<%@include file="footer.jsp"%>
-			<!--% include footer %-->
 	</div>
 
 	<script>

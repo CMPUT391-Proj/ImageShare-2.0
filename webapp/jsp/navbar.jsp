@@ -36,7 +36,7 @@
 
         <ul class="nav navbar-nav pull-right">
             <li class="divider-vertical"></li>
-            <li><p class="navbar-text" id='username'>[USERNAME]</p></li>
+            <li><p class="navbar-text" id='username'><!--% out.println(username); %--></p></li>
         </ul>
 
         <div class="nav navbar-nav pull-right">

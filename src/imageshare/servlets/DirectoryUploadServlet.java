@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -24,21 +25,20 @@ public class DirectoryUploadServlet extends HttpServlet {
     private static final String FILE_ERROR = "Atleast one file with the correct extension (.jpg / .gif) must be used.";
     private static final String DIR_UPLOAD_JSP = "directoryupload";
     
-    private static final String IMAGES = "dirImages";
+    private static final String IMAGES = "imagesDir";
     
-    @SuppressWarnings("unchecked")
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
-
+        HttpSession session = req.getSession();
+            
         /*
          * Retrieve the photos
          */
-        List<FileItem> files = (List<FileItem>) req.getSession().getAttribute(IMAGES);
-        if (files == null) files = new ArrayList<FileItem>();
+        List<FileItem> files = new ArrayList<FileItem>();
 
         try {
             /*
@@ -57,15 +57,16 @@ public class DirectoryUploadServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            req.getSession().setAttribute("error", e.toString());
+            session.setAttribute("error", e.toString());
             resp.sendRedirect(DIR_UPLOAD_JSP);
         }
         
         if (files.isEmpty()) {
-            req.getSession().setAttribute("error", FILE_ERROR);
+            session.setAttribute("error", FILE_ERROR);
             resp.sendRedirect(DIR_UPLOAD_JSP);
         }
         
-        req.getSession().setAttribute(IMAGES, files);
+        session.setAttribute(IMAGES, files);
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

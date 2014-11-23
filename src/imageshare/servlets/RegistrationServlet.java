@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
 	private static final String INSERT_PERSON_ERROR = "A person with the same email already exists.";
     
 	private static final String REGISTRATION_JSP = "registration";
-	private static final String LOGIN_JSP = "registration"; // should be changed
+	private static final String DASHBOARD_JSP = "imageupload"; // should be changed
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -50,20 +50,23 @@ public class RegistrationServlet extends HttpServlet {
 		String phone = req.getParameter(PHONE);
 		
 		try {
-			User user = new User(username, password);
-			Person person = new Person(username, firstname, lastname, address, email, phone);
+			User user = OracleHandler.getInstance().getUser(username);
+			Person person = OracleHandler.getInstance().getPerson(email);
 			
-			if (!password.equals(passwordConfirm)) {
-				throw new Exception(password + " "+ passwordConfirm+ " " + PASSWORD_ERROR);
-			}
-			
-			if (!OracleHandler.getInstance().isSatisfiesConstraint(user)) {
+			if (user != null) {
 				throw new Exception(INSERT_USER_ERROR);
 			}
 			
-			if(!OracleHandler.getInstance().isSatisfiesConstraint(person)) {
+			if (person != null) {
 				throw new Exception(INSERT_PERSON_ERROR);
 			}
+			
+			if (!password.equals(passwordConfirm)) {
+				throw new Exception(PASSWORD_ERROR);
+			}
+			
+			user = new User(username, password);
+			person = new Person(username, firstname, lastname, address, email, phone);
 			
 			OracleHandler.getInstance().storeUser(user);
 			OracleHandler.getInstance().storePerson(person);
@@ -75,7 +78,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		// should 
-		resp.sendRedirect(LOGIN_JSP);
+		resp.sendRedirect(DASHBOARD_JSP);
 	}
 
 }

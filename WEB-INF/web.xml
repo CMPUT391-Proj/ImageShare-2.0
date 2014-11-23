@@ -5,6 +5,16 @@
  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
  version="2.4">
 
+<!-- JSP -->
+	<servlet>
+		<servlet-name>Home</servlet-name>
+		<jsp-file>/webapp/jsp/index.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Home</servlet-name>
+		<url-pattern>/index</url-pattern>
+	</servlet-mapping> 	
+
 	<servlet>
 		<servlet-name>ImageUpload</servlet-name>
 		<jsp-file>/webapp/jsp/imageupload.jsp</jsp-file>
@@ -15,12 +25,12 @@
 	</servlet-mapping> 	
 
 	<servlet>
-		<servlet-name>ImageUploadServlet</servlet-name>
-		<servlet-class>imageshare.servlets.ImageUploadServlet</servlet-class>
+		<servlet-name>Registration</servlet-name>
+		<jsp-file>/webapp/jsp/registration.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ImageUploadServlet</servlet-name>
-		<url-pattern>/singleImageUpload</url-pattern>
+		<servlet-name>Registration</servlet-name>
+		<url-pattern>/registration</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -31,6 +41,8 @@
 		<servlet-name>DirectoryUpload</servlet-name>
 		<url-pattern>/directoryupload</url-pattern>
 	</servlet-mapping> 	
+
+<!-- Servlets -->
 
 	<servlet>
 		<servlet-name>DirectoryUploadServlet</servlet-name>
@@ -51,12 +63,21 @@
 	</servlet-mapping>		
 
 	<servlet>
-		<servlet-name>Registration</servlet-name>
-		<jsp-file>/webapp/jsp/registration.jsp</jsp-file>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>imageshare.servlets.LoginServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Registration</servlet-name>
-		<url-pattern>/registration</url-pattern>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/loginservlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<servlet-class>imageshare.servlets.ImageUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageUploadServlet</servlet-name>
+		<url-pattern>/singleImageUpload</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

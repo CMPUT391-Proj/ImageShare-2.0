@@ -172,13 +172,23 @@ public class OracleHandler {
     }
     
     /**
-     * Retrieves all images from the database
+     * Retrieves all images from the database that the user can see
      * @return
      * @throws Exception
      */
-    public List<Image> getAllImages() throws Exception {
-        String query = "SELECT * FROM images";
-        ResultSet rs = executeQuery(query);
+    public List<Image> getAllImages(String user) throws Exception {
+        String query = "SELECT * FROM images i WHERE i.owner_name = ? "
+                + "OR i.permitted = 1 OR i.permitted IN "
+                + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+                + "and user_name = ?) "
+                + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+                + "group_id = i.permitted AND friend_id = ?)";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        stmt.setString(3, user);
+        
+        ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
     }
 	
@@ -324,6 +334,21 @@ public class OracleHandler {
         } else {
             throw new InvalidParameterException("Photo id does not exist!");
         }
+    }
+    
+    /**
+     * Returns the name of the group
+     * @param groupId
+     * @return
+     * @throws Exception
+     */
+    public String getGroupName(int groupId) throws Exception {
+        String query = "SELECT group_name FROM groups WHERE group_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, groupId);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        return rs.getString("group_name");
     }
     
     /**

@@ -5,6 +5,7 @@
 <%
 	String user = (String) session.getAttribute("user");
 	String thumbnailURL = "thumbnail?";
+	String imageURL = "image?";
   	String updateURL = "updateimage?";
 	List<Image> popularImages = OracleHandler.getInstance().getTopFivePopularImages();
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
@@ -158,8 +159,10 @@
 
         		e.preventDefault();
 
-        		// update hits 
-        		<% OracleHandler.getInstance().increaseImageHits(image.getPhotoId()); %>
+				<% String getURL = imageURL + image.getPhotoId(); %>
+
+				// Set Image
+				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
 
         		<%String groupName = OracleHandler.getInstance().getGroupName(image.getPermitted());%>
 				
@@ -171,10 +174,6 @@
 				document.getElementById("imageDesc").innerHTML = "Description: <%=image.getDescription()%>";
 				document.getElementById("imagePermissions").innerHTML = "Group: <%=groupName%>";
 
-				<% String getURL = thumbnailURL + image.getPhotoId(); %>
-
-				// Set Image
-				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
 
 				// Resize modal based on image
 				var imgWidth = document.getElementById("modalImage").naturalWidth;
@@ -194,8 +193,10 @@
 
         		e.preventDefault();
 
-				// update hits 
-        		<% OracleHandler.getInstance().increaseImageHits(image.getPhotoId()); %>
+				<% String getURL = imageURL + image.getPhotoId(); %>
+
+				// Set Image
+				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
 
         		<%String groupName = OracleHandler.getInstance().getGroupName(image.getPermitted());%>
 				
@@ -206,11 +207,6 @@
 				document.getElementById("imageDate").innerHTML = "Date: <%=image.getDate().toString()%>";
 				document.getElementById("imageDesc").innerHTML = "Description: <%=image.getDescription()%>";
 				document.getElementById("imagePermissions").innerHTML = "Group: <%=groupName%>";
-
-				<% String getURL = thumbnailURL + image.getPhotoId(); %>
-
-				// Set Image
-				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
 
 				// Resize modal based on image
 				var imgWidth = document.getElementById("modalImage").naturalWidth;

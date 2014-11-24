@@ -210,6 +210,15 @@
 	</servlet-mapping>	
 
 	<servlet>
+		<servlet-name>ImageDisplayServlet</servlet-name>
+		<servlet-class>imageshare.servlets.ImageDisplayServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageDisplayServlet</servlet-name>
+		<url-pattern>/image</url-pattern>
+	</servlet-mapping>	
+
+	<servlet>
 		<servlet-name>UpdateImageServlet</servlet-name>
 		<servlet-class>imageshare.servlets.UpdateImageServlet</servlet-class>
 	</servlet>

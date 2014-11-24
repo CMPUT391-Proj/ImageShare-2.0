@@ -160,7 +160,7 @@ public class OracleHandler {
                     .getBinaryStream());
             BufferedImage pic = ImageIO.read(rs.getBlob("photo")
                     .getBinaryStream());
-            
+
             Image image = new Image(owner, permitted, subject, place, timing,
                     description, thumbnail, pic);
             image.setPhotoId(photo_id);
@@ -278,27 +278,6 @@ public class OracleHandler {
     }
     
     /**
-     * Get the number of times the image has been viewed.
-     * @param photoId
-     * @return
-     * @throws Exception
-     */
-    public int getImageHits(int photoId) throws Exception {
-        String query = "SELECT * FROM imagepopularity WHERE photo_id = ?";
-        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setInt(1, photoId);
-        ResultSet rs = stmt.executeQuery();
-       
-        if (!rs.next()) {
-            addImagePopularityRow(photoId);
-        } else {
-            return rs.getInt("hits");
-        }
-        
-        return 0;
-    }
-    
-    /**
      * Get the top five images with the most hits, in sequence
      * order of decreasing popularity.
      * @return
@@ -334,6 +313,27 @@ public class OracleHandler {
             throw new InvalidParameterException("Photo id does not exist!");
         }
     }
+    
+    /**
+     * Returns the input stream of the image for the specified photoId.
+     * 
+     * @param photoId
+     * @return
+     */
+    public InputStream getImageInputStream(int photoId) throws Exception {
+        String query = "SELECT photo FROM images where photo_id = ?";
+
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getBinaryStream("photo");
+        } else {
+            throw new InvalidParameterException("Photo id does not exist!");
+        }
+    }
+    
     
     /**
      * Update the image from the provided photo id.

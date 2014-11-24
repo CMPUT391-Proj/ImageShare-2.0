@@ -33,8 +33,8 @@ import org.json.JSONObject;
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -380,6 +380,21 @@ public class OracleHandler {
     }
     
     /**
+     * Adds a user created group to the database
+     * @param String user
+     * @param String group_name
+     * @throws Exception 
+     */
+    public void storeNewGroup(String user, String group_name) throws Exception {
+		String query = "insert into groups " + "values ("
+		    + "group_id_sequence.nextval, '" + user + "', '" + 
+		    group_name + "', sysdate)";
+	
+	    PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+	    stmt.executeUpdate();
+    }
+    
+    /**
      * Adds groups to the database
      * @param List<Group> groups
      */
@@ -480,6 +495,60 @@ public class OracleHandler {
             groupLists.add(new GroupList(friendId, dateAdded, notice));
         }
         return groupLists;
+    }
+    
+    /**
+     * Returns all usernames in a group
+     * @param int group_id
+     * @throws Exception 
+     * @returns ArrayList<String>
+     */
+    public List<String> get_users_from_group(int group_id) throws Exception {
+    	ArrayList<String> friend_ids = new ArrayList<String>();
+    	String query = "SELECT friend_id "
+    			+ "FROM group_lists "
+    			+ "WHERE group_id = "
+    			+ group_id;
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        
+    	friend_ids =  user_from_resultset_group(rs);
+    	query = "SELECT user_name from groups where group_id = " +
+    			group_id;
+    	stmt = getInstance().conn.prepareStatement(query);
+        rs = stmt.executeQuery();
+        
+    	try
+    	{
+    		if (rs.next())
+    		{
+    			friend_ids.add(rs.getString("user_name"));
+    		}
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return friend_ids;
+    }
+    
+    /**
+     * Gets users in a group
+     * @param rs
+     * @return
+     */
+    public ArrayList<String> user_from_resultset_group(ResultSet rs) {
+    	ArrayList<String> all_users;
+    	all_users = new ArrayList<String>();
+
+    	try {
+    		while (rs.next()) {
+    			String friend_id = rs.getString("friend_id");
+    			all_users.add(friend_id);
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return all_users;
     }
     
     /**
@@ -703,6 +772,66 @@ public class OracleHandler {
 		
 		return generateJsonFromPreparedStatement(stmt);
 	}
+	
+    /**
+     * Returns the resultset of the search by keywords
+     * @param String keywords, String order
+     * @throws Exception 
+     @ @return List<Image>
+     */
+    public List<Image> getResultByKeywords(String keywords, String order) throws Exception {
+        String query = "SELECT score(1)*6 + score(2)*3 + score(3) AS score, "
+                        + "photo_id FROM images WHERE "
+                        + "((contains(subject, '"+ keywords + "', 1) > "
+                        + "0) OR (contains(place, '" + keywords +"', 2) > 0) "
+                        + "OR (contains(description, '" + keywords + "', 3) > "
+                        + "0)) " + order;
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs =  stmt.executeQuery();
+        List<Image> images = retrieveImagesFromResultSet(rs);
+		return images;
+     }
+    
+    /**
+     * Returns results through search by date
+     * @param String fromdate, String todate, String order
+     * @return ResultSet
+     * @throws List<Image> 
+     */
+    public List<Image> getImagesByDate(String fromdate, String todate, String order) throws Exception {
+        String query = "SELECT * FROM images WHERE (timing BETWEEN '"
+                      + fromdate + "' AND '" + todate + "') " + order;
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs =  stmt.executeQuery();
+        List<Image> images = retrieveImagesFromResultSet(rs);
+		
+		return images;
+    }
+    
+    /**
+     * Returns the resultset of the search by keywords and date
+     *
+     * Rank(photo_id) = 6*frequency(subject) + 3*frequency(location)
+     * + frequency(description)
+     *
+     * @param String fromdate, String todate, String keywords, String order
+     * @return ResultSet
+     * @throws Exception 
+     */
+    public List<Image> getResultsByDateAndKeywords(String fromdate, String todate, String keywords, String order) throws Exception {
+        String query = "SELECT score(1)*6 + score(2)*3 + score(3) AS score, "
+                        + "photo_id FROM images WHERE "
+                        + "((timing BETWEEN '" + fromdate + "' AND '" + todate
+                        +  " ') AND (contains(subject, '"+ keywords + "', 1) > "
+                        + "0) OR (contains(place, '" + keywords +"', 2) > 0) "
+                        + "OR (contains(description, '" + keywords + "', 3) > "
+                        + "0)) " + order;
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs =  stmt.executeQuery();
+        List<Image> images = retrieveImagesFromResultSet(rs);
+		
+		return images;
+    }
 	
 	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();

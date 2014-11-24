@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<%@include file="header.jsp" %>
+<%@include file="../header.jsp" %>
 <%@ page import="imageshare.oraclehandler.OracleHandler"%>
 <%
 	// check user is admin
@@ -14,7 +14,7 @@
 %>
 
 <body>
-	<%@include file="navbar.jsp" %>
+	<%@include file="../navbar.jsp" %>
 
 	<div class="jumbotron">
 		<div class="container">
@@ -28,7 +28,7 @@
 	<div class="row"> <!-- start -->
 		<div class="col-lg-2 col-lg-offset-4">
 			<div class="btn-group-vertical" role="group">
-				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
+				<button type="button" class="btn btn-default active" id="button-imagesperuser">Images Per User</button>
 				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
 				<button type="button" class="btn btn-default">2</button>
 				<button type="button" class="btn btn-default">2</button>
@@ -56,17 +56,60 @@
 		</div>
 	</div>
 
+	<hr>
+
+	<div class="row"> <!-- start -->
+		<div class="container">
+			<div class="col-lg-3">
+				<div class="panel panel-default"> 
+					<div class="panel-heading">Images Per User (All)</div>
+					<table class="table table-hover table-bordered">
+						<tbody id="image-per-user">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="panel panel-default"> 
+					<div class="panel-heading">Images Per User (Yearly)</div>
+					<table class="table table-hover table-bordered">
+						<tbody id="image-per-user">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="panel panel-default"> 
+					<div class="panel-heading">Images Per User (Monthly)</div>
+					<table class="table table-hover table-bordered">
+						<tbody id="image-per-user">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="panel panel-default"> 
+					<div class="panel-heading">Images Per User (Weekly)</div>
+					<table class="table table-hover table-bordered">
+						<tbody id="image-per-user">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="container">
 		<hr>
-			<%@include file="footer.jsp"%>
+			<%@include file="../footer.jsp"%>
 	</div>
 
 	<script>
 		$('#button-imagespersubject').click(function() {
-			document.location.href = './dataanalysis/imagespersubject';
+			document.location.href = './imagespersubject';
 		});
 		$('#button-imagesperuser').click(function() {
-			document.location.href = './dataanalysis/imagesperuser';
+			document.location.href = './imagesperuser';
 		});
 
 		$('#reset').click(function(){

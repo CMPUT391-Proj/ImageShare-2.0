@@ -25,36 +25,34 @@
 
 	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
-	<div class="row"> <!-- start -->
-		<div class="col-lg-2 col-lg-offset-4">
-			<div class="btn-group-vertical" role="group">
-				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
-				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
-			</div>
-		</div>
-		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="get" role="form">
-				<div class="form-group">
-					<label for="date" class="col-sm-4 control-label">From Date:</label>
-					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="date" class="col-sm-4 control-label">To Date:</label>
-					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
-					</div>
-				</div>
-				<input type="hidden" name="page" value="imagespersubject">
-				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
-			</form>
-			<button id="reset" class="btn btn-primary pull-right">Reset Page</button>
+	<div class="row">
+		<div class="col-lg-5 col-lg-offset-1">
+			<h4>ImageShare Overview</h4>
 		</div>
 	</div>
+
+	<div class="row"> <!-- start -->
+		<div class="col-lg-5 col-lg-offset-1">
+			<div class="panel panel-default"> 
+				<div class="panel-heading">Number of images per user</div>
+				<table class="table table-hover table-bordered">
+					<tbody id="image-per-user">
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="col-lg-5">
+			<div class="panel panel-default">
+				<div class="panel-heading">Number of images per subject</div>
+					<table class="table table-hover table-bordered">
+						<tbody id="image-per-subject">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div> <!-- end -->
 
 	<div class="container">
 		<hr>
@@ -62,17 +60,6 @@
 	</div>
 
 	<script>
-		$('#button-imagespersubject').click(function() {
-			document.location.href = './dataanalysis/imagespersubject';
-		});
-		$('#button-imagesperuser').click(function() {
-			document.location.href = './dataanalysis/imagesperuser';
-		});
-
-		$('#reset').click(function(){
-			location.reload();
-		});
-
 		$(document).ready(function() {
 			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
 			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);

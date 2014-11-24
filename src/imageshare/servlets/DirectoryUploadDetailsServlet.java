@@ -40,6 +40,8 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
 
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
 
+    private static final String USER = "user";
+    
     private static final String DIR_UPLOAD_JSP = "directoryupload";
 
     @SuppressWarnings("unchecked")
@@ -101,8 +103,7 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
             }
 
             // Get the logged in user
-            // user = (String) req.getSession().getAttribute(USER);
-            user = "admin";
+            user = (String) req.getSession().getAttribute(USER);
             if (user == null)
                 throw new FileUploadException(RETRIEVE_USER_ERROR);
 

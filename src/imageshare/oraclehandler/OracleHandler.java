@@ -25,6 +25,9 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
@@ -468,7 +471,7 @@ public class OracleHandler {
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setString(1, user.getUsername());
         stmt.setString(2, user.getPassword());
-        stmt.setDate(3, user.getRegisteredDate());
+        stmt.setDate(3, new java.sql.Date(user.getRegisteredDate().getTime()));
   
         stmt.executeUpdate();
     }
@@ -608,4 +611,37 @@ public class OracleHandler {
   
         stmt.executeUpdate();
     }
+	
+	// Data Analytics Section
+	public String getImagesPerUser() throws Exception {
+		String query = 
+			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
+			"FROM USERS U "+
+			"LEFT JOIN "+
+			"  ( "+
+			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
+			"    FROM IMAGES "+
+			"    GROUP BY OWNER_NAME "+
+			"  ) IMAGE_COUNT "+
+			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
+			"ORDER BY COUNT DESC, U.USER_NAME";
+		
+		Statement stmt = getInstance().conn.createStatement();
+		
+		JSONObject jsonResultObj = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		
+		ResultSet rs = stmt.executeQuery(query);
+		while(rs.next()) {
+			JSONObject tempJsonObj = new JSONObject();
+			
+			tempJsonObj.put("username", rs.getString(1));
+			tempJsonObj.put("count", rs.getInt(2));
+			jsonArray.put(tempJsonObj);
+		}
+		
+		jsonResultObj.put("result", jsonArray);
+		
+		return jsonResultObj.toString();
+	}
 }

@@ -84,4 +84,19 @@ public class OracleHandlerTests {
 		
 		System.out.println("FINISHED CreateUser");
 	}
+	
+	@Test
+	public void ImagesPerUser() {
+		try {
+			String result = OracleHandler.getInstance().getImagesPerUser();
+			
+			assertTrue(result.length() > 0);
+			
+			System.out.println(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("FINISHED CreateUser");
+	}
 }

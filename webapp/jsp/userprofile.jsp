@@ -142,7 +142,7 @@
 			$('#edit-modal').modal('hide');
 		});
 
-		$(document).ready(function(e) {
+		$(document).ready(function() {
 			// username doesn't set for some reason
 			//$('#username').val(<% out.print("'"+user.getPassword()+"'"); %>);
 			$('#password').val(<% out.print("'"+user.getPassword()+"'"); %>);

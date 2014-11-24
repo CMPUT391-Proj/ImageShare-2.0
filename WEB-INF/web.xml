@@ -78,6 +78,15 @@
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>Gallery</servlet-name>
+		<jsp-file>/webapp/jsp/gallery.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Gallery</servlet-name>
+		<url-pattern>/gallery</url-pattern>
+	</servlet-mapping>	
+
 <!-- Servlets -->
 
 	<servlet>

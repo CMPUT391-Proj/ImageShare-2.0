@@ -20,6 +20,8 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="dropdown">
               <span class="glyphicon glyphicon-list pull-right"></span></a>
               <ul class="dropdown-menu">
+                    <li><a href="gallery"><span class="glyphicon glyphicon-camera pull-right"></span>Gallery</a></li>
+                    <li class="divider"></li>
                     <li><a href="imageupload"><span class="glyphicon glyphicon-picture pull-right"></span>Upload Image</a></li>
                     <li class="divider"></li>
                     <li><a href="directoryupload"><span class="glyphicon glyphicon-folder-open pull-right"></span>Upload Folder</a></li>

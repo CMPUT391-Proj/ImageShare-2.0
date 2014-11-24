@@ -688,20 +688,18 @@ public class OracleHandler {
 
 	public String getImagesPerSubject() throws Exception {
 		String query = 
-			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
-			"FROM USERS U "+
-			"LEFT JOIN "+
-			"  ( "+
-			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
-			"    FROM IMAGES "+
-			"    GROUP BY OWNER_NAME "+
-			"  ) IMAGE_COUNT "+
-			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
-			"ORDER BY COUNT DESC, U.USER_NAME";
+			"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"GROUP BY SUBJECT "+
+			"ORDER BY COUNT DESC, SUBJECT";
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		return generateJsonFromPreparedStatement(stmt);
+	}
+	
+	public String getAllUsers() throws Exception {
+		return "";
 	}
 	
 	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
@@ -718,7 +716,7 @@ public class OracleHandler {
 			JSONObject jsonCol = new JSONObject();
 			
 			jsonCol.put("data", rsmd.getColumnName(i));
-			jsonCol.put("bold", 1);
+			jsonCol.put("heading", 1);
 			
 			jsonColNameList.put(jsonCol);
 		}
@@ -731,7 +729,7 @@ public class OracleHandler {
 				JSONObject jsonRecordData = new JSONObject();
 				
 				jsonRecordData.put("data", getResultSetColData(rs, rsmd.getColumnType(i), i));
-				jsonRecordData.put("bold", 0);
+				jsonRecordData.put("heading", 0);
 				
 				jsonRecord.put(jsonRecordData);
 			}

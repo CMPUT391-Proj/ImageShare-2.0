@@ -19,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,13 +171,23 @@ public class OracleHandler {
     }
     
     /**
-     * Retrieves all images from the database
+     * Retrieves all images from the database that the user can see
      * @return
      * @throws Exception
      */
-    public List<Image> getAllImages() throws Exception {
-        String query = "SELECT * FROM images";
-        ResultSet rs = executeQuery(query);
+    public List<Image> getAllImages(String user) throws Exception {
+        String query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
+                + "OR i.permitted = 1 OR i.permitted IN "
+                + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+                + "and user_name = ?) "
+                + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+                + "group_id = i.permitted AND friend_id = ?)";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        stmt.setString(3, user);
+        
+        ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
     }
 	
@@ -324,6 +333,47 @@ public class OracleHandler {
         } else {
             throw new InvalidParameterException("Photo id does not exist!");
         }
+    }
+    
+    /**
+     * Update the image from the provided photo id.
+     * @param photoId
+     * @param subject
+     * @param location
+     * @param description
+     * @param date
+     * @param security
+     * @throws Exception 
+     */
+    public void updateImage(int photoId, String subject, String location,
+            String description, java.util.Date date, int security) throws Exception {
+        String update = "UPDATE images SET subject = ?," + "place = ?, "
+                + "timing = ?," + "description =?," + "permitted =? "
+                + "WHERE photo_id = ?";
+        PreparedStatement updateStmt = getInstance().conn
+                .prepareStatement(update);
+        updateStmt.setString(1, subject);
+        updateStmt.setString(2, location);
+        updateStmt.setDate(3, new Date(date.getTime()));
+        updateStmt.setString(4, description);
+        updateStmt.setInt(5,security);
+        updateStmt.setInt(6, photoId);
+        updateStmt.executeUpdate();
+    }
+    
+    /**
+     * Returns the name of the group
+     * @param groupId
+     * @return
+     * @throws Exception
+     */
+    public String getGroupName(int groupId) throws Exception {
+        String query = "SELECT group_name FROM groups WHERE group_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, groupId);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        return rs.getString("group_name");
     }
     
     /**
@@ -757,20 +807,18 @@ public class OracleHandler {
 
 	public String getImagesPerSubject() throws Exception {
 		String query = 
-			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
-			"FROM USERS U "+
-			"LEFT JOIN "+
-			"  ( "+
-			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
-			"    FROM IMAGES "+
-			"    GROUP BY OWNER_NAME "+
-			"  ) IMAGE_COUNT "+
-			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
-			"ORDER BY COUNT DESC, U.USER_NAME";
+			"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"GROUP BY SUBJECT "+
+			"ORDER BY COUNT DESC, SUBJECT";
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		return generateJsonFromPreparedStatement(stmt);
+	}
+	
+	public String getAllUsers() throws Exception {
+		return "";
 	}
 	
     /**
@@ -847,7 +895,7 @@ public class OracleHandler {
 			JSONObject jsonCol = new JSONObject();
 			
 			jsonCol.put("data", rsmd.getColumnName(i));
-			jsonCol.put("bold", 1);
+			jsonCol.put("heading", 1);
 			
 			jsonColNameList.put(jsonCol);
 		}
@@ -860,7 +908,7 @@ public class OracleHandler {
 				JSONObject jsonRecordData = new JSONObject();
 				
 				jsonRecordData.put("data", getResultSetColData(rs, rsmd.getColumnType(i), i));
-				jsonRecordData.put("bold", 0);
+				jsonRecordData.put("heading", 0);
 				
 				jsonRecord.put(jsonRecordData);
 			}

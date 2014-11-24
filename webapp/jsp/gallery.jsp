@@ -3,7 +3,7 @@
 <%@include file="header.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-	String user = (String) session.getAttribute("username");
+	String user = (String) session.getAttribute("user");
 	String thumbnailURL = request.getRequestURL().toString();
   	thumbnailURL =  "thumbnail?";
 	List<Image> popularImages = OracleHandler.getInstance().getTopFivePopularImages();
@@ -112,31 +112,60 @@
 
 		// Generate and append the popular thumbnails to the page
 		var popular_thumbs = "";
-		<% int count = 0; %>
-		for (i = 0; i < <%=popularImages.size() %> && i < 5; ++i) {
-			<% String getURL = thumbnailURL + popularImages.get(count).getPhotoId(); %>
+		<% for (int i = 0; i < popularImages.size() && i < 5; ++i) { %>
+			<% String getURL = thumbnailURL + popularImages.get(i).getPhotoId(); %>
 
-			popular_thumbs = popular_thumbs + '<div id="<%=popularImages.get(count).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>'
-			<% count++; %>
-		}
+			popular_thumbs = popular_thumbs + '<div id="p<%=popularImages.get(i).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
+		<% } %>
 
 		$('#popular').append(popular_thumbs);
 
 		// Generate and append all user visible thumbnails to the page.
 		var	thumbs = "";
-		<% count = 0; %>
-		for (i = 0; i < <%=allImages.size()%>; ++i) {
-			<% getURL = thumbnailURL + allImages.get(count).getPhotoId(); %>
+		<% for (int i = 0; i < allImages.size(); ++i) { %>
+			<% String getURL = thumbnailURL + allImages.get(i).getPhotoId(); %>
 
-			thumbs = thumbs + '<div id="<%=allImages.get(count).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>" /></a></div>'
-			<% count++; %>
-		}
+			thumbs = thumbs + '<div id="<%=allImages.get(i).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>" /></a></div>';
+		<% } %>
 			
 		$('#gal').append(thumbs);
 
-
+		// Generate the modal for each of the popular thumbnails
 		<% for (int i = 0; i < popularImages.size(); ++i) { %>
 			<%Image image = popularImages.get(i);%>
+
+			var thumbnail = document.getElementById("p<%=image.getPhotoId()%>");
+    		thumbnail.addEventListener("click", function (e) {
+
+        		e.preventDefault();
+
+        		<%String groupName = OracleHandler.getInstance().getGroupName(image.getPermitted());%>
+				
+				// Set image details
+				document.getElementById("imageSubject").innerHTML = "Subject: <%=image.getSubject()%>";
+				document.getElementById("imagePlace").innerHTML = "Location: <%=image.getPlace()%>";
+				document.getElementById("imageOwner").innerHTML = "Owner: <%=image.getOwnerName()%>";
+				document.getElementById("imageDate").innerHTML = "Date: <%=image.getDate().toString()%>";
+				document.getElementById("imageDesc").innerHTML = "Description: <%=image.getDescription()%>";
+				document.getElementById("imagePermissions").innerHTML = "Group: <%=groupName%>";
+
+				<% String getURL = thumbnailURL + image.getPhotoId(); %>
+
+				// Set Image
+				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
+
+				// Resize modal based on image
+				var imgWidth = document.getElementById("modalImage").naturalWidth;
+    			$('#imageModal').find('.modal-dialog').css({width:imgWidth+45});
+
+				// Show the modal
+				$('#imageModal').modal('show');
+    		});			
+		<%} %>
+
+		// Generate the modal for the remainder thumbnails
+		<% for (int i = 0; i < allImages.size(); ++i) { %>
+			<%Image image = allImages.get(i);%>
 
 			var thumbnail = document.getElementById(<%=image.getPhotoId()%>);
     		thumbnail.addEventListener("click", function (e) {
@@ -153,8 +182,10 @@
 				document.getElementById("imageDesc").innerHTML = "Description: <%=image.getDescription()%>";
 				document.getElementById("imagePermissions").innerHTML = "Group: <%=groupName%>";
 
+				<% String getURL = thumbnailURL + image.getPhotoId(); %>
+
 				// Set Image
-				$('#imageView').html('<img id="modalImage" src="//distilleryimage2.ak.instagram.com/e3493b0a045411e3a4fb22000a1f97ec_7.jpg">');
+				$('#imageView').html('<img id="modalImage" src="<%=getURL%>">');
 
 				// Resize modal based on image
 				var imgWidth = document.getElementById("modalImage").naturalWidth;

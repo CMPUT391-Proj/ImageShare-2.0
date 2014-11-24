@@ -177,7 +177,7 @@ public class OracleHandler {
      * @throws Exception
      */
     public List<Image> getAllImages(String user) throws Exception {
-        String query = "SELECT * FROM images i WHERE i.owner_name = ? "
+        String query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
                 + "OR i.permitted = 1 OR i.permitted IN "
                 + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
                 + "and user_name = ?) "

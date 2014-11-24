@@ -17,7 +17,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,6 +209,36 @@ public class OracleHandler {
         }
         
         return groups;
+    }
+    
+    /**
+     * Get all groups where the user either created it or is a part of the
+     * group.
+     * 
+     * @param user
+     *            The user to query for involved groups
+     */
+    public List<Group> getInvolvedGroups(String user) throws Exception {
+        List<Group> groups = new ArrayList<Group>();
+        
+        String query = "SELECT * FROM groups WHERE group_id in "
+                + "(SELECT group_id FROM group_lists where "
+                + "friend_id = ? ) OR " + "user_name = ?";
+        
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            String name = rs.getString("group_name");
+            int id = rs.getInt("group_id");
+            Date date = rs.getDate("date_created");
+            groups.add(new Group(id, user, name, date));
+        }
+        
+        return groups;     
     }
     
     /**

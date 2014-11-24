@@ -4,8 +4,8 @@
 <%@ page import="imageshare.model.Group,imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
-	String thumbnailURL = request.getRequestURL().toString();
-  	thumbnailURL =  "thumbnail?";
+	String thumbnailURL = "thumbnail?";
+  	String updateURL = "updateimage?";
 	List<Image> popularImages = OracleHandler.getInstance().getTopFivePopularImages();
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
 %>
@@ -50,6 +50,11 @@
 	#titleRight {
 		float: right;
 	}
+	.text-muted {
+	    margin-left: auto;
+	    margin-right: auto;
+	    display: table;
+	}
 </style>
 <body>
 	<%@include file="navbar.jsp" %>
@@ -57,7 +62,7 @@
 	<div class="jumbotron">
 		<div class="container">
 			<h1>Gallery</h1>
-			<p id="titleLeft"></p>
+			<p id="titleLeft">View all your photos here ... </p>
 		</div>
 	</div>
 
@@ -114,8 +119,15 @@
 		var popular_thumbs = "";
 		<% for (int i = 0; i < popularImages.size() && i < 5; ++i) { %>
 			<% String getURL = thumbnailURL + popularImages.get(i).getPhotoId(); %>
+			<% String editURL = updateURL + popularImages.get(i).getPhotoId(); %>
 
-			popular_thumbs = popular_thumbs + '<div id="p<%=popularImages.get(i).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
+			popular_thumbs = popular_thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><div id="p<%=popularImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
+
+			<% if (popularImages.get(i).getOwnerName().equals(user)) { %> 
+				popular_thumbs = popular_thumbs + '<a href="<%=editURL%>"><small class=\'text-muted\'>Edit</small></a>';
+			<% } %>
+
+			popular_thumbs = popular_thumbs + '</div>';
 		<% } %>
 
 		$('#popular').append(popular_thumbs);
@@ -124,8 +136,15 @@
 		var	thumbs = "";
 		<% for (int i = 0; i < allImages.size(); ++i) { %>
 			<% String getURL = thumbnailURL + allImages.get(i).getPhotoId(); %>
+			<% String editURL = updateURL + allImages.get(i).getPhotoId(); %>
+			
+			thumbs = thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><div id="<%=allImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
 
-			thumbs = thumbs + '<div id="<%=allImages.get(i).getPhotoId()%>" class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><a class="thumbnail fancybox"><img class="img-responsive" alt="" src="<%=getURL%>" /></a></div>';
+			<% if (allImages.get(i).getOwnerName().equals(user)) { %> 
+				thumbs = thumbs + '<a href="<%=editURL%>"><small class=\'text-muted\'>Edit</small></a>';
+			<% } %>
+
+			thumbs = thumbs + '</div>';
 		<% } %>
 			
 		$('#gal').append(thumbs);
@@ -138,6 +157,9 @@
     		thumbnail.addEventListener("click", function (e) {
 
         		e.preventDefault();
+
+        		// update hits 
+        		<% OracleHandler.getInstance().increaseImageHits(image.getPhotoId()); %>
 
         		<%String groupName = OracleHandler.getInstance().getGroupName(image.getPermitted());%>
 				
@@ -171,6 +193,9 @@
     		thumbnail.addEventListener("click", function (e) {
 
         		e.preventDefault();
+
+				// update hits 
+        		<% OracleHandler.getInstance().increaseImageHits(image.getPhotoId()); %>
 
         		<%String groupName = OracleHandler.getInstance().getGroupName(image.getPermitted());%>
 				

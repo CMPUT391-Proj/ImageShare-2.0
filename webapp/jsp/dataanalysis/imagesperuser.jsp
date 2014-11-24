@@ -30,9 +30,7 @@
 			<div class="btn-group-vertical" role="group">
 				<button type="button" class="btn btn-default active" id="button-imagesperuser">Images Per User</button>
 				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
+				<button type="button" class="btn btn-default" id="button-customanalysis">Custom Parameters</button>
 			</div>
 		</div>
 		<div class="col-lg-3">
@@ -52,7 +50,7 @@
 				<input type="hidden" name="page" value="imagespersubject">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
-			<button id="reset" class="btn btn-primary pull-right">Reset Page</button>
+			<button id="reset" class="btn btn-default pull-right">Reset Page</button>
 		</div>
 	</div>
 
@@ -110,6 +108,9 @@
 		});
 		$('#button-imagesperuser').click(function() {
 			document.location.href = './imagesperuser';
+		});
+		$('#button-customanalysis').click(function() {
+			document.location.href = './customanalysis';
 		});
 
 		$('#reset').click(function(){

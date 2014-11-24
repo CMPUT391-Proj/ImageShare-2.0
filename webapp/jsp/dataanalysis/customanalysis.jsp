@@ -29,8 +29,8 @@
 		<div class="col-lg-2 col-lg-offset-4">
 			<div class="btn-group-vertical" role="group">
 				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
-				<button type="button" class="btn btn-default active" id="button-imagespersubject">Images Per Subject</button>
-				<button type="button" class="btn btn-default" id="button-customanalysis">Custom Analysis</button>
+				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
+				<button type="button" class="btn btn-default active" id="button-customanalysis">Custom Analysis</button>
 			</div>
 		</div>
 		<div class="col-lg-3">
@@ -47,7 +47,7 @@
 						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
-				<input type="hidden" name="page" value="imagesperuser">
+				<input type="hidden" name="page" value="imagespersubject">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
 			<button id="reset" class="btn btn-default pull-right">Reset Page</button>
@@ -62,7 +62,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (All)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-subject">
+						<tbody id="image-per-user">
 						</tbody>
 					</table>
 				</div>
@@ -71,7 +71,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Yearly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-subject">
+						<tbody id="image-per-user">
 						</tbody>
 					</table>
 				</div>
@@ -80,7 +80,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Monthly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-subject">
+						<tbody id="image-per-user">
 						</tbody>
 					</table>
 				</div>
@@ -89,7 +89,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Weekly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-subject">
+						<tbody id="image-per-user">
 						</tbody>
 					</table>
 				</div>

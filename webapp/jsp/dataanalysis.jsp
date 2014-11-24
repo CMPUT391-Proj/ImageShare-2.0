@@ -8,9 +8,6 @@
 
 	String error = (String) session.getAttribute("error");
 	session.setAttribute("error", null);
-
-	String imagesPerUser = OracleHandler.getInstance().getImagesPerUser();
-	String imagesPerSubject = OracleHandler.getInstance().getImagesPerSubject();
 %>
 
 <body>
@@ -30,9 +27,7 @@
 			<div class="btn-group-vertical" role="group">
 				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
 				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
-				<button type="button" class="btn btn-default">2</button>
+				<button type="button" class="btn btn-default" id="button-customanalysis">Custom Analysis</button>
 			</div>
 		</div>
 		<div class="col-lg-3">
@@ -40,19 +35,19 @@
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">To Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
 					</div>
 				</div>
 				<input type="hidden" name="page" value="imagespersubject">
-				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
+				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
 			</form>
-			<button id="reset" class="btn btn-primary pull-right">Reset Page</button>
+			<button id="reset" class="btn btn-default pull-right" disabled>Reset Page</button>
 		</div>
 	</div>
 
@@ -68,42 +63,8 @@
 		$('#button-imagesperuser').click(function() {
 			document.location.href = './dataanalysis/imagesperuser';
 		});
-
-		$('#reset').click(function(){
-			location.reload();
+		$('#button-customanalysis').click(function() {
+			document.location.href = './customanalysis';
 		});
-
-		$(document).ready(function() {
-			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
-			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);
-
-			var imagesPerSubject = jQuery.parseJSON(<% out.print("\'"+imagesPerSubject+"\'"); %>);
-			var imagesPerSubjectTableData = parseJsonCount(imagesPerSubject.result);
-
-			$('#image-per-user').append(imagesPerUserTableData.toString());
-			$('#image-per-subject').append(imagesPerSubjectTableData.toString());
-		})
-
-		function parseJsonCount(jsonList) {
-			var tableData = '';
-			
-			for (var i=0; i<jsonList.length; i++) {
-				tableData += '<tr>';
-				
-				for (var j=0; j< jsonList[i].length; j++) {
-					if (jsonList[i][j].heading == 0) {
-						tableData += '<td>'+jsonList[i][j].data+'</td>';
-					}
-					else {
-						tableData += '<th>'+jsonList[i][j].data+'</th>';
-					}
-				}
-				
-				tableData += '</tr>\n';
-			}
-
-			return tableData;
-		}
-
 	</script>
 </body>

@@ -79,6 +79,15 @@
 		<url-pattern>/dataanalysis/imagespersubject</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
+		<jsp-file>/webapp/jsp/dataanalysis/customanalysis.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
+		<url-pattern>/dataanalysis/customanalysis</url-pattern>
+	</servlet-mapping>
+
 <!-- end data analysis -->
 
 	<servlet>

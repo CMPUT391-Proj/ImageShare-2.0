@@ -108,8 +108,7 @@ public class ImageUploadServlet extends HttpServlet {
             }
 
             // Get the logged in user
-            //user = (String) req.getSession().getAttribute(USER);
-            user = "admin";
+            user = (String) req.getSession().getAttribute(USER);
             if (user == null)
                 throw new FileUploadException(RETRIEVE_USER_ERROR);
             if (file == null)

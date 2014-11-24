@@ -3,8 +3,7 @@
 <%@include file="header.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-  //String user = (String) session.getAttribute("user");
-  String user = "admin";
+  String user = (String) session.getAttribute("user");
   List<Group> groups = OracleHandler.getInstance().getGroups(user);
   String uploadURL = request.getRequestURL().toString();
   uploadURL = uploadURL.substring(0, uploadURL.lastIndexOf("/")) + "/directoryUpload";
@@ -36,11 +35,14 @@
 
   <% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
+  <% out.println(uploadURL); %>
+
+  <% out.println(session.getAttribute("imagesDir")); %>
+
   <div class="row">
     <div class="col-lg-6 col-lg-offset-3">
 
     <!-- Image Upload Form -->
-    <% out.println(uploadURL); %>
     <form class="form-horizontal" action="directoryUploadDetails" enctype="multipart/form-data" method="post" role="form">
 
       <div class="panel panel-default">
@@ -68,19 +70,19 @@
           <div class="form-group">
             <label for="subject" class="col-sm-3 control-label">Subject</label>
             <div class="col-sm-9">
-              <input type="text" name="subject" class="form-control" placeholder="Who / What is in this photo?" id="subject">
+              <input type="text" name="subject" class="form-control" placeholder="Who / What are in these photos?" id="subject">
             </div>
           </div>
           <div class="form-group">
             <label for="location" class="col-sm-3 control-label">Location</label>
             <div class="col-sm-9">
-              <input type="text" name="location" class="form-control" placeholder="Where was this photo taken?" id="location">
+              <input type="text" name="location" class="form-control" placeholder="Where were these photos taken?" id="location">
             </div>
           </div>
           <div class="form-group">
             <label for="description" class="col-sm-3 control-label">Description</label>
             <div class="col-sm-9">
-              <input type="text" name="description" class="form-control" placeholder="Give some details about this image." id="description">
+              <input type="text" name="description" class="form-control" placeholder="Give some details about these images." id="description">
             </div>
           </div>
           <div class="form-group">
@@ -103,7 +105,7 @@
           </div>
         </div>
         <div class="panel-footer">
-          <button id="upload" type="submit" class="btn btn-primary">Upload</button>
+          <button id="upload" type="submit" class="btn btn-primary">Submit</button>
         </div>
       </div>
     </form>

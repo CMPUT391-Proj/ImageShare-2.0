@@ -209,6 +209,36 @@ public class OracleHandler {
     }
     
     /**
+     * Get all groups where the user either created it or is a part of the
+     * group.
+     * 
+     * @param user
+     *            The user to query for involved groups
+     */
+    public List<Group> getInvolvedGroups(String user) throws Exception {
+        List<Group> groups = new ArrayList<Group>();
+        
+        String query = "SELECT * FROM groups WHERE group_id in "
+                + "(SELECT group_id FROM group_lists where "
+                + "friend_id = ? ) OR " + "user_name = ?";
+        
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            String name = rs.getString("group_name");
+            int id = rs.getInt("group_id");
+            Date date = rs.getDate("date_created");
+            groups.add(new Group(id, user, name, date));
+        }
+        
+        return groups;     
+    }
+    
+    /**
      * Adds groups to the database
      * @param List<Group> groups
      */
@@ -326,6 +356,22 @@ public class OracleHandler {
   
         stmt.executeUpdate();
     }
+
+	/**
+	 * 
+	 * @param User model
+	 * @throws Exception
+	 */
+	public void updateUser(User user) throws Exception {
+		String query = "UPDATE USERS SET PASSWORD = ? WHERE USER_NAME = ?";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+
+		stmt.setString(1, user.getPassword());
+		stmt.setString(2, user.getUsername());
+		
+		stmt.executeUpdate();
+	}
 	
 	/**
 	 * 
@@ -357,7 +403,7 @@ public class OracleHandler {
 	 * @return Person model of email, null if it doesn't exist
 	 * @throws Exception
 	 */
-	public Person getPerson(String email) throws Exception {
+	public Person getPersonByEmail(String email) throws Exception {
 		String query = "SELECT * FROM PERSONS WHERE EMAIL = ?";
 		Person person = null;
 		
@@ -376,6 +422,56 @@ public class OracleHandler {
 		}
 		
 		return person;
+	}
+	
+	/**
+	 * 
+	 * @param email
+	 * @return Person model of username, null if it doesn't exist
+	 * @throws Exception
+	 */
+	public Person getPerson(String username) throws Exception {
+		String query = "SELECT * FROM PERSONS WHERE USER_NAME = ?";
+		Person person = null;
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		stmt.setString(1, username);
+		
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			String firstname = rs.getString(2);
+			String lastname = rs.getString(3);
+			String address = rs.getString(4);
+			String email = rs.getString(5);
+			String phone = rs.getString(6);
+			
+			person = new Person(username, firstname, lastname, address, email, phone);
+		}
+		
+		return person;
+	}
+	
+	/**
+	 * 
+	 * @param Person model
+	 * @throws Exception
+	 */
+	public void updatePerson(Person person) throws Exception {
+		String query = 
+			"UPDATE PERSONS "+
+			"SET FIRST_NAME = ?, LAST_NAME = ?, ADDRESS = ?, EMAIL = ?, PHONE = ? "+
+			"WHERE USER_NAME = ?";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+
+		stmt.setString(1, person.getFirstname());
+		stmt.setString(2, person.getLastname());
+		stmt.setString(3, person.getAddress());
+		stmt.setString(4, person.getEmail());
+		stmt.setString(5, person.getPhone());
+		stmt.setString(6, person.getUsername());
+		
+		stmt.executeUpdate();
 	}
 	
     /**

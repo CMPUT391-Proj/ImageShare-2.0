@@ -108,6 +108,15 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>UserProfileServlet</servlet-name>
+		<servlet-class>imageshare.servlets.UserProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserProfileServlet</servlet-name>
+		<url-pattern>/userprofileservlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>RegistrationServlet</servlet-name>
 		<servlet-class>imageshare.servlets.RegistrationServlet</servlet-class>
 	</servlet>

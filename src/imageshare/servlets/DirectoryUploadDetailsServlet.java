@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -32,13 +33,15 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
     private static final String DESCRIPTION = "description";
     private static final String SECURITY = "permissions";
 
-    private static final String IMAGES = "dirImages";
+    private static final String IMAGES = "imagesDir";
 
     private static final String FILE_ERROR = "Atleast one file with the correct extension (.jpg / .gif) must be used.";
     private static final String RETRIEVE_USER_ERROR = "Unable to get the current logged in user.";
 
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
 
+    private static final String USER = "user";
+    
     private static final String DIR_UPLOAD_JSP = "directoryupload";
 
     @SuppressWarnings("unchecked")
@@ -56,15 +59,16 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
 
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
+        HttpSession session = req.getSession();
 
         try {
             /*
              * Retrieve the files from the session attribute
              */
-            files = (List<FileItem>) req.getSession().getAttribute(IMAGES);
-            req.getSession().setAttribute(IMAGES, null);
+            files = (List<FileItem>) session.getAttribute(IMAGES);
+            //req.getSession().setAttribute(IMAGES, null);
 
-            if (files == null || files.isEmpty())
+            if (files == null)
                 throw new FileUploadException(FILE_ERROR);
 
             List<FileItem> fileItems = upload.parseRequest(req);
@@ -99,8 +103,7 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
             }
 
             // Get the logged in user
-            // user = (String) req.getSession().getAttribute(USER);
-            user = "admin";
+            user = (String) req.getSession().getAttribute(USER);
             if (user == null)
                 throw new FileUploadException(RETRIEVE_USER_ERROR);
 

@@ -3,8 +3,7 @@
 <%@include file="header.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-  //String user = (String) session.getAttribute("user");
-  String user = "admin";
+  String user = (String) session.getAttribute("user");
   List<Group> groups = OracleHandler.getInstance().getGroups(user);
   String uploadURL = request.getRequestURL().toString();
   uploadURL = uploadURL.substring(0, uploadURL.lastIndexOf("/")) + "/directoryUpload";

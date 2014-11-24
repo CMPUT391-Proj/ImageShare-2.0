@@ -3,8 +3,7 @@
 <%@include file="header.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-	//String user = (String) session.getAttribute("user");
-	String user = "admin";
+	String user = (String) session.getAttribute("user");
 	List<Group> groups = OracleHandler.getInstance().getGroups(user);
 	String error = (String) session.getAttribute("error");
 	session.setAttribute("error", null);
@@ -37,12 +36,10 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">Please fill in the image upload details.</div>
 				<div class="panel-body">
-					<div class="form-group">
 						<label for="filepath" class="col-sm-3 control-label">File Path</label>
 						<div class="col-sm-9">
 							<input type="file" name="filepath" class="form-control" placeholder="filepath" id="filepath">
 						</div>
-					</div>
 					<div class="form-group">
 						<label for="date" class="col-sm-3 control-label">Date</label>
 						<div class="col-sm-9">

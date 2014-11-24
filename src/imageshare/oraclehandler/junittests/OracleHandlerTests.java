@@ -1,7 +1,7 @@
 package imageshare.oraclehandler.junittests;
 
-import static org.junit.Assert.*;
-import imageshare.model.Person;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 

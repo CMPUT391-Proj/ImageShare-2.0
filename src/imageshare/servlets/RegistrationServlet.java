@@ -74,7 +74,7 @@ public class RegistrationServlet extends HttpServlet {
 			req.getSession(true).setAttribute("user", username);
 		} catch (Exception e) {
 			req.getSession(true).setAttribute("error", e.toString());
-			resp.sendRedirect(REGISTRATION_JSP);
+			resp.sendRedirect("search");
 			return;
 		}
 		

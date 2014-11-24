@@ -34,20 +34,21 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="get" role="form">
+			<form class="form-horizontal" action="../dataanalysisservlet" method="post" role="form">
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date-from" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">To Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
-				<input type="hidden" name="page" value="imagespersubject">
+				<input type="hidden" name="username" value=<% out.print("'"+username+"'"); %>>
+				<input type="hidden" name="page" value="customanalysis">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
 			<button id="reset" class="btn btn-default pull-right">Reset Page</button>
@@ -62,7 +63,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (All)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -71,7 +72,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Yearly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -80,7 +81,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Monthly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -89,7 +90,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Weekly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -118,6 +119,8 @@
 		});
 
 		$(document).ready(function() {
+			$('#user').val(<% out.print("\'"+username+"\'"); %>);
+
 			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
 			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);
 
@@ -126,7 +129,7 @@
 
 			$('#image-per-user').append(imagesPerUserTableData.toString());
 			$('#image-per-subject').append(imagesPerSubjectTableData.toString());
-		})
+		});
 
 		function parseJsonCount(jsonList) {
 			var tableData = '';

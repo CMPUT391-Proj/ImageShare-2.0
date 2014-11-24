@@ -88,25 +88,15 @@
 		<url-pattern>/dataanalysis/customanalysis</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<servlet-class>imageshare.servlets.DataAnalysisServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<url-pattern>/dataanalysisservlet</url-pattern>
+	</servlet-mapping> 	
 <!-- end data analysis -->
-
-	<servlet>
-		<servlet-name>Groups</servlet-name>
-		<jsp-file>/webapp/jsp/groups.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Groups</servlet-name>
-		<url-pattern>/groups</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>Search</servlet-name>
-		<jsp-file>/webapp/jsp/search.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Search</servlet-name>
-		<url-pattern>/search</url-pattern>
-	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>Gallery</servlet-name>
@@ -188,7 +178,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GroupsServlet</servlet-name>
-		<url-pattern>/groupsservlet</url-pattern>
+		<url-pattern>/groups</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -197,7 +187,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/searchservlet</url-pattern>
+		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

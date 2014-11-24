@@ -1,11 +1,9 @@
 package imageshare.model;
 
-import imageshare.oraclehandler.OracleInterface;
-
 import java.util.Date;
 
 
-public class Group implements OracleInterface {
+public class Group {
 	
 	private int groupId;		// primary key
 	private String username;	// unique (username, groupname)
@@ -50,29 +48,5 @@ public class Group implements OracleInterface {
 
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
-	}
-
-	@Override
-	public void create() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void retrieve() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -51,6 +51,15 @@
 		<url-pattern>/directoryupload</url-pattern>
 	</servlet-mapping> 	
 
+	<servlet>
+		<servlet-name>DataAnalysis</servlet-name>
+		<jsp-file>/webapp/jsp/dataanalysis.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis</servlet-name>
+		<url-pattern>/dataanalysis</url-pattern>
+	</servlet-mapping> 	
+
 <!-- Servlets -->
 
 	<servlet>

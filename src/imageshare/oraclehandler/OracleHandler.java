@@ -614,6 +614,7 @@ public class OracleHandler {
     }
 	
 	// Data Analytics Section
+	/* Deprecated
 	public String getImagesPerUser() throws Exception {
 		String query = 
 			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
@@ -627,12 +628,12 @@ public class OracleHandler {
 			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
 			"ORDER BY COUNT DESC, U.USER_NAME";
 		
-		Statement stmt = getInstance().conn.createStatement();
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonArray = new JSONArray();
 		
-		ResultSet rs = stmt.executeQuery(query);
+		ResultSet rs = stmt.executeQuery();
 		while(rs.next()) {
 			JSONObject tempJsonObj = new JSONObject();
 			
@@ -644,5 +645,104 @@ public class OracleHandler {
 		jsonResultObj.put("result", jsonArray);
 		
 		return jsonResultObj.toString();
+	}
+	*/
+	public String getImagesPerUser() throws Exception {
+		String query = 
+			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
+			"FROM USERS U "+
+			"LEFT JOIN "+
+			"  ( "+
+			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
+			"    FROM IMAGES "+
+			"    GROUP BY OWNER_NAME "+
+			"  ) IMAGE_COUNT "+
+			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
+			"ORDER BY COUNT DESC, U.USER_NAME";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatement(stmt);
+	}
+
+	public String getImagesPerSubject() throws Exception {
+		String query = 
+			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
+			"FROM USERS U "+
+			"LEFT JOIN "+
+			"  ( "+
+			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
+			"    FROM IMAGES "+
+			"    GROUP BY OWNER_NAME "+
+			"  ) IMAGE_COUNT "+
+			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
+			"ORDER BY COUNT DESC, U.USER_NAME";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatement(stmt);
+	}
+	
+	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
+		JSONObject jsonResultObj = new JSONObject();
+		JSONArray jsonRecordList = new JSONArray();
+		
+		ResultSet rs = stmt.executeQuery();
+		ResultSetMetaData rsmd = rs.getMetaData();
+		
+		int columnCount = rsmd.getColumnCount();
+		
+		JSONArray jsonColNameList = new JSONArray();
+		for (int i=1; i<=columnCount; i++) {
+			JSONObject jsonCol = new JSONObject();
+			
+			jsonCol.put("data", rsmd.getColumnName(i));
+			jsonCol.put("bold", 1);
+			
+			jsonColNameList.put(jsonCol);
+		}
+		jsonRecordList.put(jsonColNameList);
+		
+		while(rs.next()) {
+			JSONArray jsonRecord = new JSONArray();
+			
+			for (int i=1; i<=columnCount; i++) {
+				JSONObject jsonRecordData = new JSONObject();
+				
+				jsonRecordData.put("data", getResultSetColData(rs, rsmd.getColumnType(i), i));
+				jsonRecordData.put("bold", 0);
+				
+				jsonRecord.put(jsonRecordData);
+			}
+			
+			jsonRecordList.put(jsonRecord);
+		}
+		
+		jsonResultObj.put("result", jsonRecordList);
+		
+		return jsonResultObj.toString();
+	}
+	
+	private String getResultSetColData(ResultSet rs, int type, int col) throws Exception {
+		String data;
+
+		switch(type) {
+		case Types.INTEGER:
+			data = ""+rs.getInt(col);
+			break;
+		case Types.VARCHAR:
+			data = rs.getString(col);
+			break;
+		case Types.TIMESTAMP:
+			data = rs.getTimestamp(col).toString();
+			break;
+		case Types.NUMERIC:
+			data = ""+rs.getInt(col);
+			break;
+		default:
+			throw new Exception("Unsupported column type.");
+		}
+		
+		return data;
 	}
 }

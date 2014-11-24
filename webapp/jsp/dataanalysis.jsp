@@ -67,7 +67,18 @@
 			var tableData = '';
 			
 			for (var i=0; i<jsonList.length; i++) {
-				tableData += '<tr><th class="col-md-3">'+jsonList[i].username+'</th><td>'+jsonList[i].count+'</td></tr>\n';
+				tableData += '<tr>';
+				
+				for (var j=0; j< jsonList[i].length; j++) {
+					if (jsonList[i][j].bold == 0) {
+						tableData += '<td>'+jsonList[i][j].data+'</td>';
+					}
+					else {
+						tableData += '<th>'+jsonList[i][j].data+'</th>';
+					}
+				}
+				
+				tableData += '</tr>\n';
 			}
 
 			return tableData;

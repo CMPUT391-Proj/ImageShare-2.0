@@ -47,7 +47,7 @@
 						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
-				<input type="hidden" name="page" value="imagespersubject">
+				<input type="hidden" name="page" value="customanalysis">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
 			<button id="reset" class="btn btn-default pull-right">Reset Page</button>
@@ -62,7 +62,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (All)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -71,7 +71,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Yearly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -80,7 +80,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Monthly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>
@@ -89,7 +89,7 @@
 				<div class="panel panel-default"> 
 					<div class="panel-heading">Images Per User (Weekly)</div>
 					<table class="table table-hover table-bordered">
-						<tbody id="image-per-user">
+						<tbody id="custom">
 						</tbody>
 					</table>
 				</div>

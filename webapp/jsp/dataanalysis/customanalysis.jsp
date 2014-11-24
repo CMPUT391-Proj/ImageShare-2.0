@@ -47,7 +47,7 @@
 						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
-				<input type="hidden" name="user">
+				<input type="hidden" name="username" value=<% out.print("'"+username+"'"); %>>
 				<input type="hidden" name="page" value="customanalysis">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>

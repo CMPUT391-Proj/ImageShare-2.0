@@ -44,7 +44,7 @@
 						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
 					</div>
 				</div>
-				<input type="hidden" name="user">
+				<input type="hidden" name="username" value=<% out.print(username); %>>
 				<input type="hidden" name="page" value="imagespersubject">
 				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
 			</div>

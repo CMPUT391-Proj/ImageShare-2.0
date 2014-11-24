@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DataAnalysisServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    private static final String USERNAME = "user";
+    private static final String USERNAME = "username";
     private static final String CURRENT_PAGE = "page";
     private static final String FROM_DATE = "date_from";
     private static final String TO_DATE = "date_to";
@@ -33,12 +33,12 @@ public class DataAnalysisServlet extends HttpServlet {
     	String redirectJsp;
     	
     	try {
-    		if (username.equals(ADMIN))
-    			throw new Exception("User has no privileges to access this page.");
+    		if (!username.equals(ADMIN))
+    			throw new Exception(username+" has no privileges to access this page.");
     		
     		redirectJsp = getRedirect(currentPage);
     		
-    		
+    		// TODO: Implement query logic
     		
     	} catch (Exception e) {
     		req.getSession(true).setAttribute("error", e.toString());

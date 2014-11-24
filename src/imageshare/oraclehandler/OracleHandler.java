@@ -6,6 +6,7 @@ import imageshare.model.Image;
 import imageshare.model.Person;
 import imageshare.model.User;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -138,6 +139,43 @@ public class OracleHandler {
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         return stmt.executeQuery(query);
     }
+    
+    private List<Image> retrieveImagesFromResultSet(ResultSet rs)
+            throws Exception {
+        List<Image> images = new ArrayList<Image>();
+
+        while (rs.next()) {
+            int photo_id = rs.getInt("photo_id");
+            String owner = rs.getString("owner_name");
+            int permitted = rs.getInt("permitted");
+            String subject = rs.getString("subject");
+            String place = rs.getString("place");
+            Date timing = rs.getDate("timing");
+            String description = rs.getString("description");
+            BufferedImage thumbnail = ImageIO.read(rs.getBlob("thumbnail")
+                    .getBinaryStream());
+            BufferedImage pic = ImageIO.read(rs.getBlob("photo")
+                    .getBinaryStream());
+            
+            Image image = new Image(owner, permitted, subject, place, timing,
+                    description, thumbnail, pic);
+            image.setPhotoId(photo_id);
+            images.add(image);
+        }
+
+        return images;
+    }
+    
+    /**
+     * Retrieves all images from the database
+     * @return
+     * @throws Exception
+     */
+    public List<Image> getAllImages() throws Exception {
+        String query = "SELECT * FROM images";
+        ResultSet rs = executeQuery(query);
+        return retrieveImagesFromResultSet(rs);
+    }
 	
     /**
      * Stores the image into the database
@@ -172,6 +210,8 @@ public class OracleHandler {
         stmt.setBinaryStream(9, thumbnailInputStream);
 
         stmt.executeUpdate();
+        
+        increaseImageHits(imageID);
     }
     
     /**
@@ -183,6 +223,82 @@ public class OracleHandler {
         ResultSet rs = executeQuery(sql);
         rs.next();
         return rs.getInt(1);
+    }
+    
+    private void addImagePopularityRow(int photoId) throws Exception {
+        String insert = "INSERT INTO imagepopularity VALUES (?, ?)";
+        PreparedStatement insertStmt = getInstance().conn
+                .prepareStatement(insert);
+        insertStmt.setInt(1, photoId);
+        insertStmt.setInt(2, 0);
+        insertStmt.executeUpdate();        
+    }
+    
+    /**
+     * Increases the popularity count of a image or adds a row if 
+     * it is not previously set.
+     * @param photoId
+     * @throws Exception
+     */
+    public void increaseImageHits(int photoId) throws Exception{
+        // check if image is in imagepopularity table
+        String query = "SELECT * FROM imagepopularity WHERE photo_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (!rs.isBeforeFirst()) {
+            // is empty - add a row
+            addImagePopularityRow(photoId);
+        } else {
+            // update hits
+            String update = "UPDATE imagepopularity SET hits = "
+                    + "(SELECT hits FROM imagepopularity WHERE photo_id = ?) + 1 "
+                    + "WHERE photo_id = ?";
+            PreparedStatement updateStmt = getInstance().conn
+                    .prepareStatement(update);
+            updateStmt.setInt(1, photoId);
+            updateStmt.setInt(2, photoId);
+            updateStmt.executeUpdate();
+        }
+    }
+    
+    /**
+     * Get the number of times the image has been viewed.
+     * @param photoId
+     * @return
+     * @throws Exception
+     */
+    public int getImageHits(int photoId) throws Exception {
+        String query = "SELECT * FROM imagepopularity WHERE photo_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        ResultSet rs = stmt.executeQuery();
+       
+        if (!rs.next()) {
+            addImagePopularityRow(photoId);
+        } else {
+            return rs.getInt("hits");
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * Get the top five images with the most hits, in sequence
+     * order of decreasing popularity.
+     * @return
+     * @throws Exception 
+     */
+    public List<Image> getTopFivePopularImages() throws Exception {
+        String query = "select * from "
+                + "(select p.photo_id from imagepopularity p "
+                + "group by p.photo_id order by count(p.hits) desc) "
+                + "left join images i on i.photo_id = p.photo_id";
+        
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        return retrieveImagesFromResultSet(rs);
     }
     
     /**

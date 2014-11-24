@@ -74,6 +74,10 @@ public class Image {
     
 	// setters
 	
+    public void setPhotoId(int photoId) {
+        this.photoId = photoId;
+    }
+    
     public void setThumbnail(BufferedImage thumbnail) {
         this.thumbnail = thumbnail;
     }

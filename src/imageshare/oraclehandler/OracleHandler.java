@@ -284,11 +284,11 @@ public class OracleHandler {
      * @throws Exception 
      */
     public List<Image> getTopFivePopularImages() throws Exception {
-        String query = "select * from "
-                + "(select photo_id from imagepopularity "
-                + "group by photo_id order by count(hits) desc) p "
-                + "left join images i on i.photo_id = p.photo_id";
-        
+        String query = "select * from imagepopularity p "
+                + "left join images i "
+                + "on p.photo_id = i.photo_id "
+                + "order by p.hits desc";
+
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);

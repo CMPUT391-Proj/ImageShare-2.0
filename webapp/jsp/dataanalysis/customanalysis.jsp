@@ -34,19 +34,20 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="get" role="form">
+			<form class="form-horizontal" action="dataanalysis" method="post" role="form">
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date-from" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">To Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date">
+						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date">
 					</div>
 				</div>
+				<input type="hidden" name="user">
 				<input type="hidden" name="page" value="customanalysis">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
@@ -118,6 +119,8 @@
 		});
 
 		$(document).ready(function() {
+			$('#user').val(<% out.print("\'"+user+"\'"); %>);
+
 			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
 			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);
 
@@ -126,7 +129,7 @@
 
 			$('#image-per-user').append(imagesPerUserTableData.toString());
 			$('#image-per-subject').append(imagesPerSubjectTableData.toString());
-		})
+		});
 
 		function parseJsonCount(jsonList) {
 			var tableData = '';

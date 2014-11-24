@@ -31,19 +31,20 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="get" role="form">
+			<form class="form-horizontal" action="dataanalysis" method="post" role="form">
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+						<input type="date" name="date-from" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">To Date:</label>
 					<div class="col-sm-8">
-						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
 					</div>
 				</div>
+				<input type="hidden" name="user">
 				<input type="hidden" name="page" value="imagespersubject">
 				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
 			</form>
@@ -65,6 +66,10 @@
 		});
 		$('#button-customanalysis').click(function() {
 			document.location.href = './customanalysis';
+		});
+
+		$(document).ready(function() {
+			$('#user').val(<% out.print("\'"+user+"\'"); %>);
 		});
 	</script>
 </body>

@@ -15,6 +15,7 @@ public class DataAnalysisServlet extends HttpServlet {
     private static final String FROM_DATE = "date_from";
     private static final String TO_DATE = "date_to";
 	
+    private static final String ADMIN = "admin";
     
     private static final String DATA_ANALYSIS_ROOT_JSP = "dataanalysis";
     
@@ -32,12 +33,20 @@ public class DataAnalysisServlet extends HttpServlet {
     	String redirectJsp;
     	
     	try {
+    		if (username.equals(ADMIN))
+    			throw new Exception("User has no privileges to access this page.");
+    		
     		redirectJsp = getRedirect(currentPage);
+    		
+    		
     		
     	} catch (Exception e) {
     		req.getSession(true).setAttribute("error", e.toString());
     		resp.sendRedirect(DATA_ANALYSIS_ROOT_JSP);
+    		return;
     	}
+    	
+    	resp.sendRedirect(redirectJsp);
     }
     
     private String getRedirect(String currentPage) throws Exception {

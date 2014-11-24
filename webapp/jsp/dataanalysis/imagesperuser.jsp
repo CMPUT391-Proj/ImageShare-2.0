@@ -34,7 +34,7 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="post" role="form">
+			<form class="form-horizontal" action="../dataanalysisservlet" method="post" role="form">
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
@@ -48,7 +48,7 @@
 					</div>
 				</div>
 				<input type="hidden" name="user">
-				<input type="hidden" name="page" value="imagespersubject">
+				<input type="hidden" name="page" value="imagesperuser">
 				<button type="submit" class="btn btn-primary pull-right">Update Page</button>
 			</form>
 			<button id="reset" class="btn btn-default pull-right">Reset Page</button>
@@ -119,7 +119,7 @@
 		});
 
 		$(document).ready(function() {
-			$('#user').val(<% out.print("\'"+user+"\'"); %>);
+			$('#user').val(<% out.print("\'"+username+"\'"); %>);
 
 			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
 			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);

@@ -31,7 +31,7 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<form class="form-horizontal" action="dataanalysis" method="post" role="form">
+			<div class="form-horizontal">
 				<div class="form-group">
 					<label for="date" class="col-sm-4 control-label">From Date:</label>
 					<div class="col-sm-8">
@@ -47,7 +47,7 @@
 				<input type="hidden" name="user">
 				<input type="hidden" name="page" value="imagespersubject">
 				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
-			</form>
+			</div>
 			<button id="reset" class="btn btn-default pull-right" disabled>Reset Page</button>
 		</div>
 	</div>
@@ -69,7 +69,7 @@
 		});
 
 		$(document).ready(function() {
-			$('#user').val(<% out.print("\'"+user+"\'"); %>);
+			$('#user').val(<% out.print("\'"+username+"\'"); %>);
 		});
 	</script>
 </body>

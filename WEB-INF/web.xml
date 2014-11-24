@@ -87,6 +87,15 @@
 		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
 		<url-pattern>/dataanalysis/customanalysis</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<servlet-class>imageshare.servlets.DataAnalysisServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<url-pattern>/dataanalysisservlet</url-pattern>
+	</servlet-mapping> 	
 <!-- end data analysis -->
 
 	<servlet>

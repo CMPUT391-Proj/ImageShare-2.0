@@ -87,6 +87,15 @@
 		<url-pattern>/gallery</url-pattern>
 	</servlet-mapping>	
 
+	<servlet>
+		<servlet-name>UpdateImage</servlet-name>
+		<jsp-file>/webapp/jsp/updateimage.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateImage</servlet-name>
+		<url-pattern>/updateimage</url-pattern>
+	</servlet-mapping>	
+
 <!-- Servlets -->
 
 	<servlet>
@@ -168,6 +177,15 @@
 	<servlet-mapping>
 		<servlet-name>ImageThumbnailServlet</servlet-name>
 		<url-pattern>/thumbnail</url-pattern>
+	</servlet-mapping>	
+
+	<servlet>
+		<servlet-name>UpdateImageServlet</servlet-name>
+		<servlet-class>imageshare.servlets.UpdateImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateImageServlet</servlet-name>
+		<url-pattern>/updateImage</url-pattern>
 	</servlet-mapping>	
 
 </web-app>

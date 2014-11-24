@@ -336,6 +336,32 @@ public class OracleHandler {
     }
     
     /**
+     * Update the image from the provided photo id.
+     * @param photoId
+     * @param subject
+     * @param location
+     * @param description
+     * @param date
+     * @param security
+     * @throws Exception 
+     */
+    public void updateImage(int photoId, String subject, String location,
+            String description, java.util.Date date, int security) throws Exception {
+        String update = "UPDATE images SET subject = ?," + "place = ?, "
+                + "timing = ?," + "description =?," + "permitted =? "
+                + "WHERE photo_id = ?";
+        PreparedStatement updateStmt = getInstance().conn
+                .prepareStatement(update);
+        updateStmt.setString(1, subject);
+        updateStmt.setString(2, location);
+        updateStmt.setDate(3, new Date(date.getTime()));
+        updateStmt.setString(4, description);
+        updateStmt.setInt(5,security);
+        updateStmt.setInt(6, photoId);
+        updateStmt.executeUpdate();
+    }
+    
+    /**
      * Returns the name of the group
      * @param groupId
      * @return

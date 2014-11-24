@@ -5,7 +5,7 @@
 <%
 	String user = (String) session.getAttribute("user");
 	String thumbnailURL = "thumbnail?";
-  	String updateURL = "updateImage?";
+  	String updateURL = "updateimage?";
 	List<Image> popularImages = OracleHandler.getInstance().getTopFivePopularImages();
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
 %>

@@ -362,6 +362,20 @@ public class OracleHandler {
     }
     
     /**
+     * Return the image given by the photo id
+     * @param photoId
+     * @return
+     * @throws Exception
+     */
+    public Image getImageById(int photoId) throws Exception {
+        String query = "SELECT * FROM images where photo_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        ResultSet rs = stmt.executeQuery();
+        return retrieveImagesFromResultSet(rs).get(0);
+    }
+    
+    /**
      * Returns the name of the group
      * @param groupId
      * @return

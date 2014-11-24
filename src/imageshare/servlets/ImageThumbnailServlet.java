@@ -26,22 +26,30 @@ public class ImageThumbnailServlet extends HttpServlet implements
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String photoId = req.getQueryString();
+        String query = req.getQueryString();
         ServletOutputStream out = resp.getOutputStream();
 
         resp.setContentType("image/gif");
 
         try {
+            int photoId;
+            if (query.startsWith("inc")) {
+                photoId = Integer.parseInt(query.substring(3));
+                OracleHandler.getInstance().increaseImageHits(photoId);
+            } else {
+                photoId = Integer.parseInt(query);
+            }
+
             InputStream input = OracleHandler.getInstance()
-                    .getThumbnailInputStream(Integer.parseInt(photoId));
-            
+                    .getThumbnailInputStream(photoId);
+
             int imageByte;
             while ((imageByte = input.read()) != -1) {
                 out.write(imageByte);
             }
-            
+
             input.close();
-            
+
         } catch (Exception e) {
             req.getSession().setAttribute("error", e.toString());
         }

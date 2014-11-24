@@ -161,5 +161,14 @@
 		<url-pattern>/searchservlet</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>ImageThumbnailServlet</servlet-name>
+		<servlet-class>imageshare.servlets.ImageThumbnailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageThumbnailServlet</servlet-name>
+		<url-pattern>/thumbnail</url-pattern>
+	</servlet-mapping>	
+
 </web-app>
 

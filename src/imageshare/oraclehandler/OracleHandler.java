@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Driver;
@@ -296,13 +297,33 @@ public class OracleHandler {
      */
     public List<Image> getTopFivePopularImages() throws Exception {
         String query = "select * from "
-                + "(select p.photo_id from imagepopularity p "
-                + "group by p.photo_id order by count(p.hits) desc) "
+                + "(select photo_id from imagepopularity "
+                + "group by photo_id order by count(hits) desc) p "
                 + "left join images i on i.photo_id = p.photo_id";
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
+    }
+    
+    /**
+     * Returns the input stream of the thumbnail for the specified photoId.
+     * 
+     * @param photoId
+     * @return
+     */
+    public InputStream getThumbnailInputStream(int photoId) throws Exception {
+        String query = "SELECT thumbnail FROM images where photo_id = ?";
+
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getBinaryStream("thumbnail");
+        } else {
+            throw new InvalidParameterException("Photo id does not exist!");
+        }
     }
     
     /**

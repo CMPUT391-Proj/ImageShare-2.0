@@ -8,10 +8,8 @@
 
 	String error = (String) session.getAttribute("error");
 	session.setAttribute("error", null);
-
-	String imagesPerUser = OracleHandler.getInstance().getImagesPerUser();
-	String imagesPerSubject = OracleHandler.getInstance().getImagesPerSubject();
 %>
+
 <body>
 	<%@include file="navbar.jsp" %>
 
@@ -24,28 +22,34 @@
 
 	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
-
 	<div class="row"> <!-- start -->
-		<div class="col-lg-6 col-lg-offset-3">
-			<div class="panel panel-default"> 
-				<div class="panel-heading">Number of images per user</div>
-					<table id="image-per-user" class="table table-hover table-bordered">
-					</table>
-				</div>
+		<div class="col-lg-2 col-lg-offset-4">
+			<div class="btn-group-vertical" role="group">
+				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
+				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
+				<button type="button" class="btn btn-default" id="button-customanalysis">Custom Analysis</button>
 			</div>
 		</div>
-	</div><!-- end -->
-
-	<div class="row"> <!-- start -->
-		<div class="col-lg-6 col-lg-offset-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">Number of images per subject</div>
-					<table id="image-per-subject" class="table table-hover table-bordered">
-					</table>
+		<div class="col-lg-3">
+			<form class="form-horizontal" action="dataanalysis" method="get" role="form">
+				<div class="form-group">
+					<label for="date" class="col-sm-4 control-label">From Date:</label>
+					<div class="col-sm-8">
+						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+					</div>
 				</div>
-			</div>
+				<div class="form-group">
+					<label for="date" class="col-sm-4 control-label">To Date:</label>
+					<div class="col-sm-8">
+						<input type="date" name="date" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+					</div>
+				</div>
+				<input type="hidden" name="page" value="imagespersubject">
+				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
+			</form>
+			<button id="reset" class="btn btn-default pull-right" disabled>Reset Page</button>
 		</div>
-	</div> <!-- end -->
+	</div>
 
 	<div class="container">
 		<hr>
@@ -53,37 +57,14 @@
 	</div>
 
 	<script>
-		$(document).ready(function() {
-			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
-			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);
-
-			var imagesPerSubject = jQuery.parseJSON(<% out.print("\'"+imagesPerSubject+"\'"); %>);
-			var imagesPerSubjectTableData = parseJsonCount(imagesPerSubject.result);
-
-			$('#image-per-user').append(imagesPerUserTableData.toString());
-			$('#image-per-subject').append(imagesPerSubjectTableData.toString());
-		})
-
-		function parseJsonCount(jsonList) {
-			var tableData = '';
-			
-			for (var i=0; i<jsonList.length; i++) {
-				tableData += '<tr>';
-				
-				for (var j=0; j< jsonList[i].length; j++) {
-					if (jsonList[i][j].heading == 0) {
-						tableData += '<td>'+jsonList[i][j].data+'</td>';
-					}
-					else {
-						tableData += '<th>'+jsonList[i][j].data+'</th>';
-					}
-				}
-				
-				tableData += '</tr>\n';
-			}
-
-			return tableData;
-		}
-
+		$('#button-imagespersubject').click(function() {
+			document.location.href = './dataanalysis/imagespersubject';
+		});
+		$('#button-imagesperuser').click(function() {
+			document.location.href = './dataanalysis/imagesperuser';
+		});
+		$('#button-customanalysis').click(function() {
+			document.location.href = './customanalysis';
+		});
 	</script>
 </body>

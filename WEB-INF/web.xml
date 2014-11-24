@@ -51,6 +51,7 @@
 		<url-pattern>/directoryupload</url-pattern>
 	</servlet-mapping> 	
 
+<!-- data analysis -->
 	<servlet>
 		<servlet-name>DataAnalysis</servlet-name>
 		<jsp-file>/webapp/jsp/dataanalysis.jsp</jsp-file>
@@ -59,6 +60,35 @@
 		<servlet-name>DataAnalysis</servlet-name>
 		<url-pattern>/dataanalysis</url-pattern>
 	</servlet-mapping> 	
+
+	<servlet>
+		<servlet-name>DataAnalysis_ImagesPerUser</servlet-name>
+		<jsp-file>/webapp/jsp/dataanalysis/imagesperuser.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis_ImagesPerUser</servlet-name>
+		<url-pattern>/dataanalysis/imagesperuser</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DataAnalysis_ImagesPerSubject</servlet-name>
+		<jsp-file>/webapp/jsp/dataanalysis/imagespersubject.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis_ImagesPerSubject</servlet-name>
+		<url-pattern>/dataanalysis/imagespersubject</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
+		<jsp-file>/webapp/jsp/dataanalysis/customanalysis.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
+		<url-pattern>/dataanalysis/customanalysis</url-pattern>
+	</servlet-mapping>
+
+<!-- end data analysis -->
 
 	<servlet>
 		<servlet-name>Groups</servlet-name>

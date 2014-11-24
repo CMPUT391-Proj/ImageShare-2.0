@@ -10,6 +10,7 @@
 	session.setAttribute("error", null);
 
 	String imagesPerUser = OracleHandler.getInstance().getImagesPerUser();
+	String imagesPerSubject = OracleHandler.getInstance().getImagesPerSubject();
 %>
 <body>
 	<%@include file="navbar.jsp" %>
@@ -56,18 +57,29 @@
 			var imagesPerUser = jQuery.parseJSON(<% out.print("\'"+imagesPerUser+"\'"); %>);
 			var imagesPerUserTableData = parseJsonCount(imagesPerUser.result);
 
-			//var imagesPerSubject = jQuery.parseJSON();
-			//var imagesPerSubjectTableData = parseJsonCount(imagesPerSubject.result);
+			var imagesPerSubject = jQuery.parseJSON(<% out.print("\'"+imagesPerSubject+"\'"); %>);
+			var imagesPerSubjectTableData = parseJsonCount(imagesPerSubject.result);
 
 			$('#image-per-user').append(imagesPerUserTableData.toString());
-			$('#image-per-subject').append('<tr><th class="col-md-3">DATA 1</th><td>2</td></tr>');
+			$('#image-per-subject').append(imagesPerSubjectTableData.toString());
 		})
 
 		function parseJsonCount(jsonList) {
 			var tableData = '';
 			
 			for (var i=0; i<jsonList.length; i++) {
-				tableData += '<tr><th class="col-md-3">'+jsonList[i].username+'</th><td>'+jsonList[i].count+'</td></tr>\n';
+				tableData += '<tr>';
+				
+				for (var j=0; j< jsonList[i].length; j++) {
+					if (jsonList[i][j].heading == 0) {
+						tableData += '<td>'+jsonList[i][j].data+'</td>';
+					}
+					else {
+						tableData += '<th>'+jsonList[i][j].data+'</th>';
+					}
+				}
+				
+				tableData += '</tr>\n';
 			}
 
 			return tableData;

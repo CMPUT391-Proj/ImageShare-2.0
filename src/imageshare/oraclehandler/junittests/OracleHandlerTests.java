@@ -97,6 +97,6 @@ public class OracleHandlerTests {
 			e.printStackTrace();
 		}
 		
-		System.out.println("FINISHED CreateUser");
+		System.out.println("FINISHED ImagesPerUser");
 	}
 }

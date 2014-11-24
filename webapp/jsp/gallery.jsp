@@ -151,7 +151,7 @@
 		$('#gal').append(thumbs);
 
 		// Generate the modal for each of the popular thumbnails
-		<% for (int i = 0; i < popularImages.size(); ++i) { %>
+		<% for (int i = 0; i < popularImages.size() && i < 5; ++i) { %>
 			<%Image image = popularImages.get(i);%>
 
 			var thumbnail = document.getElementById("p<%=image.getPhotoId()%>");
@@ -187,7 +187,7 @@
 		<% for (int i = 0; i < allImages.size(); ++i) { %>
 			<%Image image = allImages.get(i);%>
 
-			var thumbnail = document.getElementById(<%=image.getPhotoId()%>);
+			var thumbnail = document.getElementById("<%=image.getPhotoId()%>");
     		thumbnail.addEventListener("click", function (e) {
 
         		e.preventDefault();

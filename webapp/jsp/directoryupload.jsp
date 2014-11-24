@@ -35,10 +35,6 @@
 
   <% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
-  <% out.println(uploadURL); %>
-
-  <% out.println(session.getAttribute("imagesDir")); %>
-
   <div class="row">
     <div class="col-lg-6 col-lg-offset-3">
 

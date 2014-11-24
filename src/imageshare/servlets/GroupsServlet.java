@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,23 +19,17 @@ import javax.servlet.http.HttpSession;
 
 public class GroupsServlet extends HttpServlet {
 
-	private static final String GROUPS_JSP = "groups";
+	private static final String GROUPS_JSP = "/groups.jsp";
 	
 	OracleHandler database;
 	String user = "";
 	List<Group> group_list;
 
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config); 
-	}
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		HttpSession session;
 
 		database = OracleHandler.getInstance();
 		response.setContentType("text/html;charset=UTF-8");
-		session = request.getSession(true);
 //		user = (String) session.getAttribute("username");
 		
 		/* if no user logged in, redirect to login page */
@@ -42,40 +37,40 @@ public class GroupsServlet extends HttpServlet {
 //			response.sendRedirect("login.jsp");
 //		};
 		
-		try {
-			group_list = database.getGroups(user);
-			//database.closeConnection();
-		    /**
-		     * Gets users in a group
-		     * @param rs
-		     * @return
-		     */
-			
-			List<GroupTuple> pairList = new ArrayList<GroupTuple>();
-			List<GroupList> groupLists = new ArrayList<GroupList>();
-			for(Group group : group_list)
-			{
-				groupLists = database.getGroupsLists(group.getGroupId());
-				
-				pairList.add(new GroupTuple(group, groupLists));
-			}
-		    
-			handle_write(session, pairList);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		//response.sendRedirect(GROUPS_JSP);
+//		try {
+//			group_list = database.getGroups("admin");
+//			//database.closeConnection();
+//
+//			List<GroupTuple> pairList = new ArrayList<GroupTuple>();
+//			List<GroupList> groupLists = new ArrayList<GroupList>();
+//			for(Group group : group_list)
+//			{
+//				groupLists = database.getGroupsLists(group.getGroupId());
+//				
+//				pairList.add(new GroupTuple(group, groupLists));
+//			}
+//		    
+//			handle_write(request, response, pairList);
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		HttpSession session = request.getSession(true);
+		session.setAttribute("groupcount", "test");
+//        RequestDispatcher requestDispatcher = request.getRequestDispatcher(GROUPS_JSP);    
+//        requestDispatcher.forward(request, response);
+		response.sendRedirect(GROUPS_JSP);
 	}	
 	
-	/**
-	 * Writes the groups as jsp out to the browser
-	 * @param HttpServletRequest
-	 * @param HttpServletResponse
-	 * @param ArrayList<Group>
-	 * @param String
-	 */
-	public void handle_write(HttpSession session, List<GroupTuple> pairList) {
+    /**
+     * Writes the jsp out to the browser
+     * @param HttpServletRequest
+     * @param HttpServletResponse
+     * @param ArrayList<Group>
+     * @param String
+     */
+    public void handle_write(HttpServletRequest request, 
+			     HttpServletResponse response, List<GroupTuple> pairList) {
 
 //		PrintWriter out = null;
 //
@@ -114,8 +109,9 @@ public class GroupsServlet extends HttpServlet {
     		"</article>" +
     		"<ul class='list-unstyled'><li><hr></li></ul>";
 		}
-    	session.setAttribute("groupcount", Integer.toString(pairList.size()));
-		session.setAttribute("groupsHTML", groupsHTML);
+    	request.getSession(true).setAttribute("groupcount", Integer.toString(pairList.size()));
+    	request.getSession(true).setAttribute("groupsHTML", groupsHTML);
+		
 
 	}
 }

@@ -51,6 +51,24 @@
 		<url-pattern>/directoryupload</url-pattern>
 	</servlet-mapping> 	
 
+	<servlet>
+		<servlet-name>Groups</servlet-name>
+		<jsp-file>/webapp/jsp/groups.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Groups</servlet-name>
+		<url-pattern>/groups</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Search</servlet-name>
+		<jsp-file>/webapp/jsp/search.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Search</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+
 <!-- Servlets -->
 
 	<servlet>
@@ -99,21 +117,21 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>Groups</servlet-name>
-		<jsp-file>/webapp/jsp/groups.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Groups</servlet-name>
-		<url-pattern>/groups</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>GroupsServlet</servlet-name>
 		<servlet-class>imageshare.servlets.GroupsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GroupsServlet</servlet-name>
 		<url-pattern>/groupsservlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SearchServlet</servlet-name>
+		<servlet-class>imageshare.servlets.SearchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/searchservlet</url-pattern>
 	</servlet-mapping>
 
 </web-app>

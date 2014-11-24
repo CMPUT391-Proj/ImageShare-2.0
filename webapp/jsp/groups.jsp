@@ -48,11 +48,11 @@ hgroup h2.lead { font: normal normal 1.125em "Roboto",Arial,Verdana,sans-serif; 
 <div class="container">
 
     <hgroup class="mb20">
-		<h2 class="lead">You are a member of <strong class="text-danger">${groupcount}</strong> groups</h2>								
+		<h2 class="lead">You are a member of <strong class="text-danger"><%= (String)request.getSession(false).getAttribute("groupcount") %></strong> groups</h2>								
 	</hgroup>
 
     <section class="col-xs-12 col-sm-6 col-md-12" >
-    <%= request.getAttribute("groupsHTML") %>
+    <%= (String) request.getSession(false).getAttribute("groupsHTML") %>
 
 	</section>
 </div>

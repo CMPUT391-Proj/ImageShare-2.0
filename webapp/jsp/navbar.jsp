@@ -24,6 +24,8 @@
                     <li class="divider"></li>
                     <li><a href="directoryupload"><span class="glyphicon glyphicon-folder-open pull-right"></span>Upload Folder</a></li>
                     <li class="divider"></li>
+                    <li><a href="search"><span class="glyphicon glyphicon-search pull-right"></span>Search</a></li>
+                    <li class="divider"></li>
                     <li><a href="groups"><span class="glyphicon glyphicon-user pull-right"></span>Groups</a></li>
                     <li class="divider"></li>
                     <li><a href="#"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
@@ -38,17 +40,6 @@
             <li class="divider-vertical"></li>
             <li><p class="navbar-text" id='username'>[USERNAME]</p></li>
         </ul>
-
-        <div class="nav navbar-nav pull-right">
-            <form class="navbar-form" role="search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" name="q">
-                <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                </div>
-            </div>
-            </form>
-        </div>
 
     </div>
 </div>

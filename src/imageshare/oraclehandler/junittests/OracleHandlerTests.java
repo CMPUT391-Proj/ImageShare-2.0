@@ -5,16 +5,19 @@ import static org.junit.Assert.assertTrue;
 import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 public class OracleHandlerTests {
 	
 	private static final Random rand = new Random();
 	private static final int randInt = rand.nextInt(500);
-	
+	/*
 	@Test
 	public void oracleInsertUsers() {
 		try {
@@ -98,5 +101,71 @@ public class OracleHandlerTests {
 		}
 		
 		System.out.println("FINISHED ImagesPerUser");
+	}
+	*/
+	
+	@Test
+	public void oracleGetAnalyticsByYear() {
+		try {
+            String result = OracleHandler.getInstance().getAnalyticsByYear("2014-05-21", "2014-11-24").toString();
+      
+            System.out.println(result);
+            
+            assertTrue(result.length() > 0);
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		System.out.println("FINISHED oracleGetAnalyticsByYear");
+	}
+	
+	@Test
+	public void oracleGetAnalyticsByMonth() {
+		try {
+            String result = OracleHandler.getInstance().getAnalyticsForMonth("2014-05-21", "2014-11-24").toString();
+      
+            System.out.println(result);
+            
+            assertTrue(result.length() > 0);
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		System.out.println("FINISHED oracleGetAnalyticsByMonth");
+	}
+	
+	@Test
+	public void oracleGetAnalyticsByDay() {
+		try {
+            String result = OracleHandler.getInstance().getAnalyticsByDay("2014-05-21", "2014-11-24").toString();
+      
+            System.out.println(result);
+            
+            assertTrue(result.length() > 0);
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		System.out.println("FINISHED oracleGetAnalyticsByDay");
+	}
+	
+	@Test
+	public void generateAnalytics() {
+		try {
+            JSONObject yearJson = OracleHandler.getInstance().getAnalyticsByYear("2014-05-21", "2014-11-24");
+            JSONArray yearArray = yearJson.getJSONArray("result");
+            
+            for (int i=0; i<yearArray.length(); i++) {
+            	JSONObject yearObj = yearArray.getJSONObject(i);
+            	int year = yearObj.getInt("YEAR");
+            	
+            	System.out.println(year);
+            }
+            
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		System.out.println("FINISHED oracleGetAnalyticsByDay");
 	}
 }

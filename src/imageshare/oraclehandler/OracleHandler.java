@@ -925,39 +925,6 @@ public class OracleHandler {
     }
 	
 	// Data Analytics Section
-	/* Deprecated
-	public String getImagesPerUser() throws Exception {
-		String query = 
-			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
-			"FROM USERS U "+
-			"LEFT JOIN "+
-			"  ( "+
-			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
-			"    FROM IMAGES "+
-			"    GROUP BY OWNER_NAME "+
-			"  ) IMAGE_COUNT "+
-			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
-			"ORDER BY COUNT DESC, U.USER_NAME";
-		
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		
-		JSONObject jsonResultObj = new JSONObject();
-		JSONArray jsonArray = new JSONArray();
-		
-		ResultSet rs = stmt.executeQuery();
-		while(rs.next()) {
-			JSONObject tempJsonObj = new JSONObject();
-			
-			tempJsonObj.put("username", rs.getString(1));
-			tempJsonObj.put("count", rs.getInt(2));
-			jsonArray.put(tempJsonObj);
-		}
-		
-		jsonResultObj.put("result", jsonArray);
-		
-		return jsonResultObj.toString();
-	}
-	*/
 	public String getImagesPerUser() throws Exception {
 		String query = 
 			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
@@ -988,10 +955,127 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 	
-	public String getAllUsers() throws Exception {
-		return "";
+	public JSONObject getAnalyticsByYear(String fromDate, String toDate) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		boolean isDate = false;
+		
+		if (fromDate != null)
+			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		
+		if (toDate != null)
+			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		if (fromDate != null || toDate != null)
+			isDate = true;
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"%s %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'yyyy') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'yyyy') ", 
+			(isDate ? "WHERE" : ""),
+			fromDateQuery, 
+			(fromDate != null && toDate != null ? "AND" : ""),
+			toDateQuery);
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+
+	public JSONObject getAnalyticsForMonth(String fromDate, String toDate) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		boolean isDate = false;
+		
+		if (fromDate != null)
+			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		
+		if (toDate != null)
+			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		if (fromDate != null || toDate != null)
+			isDate = true;
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"%s %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			(isDate ? "WHERE" : ""),
+			fromDateQuery, 
+			(fromDate != null && toDate != null ? "AND" : ""),
+			toDateQuery);
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
+	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		
+		if (fromDate != null)
+			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		
+		if (toDate != null)
+			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE year=%s "+
+			"AND %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			year,
+			fromDateQuery, 
+			(fromDate != null && toDate != null ? "AND" : ""),
+			toDateQuery);
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+	
+	public JSONObject getAnalyticsByDay(String fromDate, String toDate) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		boolean isDate = false;
+		
+		if (fromDate != null)
+			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		
+		if (toDate != null)
+			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		if (fromDate != null || toDate != null)
+			isDate = true;
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"%s %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ", 
+			(isDate ? "WHERE" : ""),
+			fromDateQuery, 
+			(fromDate != null && toDate != null ? "AND" : ""),
+			toDateQuery);
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+//////////////////////
     /**
      * Returns the resultset of the search by keywords
      * @param String keywords, String order
@@ -1052,6 +1136,30 @@ public class OracleHandler {
 		return images;
     }
 	
+	private JSONObject generateJsonFromPreparedStatementNEW(PreparedStatement stmt) throws Exception {
+		JSONObject jsonResultObj = new JSONObject();
+		JSONArray jsonRecordList = new JSONArray();
+		
+		ResultSet rs = stmt.executeQuery();
+		ResultSetMetaData rsmd = rs.getMetaData();
+		
+		int columnCount = rsmd.getColumnCount();
+		
+		while(rs.next()) {
+			JSONObject jsonRecordData = new JSONObject();
+			
+			for (int i=1; i<=columnCount; i++) {
+				jsonRecordData.put(rsmd.getColumnName(i), getResultSetColData(rs, rsmd.getColumnType(i), i));
+			}
+			
+			jsonRecordList.put(jsonRecordData);
+		}
+		
+		jsonResultObj.put("result", jsonRecordList);
+		
+		return jsonResultObj;
+	}
+    
 	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonRecordList = new JSONArray();

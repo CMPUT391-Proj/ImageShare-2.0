@@ -114,6 +114,18 @@
 		<servlet-name>DataAnalysisServlet</servlet-name>
 		<url-pattern>/dataanalysisservlet</url-pattern>
 	</servlet-mapping> 	
+
+
+
+
+	<servlet>
+		<servlet-name>DataAnalysis_DataReport</servlet-name>
+		<jsp-file>/webapp/jsp/datareport.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysis_DataReport</servlet-name>
+		<url-pattern>/datareport</url-pattern>
+	</servlet-mapping>
 <!-- end data analysis -->
 
 	<servlet>

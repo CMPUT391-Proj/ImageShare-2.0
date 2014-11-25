@@ -5,8 +5,14 @@ import static org.junit.Assert.assertTrue;
 import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -169,8 +175,7 @@ public class OracleHandlerTests {
             		
             		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, "2006-05-21", "2014-11-24");
             		
-            		//convertDaysToWeeksJson()
-            		//monthObj.put("DAY", dayJsonResult.getJSONArray("result"));
+            		monthObj.put("DAY_LIST", convertDaysToWeeksJson(year, month, dayJsonResult).getJSONArray("result"));
             	}
             }
             
@@ -183,7 +188,40 @@ public class OracleHandlerTests {
 		System.out.println("FINISHED generateAnalytics");
 	}
 	
-	private int convertDaysToWeeksJson(JSONObject dayJasonResult) {
-		return 1;
+	private JSONObject convertDaysToWeeksJson(int year, int month, JSONObject dayJsonResult) {
+		JSONArray dayJsonArray = dayJsonResult.getJSONArray("result");
+		JSONArray weekJsonArray = new JSONArray();
+		
+		Map<Integer,Integer> weekMap = new TreeMap<Integer,Integer>();
+		
+		for (int i=0; i<dayJsonArray.length(); i++) {
+			int day = dayJsonArray.getJSONObject(i).getInt("DAY");
+			
+			Calendar cal = Calendar.getInstance();
+			cal.set(year, month, day);
+			
+			int week = cal.get(Calendar.WEEK_OF_YEAR);
+			
+			if (weekMap.get(week) != null)
+				weekMap.put(week, weekMap.get(week)+1);
+			else
+				weekMap.put(week, 1);
+		}
+		
+		Iterator<Map.Entry<Integer, Integer>> entries = weekMap.entrySet().iterator();
+		while(entries.hasNext()) {
+			JSONObject weekObj = new JSONObject();
+			
+			Map.Entry<Integer, Integer> entry = entries.next();
+			weekObj.put("WEEK", entry.getKey());
+			weekObj.put("COUNT", entry.getValue());
+			
+			weekJsonArray.put(weekObj);
+		}
+		
+		JSONObject result = new JSONObject();
+		result.put("result", weekJsonArray);
+		
+		return result;
 	}
 }

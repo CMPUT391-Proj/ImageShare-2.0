@@ -23,32 +23,119 @@
 	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
 
 	<div class="row"> <!-- start -->
-		<div class="col-lg-2 col-lg-offset-4">
-			<div class="btn-group-vertical" role="group">
-				<button type="button" class="btn btn-default" id="button-imagesperuser">Images Per User</button>
-				<button type="button" class="btn btn-default" id="button-imagespersubject">Images Per Subject</button>
-				<button type="button" class="btn btn-default" id="button-customanalysis">Custom Analysis</button>
-			</div>
+		<div class="col-lg-6 col-lg-offset-3">
+
+			<form class="form-horizontal" action="dataanalysisservlet" method="post" role="form">
+				<div class="panel panel-default">
+					<div class="panel-heading">Images Per User</div>
+						<div class="panel-body">
+
+						<div class="form-horizontal">
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">From Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">To Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<input type="hidden" name="username" value=<% out.print(username); %>>
+						<input type="hidden" name="searchtype" value="imagesperuser">
+						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
+						</div>
+						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
+
+					</div>
+				</div>
+			</form>
+
 		</div>
-		<div class="col-lg-3">
-			<div class="form-horizontal">
-				<div class="form-group">
-					<label for="date" class="col-sm-4 control-label">From Date:</label>
-					<div class="col-sm-8">
-						<input type="date" name="date-from" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+	</div>
+
+
+	<div class="row"> <!-- start -->
+		<div class="col-lg-6 col-lg-offset-3">
+
+			<form class="form-horizontal" action="dataanalysisservlet" method="post" role="form">
+				<div class="panel panel-default">
+					<div class="panel-heading">Images Per Subject</div>
+						<div class="panel-body">
+
+						<div class="form-horizontal">
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">From Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">To Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<input type="hidden" name="username" value=<% out.print(username); %>>
+						<input type="hidden" name="searchtype" value="imagespersubject">
+						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
+						</div>
+						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
+
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="date" class="col-sm-4 control-label">To Date:</label>
-					<div class="col-sm-8">
-						<input type="date" name="date-to" class="form-control" placeholder="YYYY-MM-DD" id="date" disabled>
+			</form>
+
+		</div>
+	</div>
+
+
+	<div class="row"> <!-- start -->
+		<div class="col-lg-6 col-lg-offset-3">
+
+			<form class="form-horizontal" action="dataanalysisservlet" method="post" role="form">
+				<div class="panel panel-default">
+					<div class="panel-heading">Custom Parameter Search</div>
+						<div class="panel-body">
+
+						<div class="form-horizontal">
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">From Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="date" class="col-sm-4 control-label">To Date:</label>
+							<div class="col-sm-8">
+								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="subjectlist" class="col-sm-4 control-label">Subject List (comma separated)</label>
+							<div class="col-sm-8">
+								<input type="text" name="subjectlist" class="form-control" placeholder="Subject List" id="subject">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="usernamelist" class="col-sm-4 control-label">Username List (comma separated)</label>
+							<div class="col-sm-8">
+								<input type="text" name="usernamelist" class="form-control" placeholder="Username List" id="subject">
+							</div>
+						</div>
+
+						<input type="hidden" name="username" value=<% out.print(username); %>>
+						<input type="hidden" name="searchtype" value="customsearch">
+						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
+						</div>
+						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
+
 					</div>
 				</div>
-				<input type="hidden" name="username" value=<% out.print(username); %>>
-				<input type="hidden" name="page" value="imagespersubject">
-				<button type="submit" class="btn btn-primary pull-right" disabled>Update Page</button>
-			</div>
-			<button id="reset" class="btn btn-default pull-right" disabled>Reset Page</button>
+			</form>
+
 		</div>
 	</div>
 

@@ -212,15 +212,17 @@ public class OracleHandler {
 
         int imageID = oracleHandler.nextImageID();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baosImage = new ByteArrayOutputStream();
 
-        ImageIO.write(image.getImage(), "jpg", baos);
+        ImageIO.write(image.getImage(), "jpg", baosImage);
         InputStream imageInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosImage.toByteArray());
 
-        ImageIO.write(image.getThumbnail(), "jpg", baos);
+        ByteArrayOutputStream baosThumbnail = new ByteArrayOutputStream();
+        
+        ImageIO.write(image.getThumbnail(), "jpg", baosThumbnail);
         InputStream thumbnailInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosThumbnail.toByteArray());
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setInt(1, imageID);
@@ -230,8 +232,8 @@ public class OracleHandler {
         stmt.setString(5, image.getPlace());
         stmt.setDate(6, new Date(image.getDate().getTime()));
         stmt.setString(7, image.getDescription());
-        stmt.setBinaryStream(8, imageInputStream);
-        stmt.setBinaryStream(9, thumbnailInputStream);
+        stmt.setBinaryStream(8, thumbnailInputStream);
+        stmt.setBinaryStream(9, imageInputStream);
 
         stmt.executeUpdate();
         

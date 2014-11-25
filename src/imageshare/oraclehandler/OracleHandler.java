@@ -32,8 +32,8 @@ import org.json.JSONObject;
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -377,7 +377,7 @@ public class OracleHandler {
     }
     
     /**
-     * Get's a user's groups
+     * Get's a user's owned groups
      * @param String user
      * @returns List<Group>
      */
@@ -553,7 +553,7 @@ public class OracleHandler {
      * @throws Exception 
      * @returns ArrayList<String>
      */
-    public List<String> get_users_from_group(int group_id) throws Exception {
+    public List<String> getUsersInGroup(int group_id) throws Exception {
     	ArrayList<String> friend_ids = new ArrayList<String>();
     	String query = "SELECT friend_id "
     			+ "FROM group_lists "
@@ -576,6 +576,32 @@ public class OracleHandler {
     		}
     	}
     	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return friend_ids;
+    }
+    
+    /**
+     * Returns all usernames in a group
+     * @param int group_id
+     * @throws Exception 
+     * @returns ArrayList<String>
+     */
+    public List<String> getUsersNotInGroup(int group_id) throws Exception {
+    	ArrayList<String> friend_ids = new ArrayList<String>();
+    	String query = "SELECT user_name from users where user_name NOT IN (SELECT friend_id "
+    			+ "FROM group_lists "
+    			+ "WHERE group_id = "
+    			+ group_id + ")";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        
+    	try {
+    		while (rs.next()) {
+    			String friend_id = rs.getString("user_name");
+    			friend_ids.add(friend_id);
+    		}
+    	} catch (SQLException e) {
     		e.printStackTrace();
     	}
     	return friend_ids;

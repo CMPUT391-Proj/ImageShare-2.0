@@ -925,7 +925,7 @@ public class OracleHandler {
     }
 	
 	// Data Analytics Section
-	public String getImagesPerUser() throws Exception {
+	public JSONObject getImagesPerUser() throws Exception {
 		String query = 
 			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
 			"FROM USERS U "+
@@ -943,16 +943,16 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
-	public String getImagesPerSubject() throws Exception {
+	public JSONObject getImagesPerSubject() throws Exception {
 		String query = 
 			"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
 			"FROM IMAGES "+
 			"GROUP BY SUBJECT "+
-			"ORDER BY COUNT DESC, SUBJECT";
+			"ORDER BY SUBJECT";
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
-		return generateJsonFromPreparedStatement(stmt);
+		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
 	public JSONObject getAnalyticsForYear(String fromDate, String toDate) throws Exception {
@@ -1193,7 +1193,7 @@ public class OracleHandler {
 		return jsonResultObj;
 	}
     
-	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
+	private JSONObject generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonRecordList = new JSONArray();
 		
@@ -1230,7 +1230,7 @@ public class OracleHandler {
 		
 		jsonResultObj.put("result", jsonRecordList);
 		
-		return jsonResultObj.toString();
+		return jsonResultObj;
 	}
 	
 	private String getResultSetColData(ResultSet rs, int type, int col) throws Exception {

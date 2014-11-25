@@ -3,8 +3,10 @@ package imageshare.servlets;
 import imageshare.oraclehandler.OracleHandler;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -38,6 +40,9 @@ public class DataAnalysisServlet extends HttpServlet {
     	String fromDate = req.getParameter(FROM_DATE);
     	String toDate = req.getParameter(TO_DATE);
     	String searchType = req.getParameter(SEARCH_TYPE);
+    	String subjectListStr = req.getParameter("subjectlist");
+    	
+    	List<String> subjectList = null;
     	
     	try {
     		if (!username.equals(ADMIN))
@@ -47,10 +52,14 @@ public class DataAnalysisServlet extends HttpServlet {
     			throw new Exception("From and To Dates cannot be empty.");
     		}
 
+    		if (subjectListStr.length() > 0) {
+    			subjectList = Arrays.asList(subjectListStr.split("\\s*,\\s*"));
+    		}
+    		
     		JSONObject result = null;
     		
     		if (searchType.equals("customsearch")) {
-    			result = customAnalytics(fromDate, toDate);
+    			result = customAnalytics(fromDate, toDate, null);
     			req.getSession(true).setAttribute("testtitle", "Custom Search");
     		} 
     		else if (searchType.equals("imagesperuser")) {
@@ -58,7 +67,7 @@ public class DataAnalysisServlet extends HttpServlet {
     			req.getSession(true).setAttribute("testtitle", "Images Per User");
     		}
     		else if (searchType.equals("imagespersubject")) {
-    			
+    			imagesPerSubject(fromDate, toDate);
     			req.getSession(true).setAttribute("testtitle", "Images Per Subject");
     		}
     		else {
@@ -81,10 +90,20 @@ public class DataAnalysisServlet extends HttpServlet {
     }
     
     private void imagesPerSubject(String fromDate, String toDate) throws Exception {
-    	// TODO: query a list of users, foreach subject do a custom search
+    	JSONObject subjects = OracleHandler.getInstance().getImagesPerSubject();
+    	JSONArray subjectsArray = subjects.getJSONArray("result");
+    	
+    	for (int i=0; i<subjectsArray.length(); i++) {
+    		JSONObject subjectObj = subjectsArray.getJSONObject(i);
+    		String subject = subjectObj.getString("SUBJECT");
+    		
+    		
+    	}
+    	
+    	throw new Exception(subjects.toString());
     }
     
-    private JSONObject customAnalytics(String fromDate, String toDate) throws Exception {
+    private JSONObject customAnalytics(String fromDate, String toDate, List<String> subjectList) throws Exception {
         // TODO: add filter by subject and user
     	
     	JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear(fromDate, toDate); //final product

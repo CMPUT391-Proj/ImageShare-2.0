@@ -102,12 +102,12 @@ public class OracleHandlerTests {
 		
 		System.out.println("FINISHED ImagesPerUser");
 	}
-	*/
+	
 	
 	@Test
 	public void oracleGetAnalyticsByYear() {
 		try {
-            String result = OracleHandler.getInstance().getAnalyticsByYear("2014-05-21", "2014-11-24").toString();
+            String result = OracleHandler.getInstance().getAnalyticsForYear("2006-05-21", "2014-11-24").toString();
       
             System.out.println(result);
             
@@ -148,24 +148,42 @@ public class OracleHandlerTests {
 		
 		System.out.println("FINISHED oracleGetAnalyticsByDay");
 	}
-	
+	*/
 	@Test
 	public void generateAnalytics() {
 		try {
-            JSONObject yearJson = OracleHandler.getInstance().getAnalyticsByYear("2014-05-21", "2014-11-24");
-            JSONArray yearArray = yearJson.getJSONArray("result");
+            JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear("2006-05-21", "2014-11-24");
+            JSONArray yearArray = yearJsonResult.getJSONArray("result");
             
             for (int i=0; i<yearArray.length(); i++) {
             	JSONObject yearObj = yearArray.getJSONObject(i);
             	int year = yearObj.getInt("YEAR");
             	
-            	System.out.println(year);
+            	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, "2006-05-21", "2014-11-24");
+            	JSONArray monthArray = monthJsonResult.getJSONArray("result");
+            	yearObj.put("MONTH_LIST", monthArray);
+            	
+            	for (int j=0; j<monthArray.length(); j++) {
+            		JSONObject monthObj = monthArray.getJSONObject(j);
+            		int month = monthObj.getInt("MONTH");
+            		
+            		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, "2006-05-21", "2014-11-24");
+            		
+            		//convertDaysToWeeksJson()
+            		//monthObj.put("DAY", dayJsonResult.getJSONArray("result"));
+            	}
             }
+            
+            System.out.println(yearJsonResult.toString());
             
 		} catch (Exception e) {
             e.printStackTrace();
         }
 		
-		System.out.println("FINISHED oracleGetAnalyticsByDay");
+		System.out.println("FINISHED generateAnalytics");
+	}
+	
+	private int convertDaysToWeeksJson(JSONObject dayJasonResult) {
+		return 1;
 	}
 }

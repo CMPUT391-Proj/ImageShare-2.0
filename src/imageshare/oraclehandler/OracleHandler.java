@@ -947,7 +947,7 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 	
-	public JSONObject getAnalyticsByYear(String fromDate, String toDate) throws Exception {
+	public JSONObject getAnalyticsForYear(String fromDate, String toDate) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
 		boolean isDate = false;
@@ -1023,7 +1023,7 @@ public class OracleHandler {
 			String.format(
 			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
 			"FROM IMAGES "+
-			"WHERE year=%s "+
+			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
 			"AND %s %s %s "+
 			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
 			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
@@ -1036,8 +1036,41 @@ public class OracleHandler {
 		
 		return generateJsonFromPreparedStatementNEW(stmt);
 	}
+
+	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		boolean isDate = false;
+		
+		if (fromDate != null)
+			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		
+		if (toDate != null)
+			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		if (fromDate != null || toDate != null)
+			isDate = true;
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
+			"AND TO_CHAR(TRUNC(TIMING), 'MM')=%s "+
+			"AND %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ",
+			year, month,
+			fromDateQuery, 
+			(fromDate != null && toDate != null ? "AND" : ""),
+			toDateQuery);
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
 	
-	public JSONObject getAnalyticsByDay(String fromDate, String toDate) throws Exception {
+	public JSONObject getAnalyticsForDay(String fromDate, String toDate) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
 		boolean isDate = false;

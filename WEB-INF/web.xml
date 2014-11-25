@@ -60,6 +60,15 @@
 		<url-pattern>/display</url-pattern>
 	</servlet-mapping> 		
 
+	<servlet>
+		<servlet-name>Help</servlet-name>
+		<jsp-file>/webapp/jsp/help.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Help</servlet-name>
+		<url-pattern>/help</url-pattern>
+	</servlet-mapping> 			
+
 <!-- data analysis -->
 	<servlet>
 		<servlet-name>DataAnalysis</servlet-name>

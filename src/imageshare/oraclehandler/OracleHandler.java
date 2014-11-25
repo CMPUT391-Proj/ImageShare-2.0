@@ -284,13 +284,31 @@ public class OracleHandler {
      * @return
      * @throws Exception 
      */
-    public List<Image> getImagesByPopularity() throws Exception {
-        String query = "select * from imagepopularity p "
-                + "left join images i "
-                + "on p.photo_id = i.photo_id "
-                + "order by p.hits desc";
+    public List<Image> getImagesByPopularity(String user) throws Exception {
+        String query = "SELECT * FROM images i "
+                        + "LEFT JOIN imagepopularity p "
+                        + "ON p.photo_id = i.photo_id "
+                        + "WHERE i.owner_name = ? "
+                        + "OR i.permitted     = 1 "
+                        + "OR i.permitted    IN "
+                        + "(SELECT group_id "
+                        + "FROM groups "
+                        + "WHERE group_id = i.permitted "
+                        + "AND user_name  = ? "
+                        + ") "
+                        + "OR i.permitted IN "
+                        + "(SELECT group_id "
+                        + "FROM group_lists "
+                        + "WHERE group_id = i.permitted "
+                        + "AND friend_id  = ? "
+                        + ") "
+                        + "ORDER BY p.hits DESC ";
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        stmt.setString(3, user);
+        
         ResultSet rs = stmt.executeQuery();
 
         List<Image> images = new ArrayList<Image>();

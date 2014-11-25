@@ -4,7 +4,7 @@
 <%@ page import="imageshare.model.Group,imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
-	List<Image> popularImages = OracleHandler.getInstance().getImagesByPopularity();
+	List<Image> popularImages = OracleHandler.getInstance().getImagesByPopularity(user);
 	int numPopularImages = OracleHandler.getInstance().getNumberOfPopularImages();
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
 %>
@@ -72,7 +72,7 @@
 			<% if (allImages.get(i).getOwnerName().equals(user)) { %> 
 				thumbs = thumbs + '<a href="<%=editURL%>"><strong class=\'text-muted\'>Edit</strong></a>';
 			<% } %>
-			
+
 			thumbs = thumbs + '<div id="<%=allImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox" href="<%=displayURL%>"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
 
 			thumbs = thumbs + '</div>';

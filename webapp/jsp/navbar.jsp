@@ -1,3 +1,5 @@
+<% String navbarUser = (String) session.getAttribute("user"); %>
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -41,8 +43,7 @@
         </div>
 
         <ul class="nav navbar-nav pull-right">
-            <li class="divider-vertical"></li>
-            <li><p class="navbar-text" id='username'><!--% out.println(username); %--></p></li>
+            <li><p class="navbar-text" id='username'><a href="userprofile"><% out.println(navbarUser); %></a></p></li>
         </ul>
 
     </div>

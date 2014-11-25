@@ -4,6 +4,7 @@
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
+	if (user == null) response.sendRedirect("index");
 	List<Group> groups = OracleHandler.getInstance().getGroups(user);
 	String error = (String) session.getAttribute("error");
 	session.setAttribute("error", null);

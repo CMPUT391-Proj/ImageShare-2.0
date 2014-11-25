@@ -4,12 +4,10 @@
 <%@ page import="imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
+	if (user == null) response.sendRedirect("index");
 	Integer photoId = Integer.parseInt(request.getQueryString());
-	session.setAttribute("photoID", photoId);
 	Image image = OracleHandler.getInstance().getImageById(photoId);
 	String imageURL = "image?" + photoId;
-	String error = (String) session.getAttribute("error");
-	session.setAttribute("error", null);
 %>
 <style>
 </style>

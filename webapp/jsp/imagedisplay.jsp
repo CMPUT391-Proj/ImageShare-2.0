@@ -21,6 +21,8 @@
 		</div>
 	</div>
 
+	<%@include file="error.jsp"%>
+
 	<div class="container">
 		<!-- Image Modal -->
 		<div class="row>">

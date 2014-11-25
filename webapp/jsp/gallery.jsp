@@ -6,7 +6,7 @@
 	String user = (String) session.getAttribute("user");
 	if (user == null) response.sendRedirect("index");
 	List<Image> popularImages = OracleHandler.getInstance().getImagesByPopularity(user);
-	int numPopularImages = OracleHandler.getInstance().getNumberOfPopularImages();
+	int numPopularImages = OracleHandler.getInstance().getNumberOfPopularImages(user);
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
 %>
 <body>

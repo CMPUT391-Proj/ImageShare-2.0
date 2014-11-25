@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@include file="header.jsp" %>
-<%
-	String error = (String) session.getAttribute("error");
-	session.setAttribute("error", null);
-%>
+<style>
+	#reg {
+		float: left;
+	}
+	#help {
+		float: right;
+	}
+	.panel-footer {
+		min-height: 40px;
+	}
+</style>
 <body>
 	<div class="jumbotron">
 		<div class="container">
@@ -12,7 +19,7 @@
 		</div>
 	</div>
 
-	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
+	<%@include file="error.jsp"%>
 
 	<div class="row">
 		<div class="col-md-6  col-lg-offset-3">
@@ -45,7 +52,8 @@
 						</form>
 					</div>
 					<div class="panel-footer" >
-						Not Registered? <a href="registration">Register here</a>
+						<div id="reg">Not Registered? <a href="registration">Register here</a></div>
+						<div id="help"><a href="help">Help</a></div>
 					</div>
 			</div>
 		</div>
@@ -53,7 +61,6 @@
 	<div class="container">
 		<hr>
 			<%@include file="footer.jsp"%>
-			<!--% include footer %-->
 	</div>
 </body>
 </html>

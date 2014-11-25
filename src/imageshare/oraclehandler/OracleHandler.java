@@ -178,16 +178,24 @@ public class OracleHandler {
      * @throws Exception
      */
     public List<Image> getAllImages(String user) throws Exception {
-        String query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
-                + "OR i.permitted = 1 OR i.permitted IN "
-                + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
-                + "and user_name = ?) "
-                + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
-                + "group_id = i.permitted AND friend_id = ?)";
+        String query;
+        
+        if (user.equalsIgnoreCase("admin")) {
+            query = "SELECT * FROM images";
+        } else {  
+            query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
+                    + "OR i.permitted = 1 OR i.permitted IN "
+                    + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+                    + "and user_name = ?) "
+                    + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+                    + "group_id = i.permitted AND friend_id = ?)";
+        }
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
-        stmt.setString(3, user);
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
@@ -285,7 +293,15 @@ public class OracleHandler {
      * @throws Exception 
      */
     public List<Image> getImagesByPopularity(String user) throws Exception {
-        String query = "SELECT * FROM images i "
+        String query;
+        
+        if (user.equalsIgnoreCase("admin"))
+            query = "SELECT * FROM images i "
+                    + "LEFT JOIN imagepopularity p "
+                    + "on p.photo_id = i.photo_id "
+                    + "ORDER BY p.hits DESC";
+        else {
+            query = "SELECT * FROM images i "
                         + "LEFT JOIN imagepopularity p "
                         + "ON p.photo_id = i.photo_id "
                         + "WHERE i.owner_name = ? "
@@ -303,11 +319,15 @@ public class OracleHandler {
                         + "AND friend_id  = ? "
                         + ") "
                         + "ORDER BY p.hits DESC ";
+        }
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
-        stmt.setString(3, user);
+        
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
 
@@ -340,17 +360,45 @@ public class OracleHandler {
     /**
      * @return the number of popular images, usually 5 but more if there are
      *         ties.
+     * @param user
      */
-    public int getNumberOfPopularImages() throws Exception {
+    public int getNumberOfPopularImages(String user) throws Exception {
         Map<Integer, Integer> hitMap = new HashMap<Integer, Integer>();
         int count = 0;
         
-        String query = "select p.hits from imagepopularity p "
+        String query;
+        if (user.equalsIgnoreCase("admin")) {
+            query = "select p.hits from imagepopularity p "
                 + "order by p.hits desc";
+        } else {
+            query = "SELECT p.hits FROM images i "
+                    + "LEFT JOIN imagepopularity p "
+                    + "ON p.photo_id = i.photo_id "
+                    + "WHERE i.owner_name = ? "
+                    + "OR i.permitted     = 1 "
+                    + "OR i.permitted    IN "
+                    + "(SELECT group_id "
+                    + "FROM groups "
+                    + "WHERE group_id = i.permitted "
+                    + "AND user_name  = ? "
+                    + ") "
+                    + "OR i.permitted IN "
+                    + "(SELECT group_id "
+                    + "FROM group_lists "
+                    + "WHERE group_id = i.permitted "
+                    + "AND friend_id  = ? "
+                    + ") "
+                    + "ORDER BY p.hits DESC ";
+        }
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
+        ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             int hits = rs.getInt("hits");
             if (hitMap.containsKey(hits)) {

@@ -6,8 +6,6 @@
 	String user = (String) session.getAttribute("user");
 	if (user == null) response.sendRedirect("index");
 	List<Group> groups = OracleHandler.getInstance().getGroups(user);
-	String error = (String) session.getAttribute("error");
-	session.setAttribute("error", null);
 %>
 <style>
 	#upload {
@@ -27,7 +25,7 @@
 		</div>
 	</div>	
 
-	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
+	<%@include file="error.jsp"%>
 
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3">

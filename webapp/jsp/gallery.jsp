@@ -4,7 +4,8 @@
 <%@ page import="imageshare.model.Group,imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
-	List<Image> popularImages = OracleHandler.getInstance().getTopFivePopularImages();
+	List<Image> popularImages = OracleHandler.getInstance().getImagesByPopularity();
+	int numPopularImages = OracleHandler.getInstance().getNumberOfPopularImages();
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);
 %>
 <body>
@@ -41,7 +42,7 @@
 
 		// Generate and append the popular thumbnails to the page
 		var popular_thumbs = "";
-		<% for (int i = 0; i < popularImages.size() && i < 5; ++i) { %>
+		<% for (int i = 0; i < popularImages.size() && i < numPopularImages; ++i) { %>
 			<% String getURL = "thumbnail?" + popularImages.get(i).getPhotoId(); %>
 			<% String editURL = "updateimage?" + popularImages.get(i).getPhotoId(); %>
 			<% String displayURL = "display?" + popularImages.get(i).getPhotoId(); %>

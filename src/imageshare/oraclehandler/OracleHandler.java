@@ -21,7 +21,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -278,12 +280,11 @@ public class OracleHandler {
     }
     
     /**
-     * Get the top five images with the most hits, in sequence
-     * order of decreasing popularity.
+     * Get the images in sequence order of decreasing popularity.
      * @return
      * @throws Exception 
      */
-    public List<Image> getTopFivePopularImages() throws Exception {
+    public List<Image> getImagesByPopularity() throws Exception {
         String query = "select * from imagepopularity p "
                 + "left join images i "
                 + "on p.photo_id = i.photo_id "
@@ -292,6 +293,38 @@ public class OracleHandler {
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
+    }
+    
+    /**
+     * @return the number of popular images, usually 5 but more if there are
+     *         ties.
+     */
+    public int getNumberOfPopularImages() throws Exception {
+        Map<Integer, Integer> hitMap = new HashMap<Integer, Integer>();
+        int count = 0;
+        
+        String query = "select p.hits from imagepopularity p "
+                + "order by p.hits desc";
+        
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            int hits = rs.getInt("hits");
+            if (hitMap.containsKey(hits)) {
+                hitMap.put(hits, hitMap.get(hits) + 1);
+            } else {
+                if (hitMap.size() < 5)
+                    hitMap.put(hits, 1);
+                else
+                    break;
+            }
+        }
+        
+        for (Integer hits : hitMap.values())
+            count += hits;
+        
+        return count;
     }
     
     /**

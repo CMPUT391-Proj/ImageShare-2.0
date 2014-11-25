@@ -70,10 +70,10 @@ public class OracleHandler {
         }
     }
 
-    // TODO call on logout?
     public void closeConnection() {
         try {
             OracleHandler.getInstance().conn.close();
+            oracleHandler = null;
         } catch (SQLException e) {
             e.printStackTrace();
         }

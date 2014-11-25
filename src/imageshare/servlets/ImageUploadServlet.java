@@ -46,6 +46,7 @@ public class ImageUploadServlet extends HttpServlet {
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
     
     private static final String IMAGE_UPLOAD_JSP = "imageupload";
+    private static final String IMAGE_SUCCESSFUL = "The image file has been uploaded.";
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -131,8 +132,11 @@ public class ImageUploadServlet extends HttpServlet {
             OracleHandler.getInstance().storeImage(image);
         } catch (Exception e) {
             req.getSession(true).setAttribute("error", e.toString());
+            resp.sendRedirect(IMAGE_UPLOAD_JSP);
+            return;
         }
 
+        req.getSession(true).setAttribute("success", IMAGE_SUCCESSFUL);
         resp.sendRedirect(IMAGE_UPLOAD_JSP);
     }
 

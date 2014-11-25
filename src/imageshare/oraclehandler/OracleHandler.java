@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -87,63 +86,6 @@ public class OracleHandler {
         PreparedStatement stmt = getInstance().conn.prepareStatement(statement);
         stmt.executeUpdate();
         stmt.execute("commit");
-    }
-
-    /**
-     * @param statement
-     *            Query statement use to query Oracle database
-     */
-	public Vector<Vector<String>> retrieveResultSet(String statement) throws Exception {
-        Vector<Vector<String>> resultVector = null;
-
-        PreparedStatement stmt = getInstance().conn.prepareStatement(statement);
-        ResultSet rset = stmt.executeQuery(statement);
-
-        ResultSetMetaData rsmd = rset.getMetaData();
-        resultVector = new Vector<Vector<String>>();
-
-        int colCount = rsmd.getColumnCount();
-
-        // algorithm could be improved.
-        // if unknown oracle type comes up, google the type number and add it
-        // to the else if statements
-        while (rset.next()) {
-            Vector<String> resultRow = new Vector<String>();
-
-            for (int i = 1; i <= colCount; i++) {
-                if (rsmd.getColumnType(i) == Types.INTEGER) {
-                    resultRow.add("" + rset.getInt(i));
-                } else if (rsmd.getColumnType(i) == Types.VARCHAR) {
-                    resultRow.add(rset.getString(i));
-                } else if (rsmd.getColumnType(i) == Types.TIMESTAMP) {
-                    resultRow.add(rset.getTimestamp(i).toString());
-                } else {
-                    throw new Exception("UKNOWN ORACLE TYPE: "
-                            + rsmd.getColumnType(i));
-                }
-            }
-
-            resultVector.add(resultRow);
-        }
-
-        stmt.close();
-
-        return resultVector;
-	}
-
-    /**
-     * Executes a generic query.
-     * 
-     * @param query
-     *            sql to execute
-     * @return the result set
-     * @throws Exception
-     *             exception if there was trouble executed the query. Caller
-     *             expected to handle.
-     */
-    public ResultSet executeQuery(String query) throws Exception {
-        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        return stmt.executeQuery(query);
     }
     
     private List<Image> retrieveImagesFromResultSet(ResultSet rs)
@@ -212,15 +154,17 @@ public class OracleHandler {
 
         int imageID = oracleHandler.nextImageID();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baosImage = new ByteArrayOutputStream();
 
-        ImageIO.write(image.getImage(), "jpg", baos);
+        ImageIO.write(image.getImage(), "jpg", baosImage);
         InputStream imageInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosImage.toByteArray());
 
-        ImageIO.write(image.getThumbnail(), "jpg", baos);
+        ByteArrayOutputStream baosThumbnail = new ByteArrayOutputStream();
+        
+        ImageIO.write(image.getThumbnail(), "jpg", baosThumbnail);
         InputStream thumbnailInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosThumbnail.toByteArray());
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setInt(1, imageID);
@@ -230,8 +174,8 @@ public class OracleHandler {
         stmt.setString(5, image.getPlace());
         stmt.setDate(6, new Date(image.getDate().getTime()));
         stmt.setString(7, image.getDescription());
-        stmt.setBinaryStream(8, imageInputStream);
-        stmt.setBinaryStream(9, thumbnailInputStream);
+        stmt.setBinaryStream(8, thumbnailInputStream);
+        stmt.setBinaryStream(9, imageInputStream);
 
         stmt.executeUpdate();
         
@@ -244,7 +188,8 @@ public class OracleHandler {
      */
     public int nextImageID() throws Exception {
         String sql = "SELECT image_sequence.nextval from dual";
-        ResultSet rs = executeQuery(sql);
+        PreparedStatement ps = getInstance().conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
         rs.next();
         return rs.getInt(1);
     }
@@ -456,7 +401,6 @@ public class OracleHandler {
             throw new InvalidParameterException("Photo id does not exist!");
         }
     }
-    
     
     /**
      * Update the image from the provided photo id.

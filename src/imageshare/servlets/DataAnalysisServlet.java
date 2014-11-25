@@ -28,10 +28,7 @@ public class DataAnalysisServlet extends HttpServlet {
     private static final String ADMIN = "admin";
     
     private static final String DATA_ANALYSIS_ROOT_JSP = "dataanalysis";
-    
-    private static final String IMAGES_PER_USER_JSP = "imagesperuser";
-    private static final String IMAGES_PER_SUBJECT_JSP = "imagespersubject";
-    private static final String CUSTOM_ANALYSIS_JSP = "customanalysis";
+    private static final String DATA_REPORT_JSP = "datareport";
     
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -46,28 +43,29 @@ public class DataAnalysisServlet extends HttpServlet {
     		if (!username.equals(ADMIN))
     			throw new Exception(username+" has no privileges to access this page.");
     		
-            JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear(fromDate, toDate); //final product
-            JSONArray yearArray = yearJsonResult.getJSONArray("result");
-            
-            for (int i=0; i<yearArray.length(); i++) {
-            	JSONObject yearObj = yearArray.getJSONObject(i);
-            	int year = yearObj.getInt("YEAR");
-            	
-            	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, fromDate, toDate);
-            	JSONArray monthArray = monthJsonResult.getJSONArray("result");
-            	yearObj.put("MONTH_LIST", monthArray);
-            	
-            	for (int j=0; j<monthArray.length(); j++) {
-            		JSONObject monthObj = monthArray.getJSONObject(j);
-            		int month = monthObj.getInt("MONTH");
-            		
-            		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, fromDate, toDate);
-            		
-            		monthObj.put("WEEK_LIST", convertDaysToWeeksJson(year, month, dayJsonResult).getJSONArray("result"));
-            	}
-            }
+    		if (fromDate.length() == 0 || toDate.length() == 0) {
+    			throw new Exception("From and To Dates cannot be empty.");
+    		}
+
+    		JSONObject result = null;
     		
-            req.getSession(true).setAttribute("customjson", yearJsonResult.toString());
+    		if (searchType.equals("customsearch")) {
+    			result = customAnalytics(fromDate, toDate);
+    			req.getSession(true).setAttribute("testtitle", "Custom Search");
+    		} 
+    		else if (searchType.equals("imagesperuser")) {
+    			
+    			req.getSession(true).setAttribute("testtitle", "Images Per User");
+    		}
+    		else if (searchType.equals("imagespersubject")) {
+    			
+    			req.getSession(true).setAttribute("testtitle", "Images Per Subject");
+    		}
+    		else {
+    			throw new Exception("Unknown test type.");
+    		}
+    		
+            req.getSession(true).setAttribute("customjson", result.toString());
             
     	} catch (Exception e) {
     		req.getSession(true).setAttribute("error", e.toString());
@@ -76,6 +74,41 @@ public class DataAnalysisServlet extends HttpServlet {
     	}
     	
     	resp.sendRedirect("datareport");
+    }
+    
+    private void imagesPerUser(String fromDate, String toDate) throws Exception {
+    	// TODO: query a list of users, foreach user do a custom search
+    }
+    
+    private void imagesPerSubject(String fromDate, String toDate) throws Exception {
+    	// TODO: query a list of users, foreach subject do a custom search
+    }
+    
+    private JSONObject customAnalytics(String fromDate, String toDate) throws Exception {
+        // TODO: add filter by subject and user
+    	
+    	JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear(fromDate, toDate); //final product
+        JSONArray yearArray = yearJsonResult.getJSONArray("result");
+        
+        for (int i=0; i<yearArray.length(); i++) {
+        	JSONObject yearObj = yearArray.getJSONObject(i);
+        	int year = yearObj.getInt("YEAR");
+        	
+        	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, fromDate, toDate);
+        	JSONArray monthArray = monthJsonResult.getJSONArray("result");
+        	yearObj.put("MONTH_LIST", monthArray);
+        	
+        	for (int j=0; j<monthArray.length(); j++) {
+        		JSONObject monthObj = monthArray.getJSONObject(j);
+        		int month = monthObj.getInt("MONTH");
+        		
+        		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, fromDate, toDate);
+        		
+        		monthObj.put("WEEK_LIST", convertDaysToWeeksJson(year, month, dayJsonResult).getJSONArray("result"));
+        	}
+        }
+        
+        return yearJsonResult;
     }
     
 	private JSONObject convertDaysToWeeksJson(int year, int month, JSONObject dayJsonResult) {

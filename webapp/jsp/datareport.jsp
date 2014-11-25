@@ -5,11 +5,13 @@
 <%
 	// check user is admin
 	String username = (String) session.getAttribute("user");
+	String testtitle = (String) session.getAttribute("testtitle");
 	String customjson = (String) session.getAttribute("customjson");
 	String error = (String) session.getAttribute("error");
 
 	session.setAttribute("error", null);
 	session.setAttribute("customjson", null);
+	session.setAttribute("testtitle", null);
 %>
 <body>
 	<%@include file="navbar.jsp" %>
@@ -25,6 +27,7 @@
 
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3">
+			<h4 id="testtitle"><% out.print(testtitle);%></h4>
 			<div id="customjsondata">
 			</div>
 		</div>
@@ -48,6 +51,7 @@
 			var unorderedlist = parseJson(customdatajson.result);
 
 			$('#customjsondata').append(unorderedlist);
+			$('#testtitle').val('text');
 		});
 
 		function parseJson(jsonList) {

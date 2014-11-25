@@ -546,13 +546,21 @@ public class OracleHandler {
     public List<Group> getInvolvedGroups(String user) throws Exception {
         List<Group> groups = new ArrayList<Group>();
         
-        String query = "SELECT * FROM groups WHERE group_id in "
+        String query;
+        if (user.equalsIgnoreCase("admin")) {
+            query = "SELECT * FROM groups where group_id != 1 "
+                    + "and group_id != 2";
+        } else {
+            query = "SELECT * FROM groups WHERE group_id in "
                 + "(SELECT group_id FROM group_lists where "
                 + "friend_id = ? ) OR " + "user_name = ?";
+        }
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
         

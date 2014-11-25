@@ -1,3 +1,5 @@
+<% String navbarUser = (String) session.getAttribute("user"); %>
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -6,12 +8,14 @@
                 <span class="icon-bar"></span> <span class="icon-bar"></span> <span
                     class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/ImageShare-2.0/">ImageShare</a>
+            <a class="navbar-brand" href="gallery"><i class="glyphicon glyphicon-home white"></i> ImageShare</a>
         </div>
 
         <ul class="nav navbar-nav">
-            <li class="divider-vertical"></li>
-            <li><a href="/ImageShare-2.0/"><i class="glyphicon glyphicon-home white"></i> Home</a></li>
+            <li><a href="imageupload">Upload</a></li>
+            <li><a href="groups">Groups</a></li>
+            <li><a href="search">Search</a></li>
+            <li><a href="dataanalysis">Statistics</a></li>
         </ul>
 
         <div class="navbar-collapse collapse pull-right">
@@ -30,7 +34,7 @@
                     <li class="divider"></li>
                     <li><a href="groups"><span class="glyphicon glyphicon-user pull-right"></span>Groups</a></li>
                     <li class="divider"></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
+                    <li><a href="dataanalysis"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
                     <li class="divider"></li>
                     <li><a href="logout"><span class="glyphicon glyphicon-log-out pull-right"></span>Sign Out</a></li>
               </ul>
@@ -39,8 +43,7 @@
         </div>
 
         <ul class="nav navbar-nav pull-right">
-            <li class="divider-vertical"></li>
-            <li><p class="navbar-text" id='username'><!--% out.println(username); %--></p></li>
+            <li><p class="navbar-text" id='username'><a href="userprofile"><% out.println(navbarUser); %></a></p></li>
         </ul>
 
     </div>

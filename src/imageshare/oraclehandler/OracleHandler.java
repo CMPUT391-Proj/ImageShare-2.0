@@ -21,7 +21,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -68,10 +70,10 @@ public class OracleHandler {
         }
     }
 
-    // TODO call on logout?
     public void closeConnection() {
         try {
             OracleHandler.getInstance().conn.close();
+            oracleHandler = null;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -278,20 +280,93 @@ public class OracleHandler {
     }
     
     /**
-     * Get the top five images with the most hits, in sequence
-     * order of decreasing popularity.
+     * Get the images in sequence order of decreasing popularity.
      * @return
      * @throws Exception 
      */
-    public List<Image> getTopFivePopularImages() throws Exception {
-        String query = "select * from "
-                + "(select photo_id from imagepopularity "
-                + "group by photo_id order by count(hits) desc) p "
-                + "left join images i on i.photo_id = p.photo_id";
+    public List<Image> getImagesByPopularity(String user) throws Exception {
+        String query = "SELECT * FROM images i "
+                        + "LEFT JOIN imagepopularity p "
+                        + "ON p.photo_id = i.photo_id "
+                        + "WHERE i.owner_name = ? "
+                        + "OR i.permitted     = 1 "
+                        + "OR i.permitted    IN "
+                        + "(SELECT group_id "
+                        + "FROM groups "
+                        + "WHERE group_id = i.permitted "
+                        + "AND user_name  = ? "
+                        + ") "
+                        + "OR i.permitted IN "
+                        + "(SELECT group_id "
+                        + "FROM group_lists "
+                        + "WHERE group_id = i.permitted "
+                        + "AND friend_id  = ? "
+                        + ") "
+                        + "ORDER BY p.hits DESC ";
+
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setString(1, user);
+        stmt.setString(2, user);
+        stmt.setString(3, user);
+        
+        ResultSet rs = stmt.executeQuery();
+
+        List<Image> images = new ArrayList<Image>();
+
+        while (rs.next()) {
+            int photo_id = rs.getInt("photo_id");
+            String owner = rs.getString("owner_name");
+            int permitted = rs.getInt("permitted");
+            String subject = rs.getString("subject");
+            String place = rs.getString("place");
+            Date timing = rs.getDate("timing");
+            String description = rs.getString("description");
+            BufferedImage thumbnail = ImageIO.read(rs.getBlob("thumbnail")
+                    .getBinaryStream());
+            BufferedImage pic = ImageIO.read(rs.getBlob("photo")
+                    .getBinaryStream());
+            int hits = rs.getInt("hits");
+
+            Image image = new Image(owner, permitted, subject, place, timing,
+                    description, thumbnail, pic);
+            image.setPhotoId(photo_id);
+            image.setHits(hits);
+            images.add(image);
+        }
+
+        return images;
+    }
+    
+    /**
+     * @return the number of popular images, usually 5 but more if there are
+     *         ties.
+     */
+    public int getNumberOfPopularImages() throws Exception {
+        Map<Integer, Integer> hitMap = new HashMap<Integer, Integer>();
+        int count = 0;
+        
+        String query = "select p.hits from imagepopularity p "
+                + "order by p.hits desc";
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
-        return retrieveImagesFromResultSet(rs);
+        
+        while (rs.next()) {
+            int hits = rs.getInt("hits");
+            if (hitMap.containsKey(hits)) {
+                hitMap.put(hits, hitMap.get(hits) + 1);
+            } else {
+                if (hitMap.size() < 5)
+                    hitMap.put(hits, 1);
+                else
+                    break;
+            }
+        }
+        
+        for (Integer hits : hitMap.values())
+            count += hits;
+        
+        return count;
     }
     
     /**
@@ -359,6 +434,20 @@ public class OracleHandler {
         updateStmt.setInt(5,security);
         updateStmt.setInt(6, photoId);
         updateStmt.executeUpdate();
+    }
+    
+    /**
+     * Return the image given by the photo id
+     * @param photoId
+     * @return
+     * @throws Exception
+     */
+    public Image getImageById(int photoId) throws Exception {
+        String query = "SELECT * FROM images where photo_id = ?";
+        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+        stmt.setInt(1, photoId);
+        ResultSet rs = stmt.executeQuery();
+        return retrieveImagesFromResultSet(rs).get(0);
     }
     
     /**

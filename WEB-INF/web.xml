@@ -51,6 +51,15 @@
 		<url-pattern>/directoryupload</url-pattern>
 	</servlet-mapping> 	
 
+	<servlet>
+		<servlet-name>ImageDisplay</servlet-name>
+		<jsp-file>/webapp/jsp/imagedisplay.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageDisplay</servlet-name>
+		<url-pattern>/display</url-pattern>
+	</servlet-mapping> 		
+
 <!-- data analysis -->
 	<servlet>
 		<servlet-name>DataAnalysis</servlet-name>
@@ -215,6 +224,15 @@
 	<servlet-mapping>
 		<servlet-name>UpdateImageServlet</servlet-name>
 		<url-pattern>/updateImage</url-pattern>
+	</servlet-mapping>	
+
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>imageshare.servlets.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>	
 
 </web-app>

@@ -34,14 +34,14 @@ public class ImageThumbnailServlet extends HttpServlet implements
         try {
             InputStream input = OracleHandler.getInstance()
                     .getThumbnailInputStream(Integer.parseInt(photoId));
-            
+
             int imageByte;
             while ((imageByte = input.read()) != -1) {
                 out.write(imageByte);
             }
-            
+
             input.close();
-            
+
         } catch (Exception e) {
             req.getSession().setAttribute("error", e.toString());
         }

@@ -4,6 +4,7 @@
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
   String user = (String) session.getAttribute("user");
+  if (user == null) response.sendRedirect("index");
   List<Group> groups = OracleHandler.getInstance().getGroups(user);
   String uploadURL = request.getRequestURL().toString();
   uploadURL = uploadURL.substring(0, uploadURL.lastIndexOf("/")) + "/directoryUpload";
@@ -34,10 +35,6 @@
   </div>  
 
   <% if (error != null) out.println("<tr>" + error + "</tr>"); %>
-
-  <% out.println(uploadURL); %>
-
-  <% out.println(session.getAttribute("imagesDir")); %>
 
   <div class="row">
     <div class="col-lg-6 col-lg-offset-3">

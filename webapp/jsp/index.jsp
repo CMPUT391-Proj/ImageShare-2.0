@@ -9,7 +9,6 @@
 	<div class="jumbotron">
 		<div class="container">
 			<h1>ImageShare</h1>
-			<p id="titleLeft">Please log in</p>
 		</div>
 	</div>
 

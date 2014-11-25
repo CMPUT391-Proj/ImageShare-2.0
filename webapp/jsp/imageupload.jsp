@@ -5,7 +5,7 @@
 <%
 	String user = (String) session.getAttribute("user");
 	if (user == null) response.sendRedirect("index");
-	List<Group> groups = OracleHandler.getInstance().getGroups(user);
+	List<Group> groups = OracleHandler.getInstance().getInvolvedGroups(user);
 %>
 <style>
 	#upload {
@@ -79,7 +79,7 @@
 								</label>
 							</div>
 							<% for (Group group : groups) {
-								out.println("<div class='radio'><label><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></label></div>");
+								out.println("<div class='radio'><label><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "<small class='text-muted'> " + group.getUsername() + "</small></input></label></div>");
 							} %>
 						</div>
 					</div>

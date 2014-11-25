@@ -26,6 +26,8 @@ public class DataAnalysisServlet extends HttpServlet {
     private static final String FROM_DATE = "datefrom";
     private static final String TO_DATE = "dateto";
     private static final String SEARCH_TYPE = "searchtype";
+    private static final String SUBJECT_LIST = "subjectlist";
+    private static final String USERNAME_LIST = "usernamelist";
 	
     private static final String ADMIN = "admin";
     
@@ -40,9 +42,16 @@ public class DataAnalysisServlet extends HttpServlet {
     	String fromDate = req.getParameter(FROM_DATE);
     	String toDate = req.getParameter(TO_DATE);
     	String searchType = req.getParameter(SEARCH_TYPE);
-    	String subjectListStr = req.getParameter("subjectlist");
     	
-    	List<String> subjectList = null;
+    	String subjectListStr = 
+    			req.getParameter(SUBJECT_LIST) != null ? 
+    			req.getParameter(SUBJECT_LIST) : null;
+    	String usernameListStr = 
+    			req.getParameter(USERNAME_LIST) != null ?
+    			req.getParameter(USERNAME_LIST) : null;
+    	
+    	String subjectListFormatted = null;
+    	String usernameListFormatted = null;
     	
     	try {
     		if (!username.equals(ADMIN))
@@ -52,23 +61,46 @@ public class DataAnalysisServlet extends HttpServlet {
     			throw new Exception("From and To Dates cannot be empty.");
     		}
 
-    		if (subjectListStr.length() > 0) {
-    			subjectList = Arrays.asList(subjectListStr.split("\\s*,\\s*"));
+    		if (subjectListStr != null && subjectListStr.length() > 0) {
+    			List<String> subjectList = Arrays.asList(subjectListStr.split("\\s*,\\s*"));
+    			
+    			StringBuilder sb = new StringBuilder();
+    			for (String subject : subjectList) {
+    				sb.append(String.format("'%s',", subject));
+    			}
+    			sb.setLength(sb.length()-1);
+    			
+    			subjectListFormatted = sb.toString();
+    		}
+
+    		if (usernameListStr != null && usernameListStr.length() > 0) {
+    			List<String> usernameList = Arrays.asList(usernameListStr.split("\\s*,\\s*"));
+    			
+    			StringBuilder sb = new StringBuilder();
+    			for (String usernameToken : usernameList) {
+    				sb.append(String.format("'%s',", usernameToken));
+    			}
+    			sb.setLength(sb.length()-1);
+    			
+    			usernameListFormatted = sb.toString();
     		}
     		
     		JSONObject result = null;
     		
     		if (searchType.equals("customsearch")) {
-    			result = customAnalytics(fromDate, toDate, null);
+    			result = customAnalytics(fromDate, toDate, subjectListFormatted, usernameListFormatted);
     			req.getSession(true).setAttribute("testtitle", "Custom Search");
+    			req.getSession(true).setAttribute("search", "customsearch");
     		} 
     		else if (searchType.equals("imagesperuser")) {
-    			
+    			result = imagesPerUser(fromDate, toDate);
     			req.getSession(true).setAttribute("testtitle", "Images Per User");
+    			req.getSession(true).setAttribute("search", "imagesperuser");
     		}
     		else if (searchType.equals("imagespersubject")) {
-    			imagesPerSubject(fromDate, toDate);
+    			result = imagesPerSubject(fromDate, toDate);
     			req.getSession(true).setAttribute("testtitle", "Images Per Subject");
+    			req.getSession(true).setAttribute("search", "imagespersubject");
     		}
     		else {
     			throw new Exception("Unknown test type.");
@@ -85,35 +117,46 @@ public class DataAnalysisServlet extends HttpServlet {
     	resp.sendRedirect("datareport");
     }
     
-    private void imagesPerUser(String fromDate, String toDate) throws Exception {
-    	// TODO: query a list of users, foreach user do a custom search
+    private JSONObject imagesPerUser(String fromDate, String toDate) throws Exception {
+    	JSONObject users = OracleHandler.getInstance().getImagesPerUser();
+    	JSONArray usersArray = users.getJSONArray("result");
+    	
+    	for (int i=0; i<usersArray.length(); i++) {
+    		JSONObject userObj = usersArray.getJSONObject(i);
+    		
+    		String user = String.format("'%s'", userObj.getString("OWNER_NAME"));
+    		
+    		JSONObject subjectAnalytics = customAnalytics(fromDate, toDate, null, user);
+    		userObj.put("data", subjectAnalytics.get("result"));
+    	}
+    	
+    	return users;
     }
     
-    private void imagesPerSubject(String fromDate, String toDate) throws Exception {
+    private JSONObject imagesPerSubject(String fromDate, String toDate) throws Exception {
     	JSONObject subjects = OracleHandler.getInstance().getImagesPerSubject();
     	JSONArray subjectsArray = subjects.getJSONArray("result");
     	
     	for (int i=0; i<subjectsArray.length(); i++) {
     		JSONObject subjectObj = subjectsArray.getJSONObject(i);
-    		String subject = subjectObj.getString("SUBJECT");
+    		String subject = String.format("'%s'", subjectObj.getString("SUBJECT"));
     		
-    		
+    		JSONObject subjectAnalytics = customAnalytics(fromDate, toDate, subject, null);
+    		subjectObj.put("data", subjectAnalytics.get("result"));
     	}
     	
-    	throw new Exception(subjects.toString());
+    	return subjects;
     }
     
-    private JSONObject customAnalytics(String fromDate, String toDate, List<String> subjectList) throws Exception {
-        // TODO: add filter by subject and user
-    	
-    	JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear(fromDate, toDate); //final product
+    private JSONObject customAnalytics(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+    	JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear(fromDate, toDate, subjectList, usernameList); //final product
         JSONArray yearArray = yearJsonResult.getJSONArray("result");
         
         for (int i=0; i<yearArray.length(); i++) {
         	JSONObject yearObj = yearArray.getJSONObject(i);
         	int year = yearObj.getInt("YEAR");
         	
-        	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, fromDate, toDate);
+        	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, fromDate, toDate, subjectList, usernameList);
         	JSONArray monthArray = monthJsonResult.getJSONArray("result");
         	yearObj.put("MONTH_LIST", monthArray);
         	
@@ -121,7 +164,7 @@ public class DataAnalysisServlet extends HttpServlet {
         		JSONObject monthObj = monthArray.getJSONObject(j);
         		int month = monthObj.getInt("MONTH");
         		
-        		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, fromDate, toDate);
+        		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, fromDate, toDate, subjectList, usernameList);
         		
         		monthObj.put("WEEK_LIST", convertDaysToWeeksJson(year, month, dayJsonResult).getJSONArray("result"));
         	}
@@ -138,6 +181,7 @@ public class DataAnalysisServlet extends HttpServlet {
 		
 		for (int i=0; i<dayJsonArray.length(); i++) {
 			int day = dayJsonArray.getJSONObject(i).getInt("DAY");
+			int dayCount = dayJsonArray.getJSONObject(i).getInt("COUNT");
 			
 			Calendar cal = Calendar.getInstance();
 			cal.set(year, month, day);
@@ -145,9 +189,9 @@ public class DataAnalysisServlet extends HttpServlet {
 			int week = cal.get(Calendar.WEEK_OF_YEAR);
 			
 			if (weekMap.get(week) != null)
-				weekMap.put(week, weekMap.get(week)+1);
+				weekMap.put(week, weekMap.get(week)+dayCount);
 			else
-				weekMap.put(week, 1);
+				weekMap.put(week, dayCount);
 		}
 		
 		Iterator<Map.Entry<Integer, Integer>> entries = weekMap.entrySet().iterator();

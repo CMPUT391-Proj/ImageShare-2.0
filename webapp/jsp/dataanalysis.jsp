@@ -6,8 +6,6 @@
 	// check user is admin
 	String username = (String) session.getAttribute("user");
 
-	String error = (String) session.getAttribute("error");
-	session.setAttribute("error", null);
 %>
 
 <body>
@@ -20,7 +18,7 @@
 		</div>
 	</div>
 
-	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
+	<%@include file="error.jsp" %>
 
 	<div class="row"> <!-- start -->
 		<div class="col-lg-6 col-lg-offset-3">

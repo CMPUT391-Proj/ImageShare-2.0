@@ -158,14 +158,15 @@ public class OracleHandlerTests {
 	@Test
 	public void generateAnalytics() {
 		try {
-            JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear("2006-05-21", "2014-11-24");
+            JSONObject yearJsonResult = OracleHandler.getInstance().getAnalyticsForYear("2006-05-21", "2014-11-24", "'Santa Clause', 'mario'", null);
+            
             JSONArray yearArray = yearJsonResult.getJSONArray("result");
             
             for (int i=0; i<yearArray.length(); i++) {
             	JSONObject yearObj = yearArray.getJSONObject(i);
             	int year = yearObj.getInt("YEAR");
             	
-            	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, "2006-05-21", "2014-11-24");
+            	JSONObject monthJsonResult = OracleHandler.getInstance().getAnalyticsForMonthByYear(year, "2006-05-21", "2014-11-24", null, null);
             	JSONArray monthArray = monthJsonResult.getJSONArray("result");
             	yearObj.put("MONTH_LIST", monthArray);
             	
@@ -173,7 +174,7 @@ public class OracleHandlerTests {
             		JSONObject monthObj = monthArray.getJSONObject(j);
             		int month = monthObj.getInt("MONTH");
             		
-            		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, "2006-05-21", "2014-11-24");
+            		JSONObject dayJsonResult = OracleHandler.getInstance().getAnalyticsForDayByYearByMonth(year, month, "2006-05-21", "2014-11-24", null, null);
             		
             		monthObj.put("DAY_LIST", convertDaysToWeeksJson(year, month, dayJsonResult).getJSONArray("result"));
             	}
@@ -196,6 +197,7 @@ public class OracleHandlerTests {
 		
 		for (int i=0; i<dayJsonArray.length(); i++) {
 			int day = dayJsonArray.getJSONObject(i).getInt("DAY");
+			int dayCount = dayJsonArray.getJSONObject(i).getInt("COUNT");
 			
 			Calendar cal = Calendar.getInstance();
 			cal.set(year, month, day);
@@ -203,9 +205,9 @@ public class OracleHandlerTests {
 			int week = cal.get(Calendar.WEEK_OF_YEAR);
 			
 			if (weekMap.get(week) != null)
-				weekMap.put(week, weekMap.get(week)+1);
+				weekMap.put(week, weekMap.get(week)+dayCount);
 			else
-				weekMap.put(week, 1);
+				weekMap.put(week, dayCount);
 		}
 		
 		Iterator<Map.Entry<Integer, Integer>> entries = weekMap.entrySet().iterator();

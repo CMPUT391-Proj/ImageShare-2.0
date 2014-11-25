@@ -34,8 +34,8 @@ import org.json.JSONObject;
 public class OracleHandler {
 	
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -925,7 +925,7 @@ public class OracleHandler {
     }
 	
 	// Data Analytics Section
-	public JSONObject getImagesPerUser() throws Exception {
+	public JSONObject getImagesPerUserOLD() throws Exception {
 		String query = 
 			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
 			"FROM USERS U "+
@@ -955,109 +955,102 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
-	public JSONObject getAnalyticsForYear(String fromDate, String toDate) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-		boolean isDate = false;
-		
-		if (fromDate != null)
-			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		
-		if (toDate != null)
-			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-		
-		if (fromDate != null || toDate != null)
-			isDate = true;
-		
+	public JSONObject getImagesPerUser() throws Exception {
 		String query = 
-			String.format(
-			"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
+			"SELECT OWNER_NAME, COUNT(*) AS COUNT "+ 
 			"FROM IMAGES "+
-			"%s %s %s %s "+
-			"GROUP BY TO_CHAR(TRUNC(TIMING), 'yyyy') "+
-			"ORDER BY TO_CHAR(TRUNC(TIMING), 'yyyy') ", 
-			(isDate ? "WHERE" : ""),
-			fromDateQuery, 
-			(fromDate != null && toDate != null ? "AND" : ""),
-			toDateQuery);
-		
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		
-		return generateJsonFromPreparedStatementNEW(stmt);
-	}
-
-	public JSONObject getAnalyticsForMonth(String fromDate, String toDate) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-		boolean isDate = false;
-		
-		if (fromDate != null)
-			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		
-		if (toDate != null)
-			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-		
-		if (fromDate != null || toDate != null)
-			isDate = true;
-		
-		String query = 
-			String.format(
-			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
-			"FROM IMAGES "+
-			"%s %s %s %s "+
-			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
-			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
-			(isDate ? "WHERE" : ""),
-			fromDateQuery, 
-			(fromDate != null && toDate != null ? "AND" : ""),
-			toDateQuery);
+			"GROUP BY OWNER_NAME "+
+			"ORDER BY OWNER_NAME";
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
-	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate) throws Exception {
+	public JSONObject getAnalyticsForYear(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
-		
-		if (fromDate != null)
-			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		
-		if (toDate != null)
-			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-		
+
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+
 		String query = 
 			String.format(
-			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
 			"FROM IMAGES "+
-			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
-			"AND %s %s %s "+
-			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
-			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
-			year,
-			fromDateQuery, 
-			(fromDate != null && toDate != null ? "AND" : ""),
-			toDateQuery);
+			"WHERE %s " +
+			"AND %s "+
+			"%s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'yyyy') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'yyyy') ", 
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 
-	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate) throws Exception {
+	public JSONObject getAnalyticsForMonth(String fromDate, String toDate, String subjectList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
-		boolean isDate = false;
 		
-		if (fromDate != null)
-			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
 		
-		if (toDate != null)
-			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE %s " +
+			"AND %s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			fromDateQuery, toDateQuery, 
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
 		
-		if (fromDate != null || toDate != null)
-			isDate = true;
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+	
+	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
+			"AND %s "+
+			"AND %s "+
+			"%s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			year, fromDateQuery, toDateQuery, 
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
+
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+
+	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
 		
 		String query = 
 			String.format(
@@ -1065,44 +1058,39 @@ public class OracleHandler {
 			"FROM IMAGES "+
 			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
 			"AND TO_CHAR(TRUNC(TIMING), 'MM')=%s "+
-			"AND %s %s %s "+
+			"AND %s "+
+			"AND %s "+
+			"%s "+
 			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
 			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ",
 			year, month,
-			fromDateQuery, 
-			(fromDate != null && toDate != null ? "AND" : ""),
-			toDateQuery);
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
 		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
-	public JSONObject getAnalyticsForDay(String fromDate, String toDate) throws Exception {
+	public JSONObject getAnalyticsForDay(String fromDate, String toDate, String subjectList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
-		boolean isDate = false;
 		
-		if (fromDate != null)
-			fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		
-		if (toDate != null)
-			toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-		
-		if (fromDate != null || toDate != null)
-			isDate = true;
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
 		
 		String query = 
 			String.format(
 			"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
 			"FROM IMAGES "+
+			"WHERE %s "+
+			"AND %s "+
 			"%s %s %s %s "+
 			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
 			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ", 
-			(isDate ? "WHERE" : ""),
-			fromDateQuery, 
-			(fromDate != null && toDate != null ? "AND" : ""),
-			toDateQuery);
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		

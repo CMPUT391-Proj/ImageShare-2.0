@@ -10,7 +10,7 @@
 			<p id="titleLeft">Find Images.</p>
 
 			<form id="landing-page-search-form" class="well" method="get"
-				action="/search" role="form" onsubmit="return getcoord(this);">
+				action="/search" role="form">
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3">
 

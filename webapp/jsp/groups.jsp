@@ -110,13 +110,6 @@ hgroup h2.lead {
 		<div class="container">
 			<h1>Groups</h1>
 			<p id="titleLeft">Share images with groups.</p>
-			<!-- Button to trigger group create -->
-			<form action="groups" enctype="multipart/form-data" method="post"
-				role="form">
-				<button id="createGrp" type="submit"
-					class="btn btn-primary btn-lg pull-right" data-backdrop="static">Create
-					a group</button>
-			</form>
 		</div>
 	</div>
 
@@ -127,8 +120,8 @@ hgroup h2.lead {
 				<div class='col-md-7 col-md-offset-3'>
 					<div class='form-group'>
 						<div class="form-group">
-							<label for="groupname" class="col-sm-3 control-label">Enter a name for your new group:
-							</label>
+							<label for="groupname" class="col-sm-3 control-label">Enter
+								a name for your new group: </label>
 							<div class="col-sm-9">
 								<input type="text" name="groupname" class="form-control"
 									placeholder="Group Name" id="groupname">
@@ -139,14 +132,15 @@ hgroup h2.lead {
 			</div>
 			<div class='span7 text-center'>
 				<div class='btn-group'>
-					<button id='submitGrp' type='submit' class='btn btn-primary'>Create a New Group</button>
+					<button id='submitGrp' name='submitGrp' type='submit' class='btn btn-primary'>Create
+						a New Group</button>
 				</div>
 			</div>
 		</form>
 
 		<hgroup class="mb20">
 			<h2 class="lead">
-				You are a member of <strong class="text-danger"><%= (String)request.getSession(false).getAttribute("groupcount") %></strong>
+				You are an owner of <strong class="text-danger"><%= (String)request.getSession(false).getAttribute("groupcount") %></strong>
 				group(s)
 			</h2>
 		</hgroup>

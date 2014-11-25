@@ -47,11 +47,13 @@
 			<% String editURL = "updateimage?" + popularImages.get(i).getPhotoId(); %>
 			<% String displayURL = "display?" + popularImages.get(i).getPhotoId(); %>
 
-			popular_thumbs = popular_thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><div id="p<%=popularImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox" href="<%=displayURL%>"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
+			popular_thumbs = popular_thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><small class=\'text-muted\'><%=i+1%><br>hits: <%=popularImages.get(i).getHits()%></small>'
 
 			<% if (popularImages.get(i).getOwnerName().equals(user)) { %> 
-				popular_thumbs = popular_thumbs + '<a href="<%=editURL%>"><small class=\'text-muted\'>Edit</small></a>';
+				popular_thumbs = popular_thumbs + '<br><a href="<%=editURL%>"><strong class=\'text-muted\'>Edit</strong></a>';
 			<% } %>
+
+			popular_thumbs = popular_thumbs + '<div id="p<%=popularImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox" href="<%=displayURL%>"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
 
 			popular_thumbs = popular_thumbs + '</div>';
 		<% } %>
@@ -65,11 +67,13 @@
 			<% String editURL = "updateimage?" + allImages.get(i).getPhotoId(); %>
 			<% String displayURL = "display?" + allImages.get(i).getPhotoId(); %>
 			
-			thumbs = thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'><div id="<%=allImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox" href="<%=displayURL%>"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
+			thumbs = thumbs + '<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'>'
 
 			<% if (allImages.get(i).getOwnerName().equals(user)) { %> 
-				thumbs = thumbs + '<a href="<%=editURL%>"><small class=\'text-muted\'>Edit</small></a>';
+				thumbs = thumbs + '<a href="<%=editURL%>"><strong class=\'text-muted\'>Edit</strong></a>';
 			<% } %>
+			
+			thumbs = thumbs + '<div id="<%=allImages.get(i).getPhotoId()%>"><a class="thumbnail fancybox" href="<%=displayURL%>"><img class="img-responsive" alt="" src="<%=getURL%>"/></a></div>';
 
 			thumbs = thumbs + '</div>';
 		<% } %>

@@ -292,7 +292,31 @@ public class OracleHandler {
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
-        return retrieveImagesFromResultSet(rs);
+
+        List<Image> images = new ArrayList<Image>();
+
+        while (rs.next()) {
+            int photo_id = rs.getInt("photo_id");
+            String owner = rs.getString("owner_name");
+            int permitted = rs.getInt("permitted");
+            String subject = rs.getString("subject");
+            String place = rs.getString("place");
+            Date timing = rs.getDate("timing");
+            String description = rs.getString("description");
+            BufferedImage thumbnail = ImageIO.read(rs.getBlob("thumbnail")
+                    .getBinaryStream());
+            BufferedImage pic = ImageIO.read(rs.getBlob("photo")
+                    .getBinaryStream());
+            int hits = rs.getInt("hits");
+
+            Image image = new Image(owner, permitted, subject, place, timing,
+                    description, thumbnail, pic);
+            image.setPhotoId(photo_id);
+            image.setHits(hits);
+            images.add(image);
+        }
+
+        return images;
     }
     
     /**

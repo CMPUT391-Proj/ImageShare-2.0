@@ -19,6 +19,7 @@ public class Image {
 	private String description; // 2048 char max
 	private BufferedImage thumbnail;
 	private BufferedImage image;
+	private int hits;
 	
     public Image(String ownerName, int permitted, String subject, String place,
             Date date, String description, BufferedImage thumbnail,
@@ -72,6 +73,10 @@ public class Image {
         return image;
     }
     
+    public int getHits() {
+        return hits;
+    }
+    
 	// setters
 	
     public void setPhotoId(int photoId) {
@@ -108,5 +113,9 @@ public class Image {
 
 	public void setDescription(String description) {
 	    this.description = description;
+	}
+	
+	public void setHits(int hits) {
+	    this.hits = hits;
 	}
 }

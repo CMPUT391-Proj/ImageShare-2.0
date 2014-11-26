@@ -69,6 +69,15 @@
 		<url-pattern>/help</url-pattern>
 	</servlet-mapping> 			
 
+	<servlet>
+		<servlet-name>Groups</servlet-name>
+		<jsp-file>/webapp/jsp/groups.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Groups</servlet-name>
+		<url-pattern>/groupsview</url-pattern>
+	</servlet-mapping> 				
+
 <!-- data analysis -->
 	<servlet>
 		<servlet-name>DataAnalysis</servlet-name>

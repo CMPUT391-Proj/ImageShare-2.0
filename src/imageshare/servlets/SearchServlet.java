@@ -45,9 +45,10 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
-			response.sendRedirect("login.jsp");
+			response.sendRedirect("index");
 			return;
 		};
+		
 		thumbs = "";
 		request.getSession(true).setAttribute("galHTML", thumbs);
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(SEARCH_JSP);    
@@ -59,7 +60,7 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
-			response.sendRedirect("login.jsp");
+			response.sendRedirect("index");
 			return;
 		};
 

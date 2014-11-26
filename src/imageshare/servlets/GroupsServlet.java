@@ -1,28 +1,21 @@
 package imageshare.servlets;
 import imageshare.model.Group;
-import imageshare.model.GroupList;
 import imageshare.oraclehandler.OracleHandler;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import javax.servlet.http.HttpSession;
 
 public class GroupsServlet extends HttpServlet {
 
-	private static final String GROUPS_JSP = "/webapp/jsp/groups.jsp";
+	private static final String GROUPS_JSP = "groupsview";
 
 	OracleHandler database;
 	String user = "";
@@ -36,7 +29,7 @@ public class GroupsServlet extends HttpServlet {
 
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
-			response.sendRedirect("login.jsp");
+			response.sendRedirect("index");
 			return;
 		};
 
@@ -50,8 +43,7 @@ public class GroupsServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher(GROUPS_JSP);    
-		requestDispatcher.forward(request, response);
+		response.sendRedirect(GROUPS_JSP);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -59,17 +51,23 @@ public class GroupsServlet extends HttpServlet {
 		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
-			response.sendRedirect("login.jsp");
+			response.sendRedirect("index");
 			return;
 		};
 		
+	    HttpSession session = request.getSession();
+
 		if (request.getParameter("submitGrp") != null) {
 			String new_group = request.getParameter("groupname");
 			try {
 				database.storeNewGroup(user, new_group);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    if (e instanceof SQLIntegrityConstraintViolationException)
+			        session.setAttribute("error", "Error: Group name must be unique.");
+			    else
+			        session.setAttribute("error", e.toString());
+			    response.sendRedirect(GROUPS_JSP);
+			    return;
 			}
 		}
 		else if(request.getParameter("addmember") != null) {
@@ -79,8 +77,9 @@ public class GroupsServlet extends HttpServlet {
 				try {
 					database.add_friend(Integer.parseInt(groupId), request.getParameter("listadd"));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    session.setAttribute("error", e.toString());
+                    response.sendRedirect(GROUPS_JSP);
+                    return;
 				}
 			}
 		}
@@ -88,14 +87,12 @@ public class GroupsServlet extends HttpServlet {
 			if(request.getParameter("listdelete") != null)
 			{
 				String groupId = request.getQueryString();
-				try{
+				try {
 					database.delete_friend(Integer.parseInt(groupId), request.getParameter("listdelete"));
-
-				}
-
-				catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (Exception e) {
+                    session.setAttribute("error", e.toString());
+                    response.sendRedirect(GROUPS_JSP);
+                    return;
 				}
 			}
 
@@ -106,8 +103,9 @@ public class GroupsServlet extends HttpServlet {
 			try {
 				database.delete_group(delete_group);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                session.setAttribute("error", e.toString());
+                response.sendRedirect(GROUPS_JSP);
+                return;
 			}
 		}
 		//checkNewGroup(request, response);

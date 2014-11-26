@@ -45,8 +45,10 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
-			response.sendRedirect("login.jsp");
+			response.sendRedirect("index");
+			return;
 		};
+		
 		thumbs = "";
 		request.getSession(true).setAttribute("galHTML", thumbs);
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(SEARCH_JSP);    
@@ -54,6 +56,14 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		user = (String) request.getSession(true).getAttribute("user");
+		/* if no user logged in, redirect to login page */
+		if (user == null) {
+			response.sendRedirect("index");
+			return;
+		};
+
 		String orderStr = "";
 		thumbs = "";
 		database = OracleHandler.getInstance();
@@ -107,18 +117,18 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		if (!(keywords.equals(""))) {
 			if((fromDate.equals("")) || (toDate.equals(""))) {
 				try {
-					results = database.getImagesByKeywords(keywords, order);
+					results = database.getImagesByKeywords(user, keywords, order);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				thumbs = thumbs + "<h3>Your results for: <strong class='text-primary'>" + keywords + "</strong>" + 
-				" ordered by <strong class='text-success'>" + orderStr + "</strong></h3>";
+						" ordered by <strong class='text-success'>" + orderStr + "</strong></h3>";
 				writeThumbnails(request, response);
 			}
 			else {
 				try {       
-					results = database.getImagesByDateAndKeywords(fromdatesql, 
+					results = database.getImagesByDateAndKeywords(user, fromdatesql, 
 							todatesql, keywords, order);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -137,7 +147,7 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 			if (!(order.equals("order by 1 DESC"))) {
 
 				try {
-					results = database.getImagesByDate(fromdatesql, todatesql, order);
+					results = database.getImagesByDate(user, fromdatesql, todatesql, order);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -177,12 +187,17 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 
 			thumbs = thumbs + "<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'>"+
 					"<small class=\'text-muted\'>"+
-					Integer.toString(i+1) + "<br></small>" +
-					"<small class=\'text-muted\'>"+"Ranking: "  + Integer.toString(results.get(i).getScore()) +  "<br></small>" +
-					"<small class=\'text-muted\'>"+"Date Created:" + results.get(i).getDate().toString() +  "<br></small>";
+					Integer.toString(i+1) + "<br></small>";
+
+			//display ranking is that is the option
+			if(!sortby.equals("1") && !sortby.equals("2"))
+			{
+				thumbs = thumbs + "<small class=\'text-muted\'>"+"Ranking: "  + Integer.toString(results.get(i).getScore()) +  "<br></small>";
+			}
+
+			thumbs = thumbs + "<small class=\'text-muted\'>"+"Date Created: " + results.get(i).getDate().toString() +  "<br></small>";
 			if (results.get(i).getOwnerName().equals(user)) {  
-				thumbs = thumbs + "<a href='" + 
-						editURL +
+				thumbs = thumbs + "<a href='" + editURL +
 						"'><strong class=\'text-muted\'>Edit</strong></a>";
 			} 
 

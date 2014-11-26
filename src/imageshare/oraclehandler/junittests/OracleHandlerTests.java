@@ -189,17 +189,6 @@ public class OracleHandlerTests {
 		System.out.println("FINISHED generateAnalytics");
 	}
 	*/
-	@Test
-	public void test() {
-		try {
-			OracleHandler.getInstance().getImagesByKeywords("MARIO", "order by score DESC");
-            
-		} catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		System.out.println("FINISHED generateAnalytics");
-	}
 	
 	private JSONObject convertDaysToWeeksJson(int year, int month, JSONObject dayJsonResult) {
 		JSONArray dayJsonArray = dayJsonResult.getJSONArray("result");

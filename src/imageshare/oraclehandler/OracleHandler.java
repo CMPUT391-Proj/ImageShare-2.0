@@ -915,23 +915,17 @@ public class OracleHandler {
 	 * @throws Exception
 	 */
 	public JSONObject getAnalyticsForYear(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-
-		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
 								"FROM IMAGES "+
-								"WHERE %s " +
-								"AND %s "+
+								"WHERE TIMING >= TO_DATE('%s', 'yyyy-MM-dd') " +
+								"AND TIMING <= TO_DATE('%s', 'yyyy-MM-dd') "+
 								"%s "+
 								"%s "+
 								"GROUP BY TO_CHAR(TRUNC(TIMING), 'yyyy') "+
 								"ORDER BY TO_CHAR(TRUNC(TIMING), 'yyyy') ", 
-								fromDateQuery, toDateQuery,
+								fromDate, toDate,
 								(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
 								(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
 
@@ -952,24 +946,18 @@ public class OracleHandler {
 	 * @throws Exception
 	 */
 	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-
-		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
 								"FROM IMAGES "+
 								"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
-								"AND %s "+
-								"AND %s "+
+								"AND TIMING >= TO_DATE('%s', 'yyyy-MM-dd') "+
+								"AND TIMING <= TO_DATE('%s', 'yyyy-MM-dd') "+
 								"%s "+
 								"%s "+
 								"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
 								"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
-								year, fromDateQuery, toDateQuery, 
+								year, fromDate, toDate, 
 								(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
 								(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
 
@@ -993,25 +981,20 @@ public class OracleHandler {
 	 * @throws Exception
 	 */
 	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-
-		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
 								"FROM IMAGES "+
 								"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
 								"AND TO_CHAR(TRUNC(TIMING), 'MM')=%s "+
-								"AND %s "+
-								"AND %s "+
+								"AND TIMING >= TO_DATE('%s', 'yyyy-MM-dd') "+
+								"AND TIMING <= TO_DATE('%s', 'yyyy-MM-dd') "+
+								"%s "+
 								"%s "+
 								"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
 								"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ",
 								year, month,
-								fromDateQuery, toDateQuery,
+								fromDate, toDate,
 								(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
 								(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
 

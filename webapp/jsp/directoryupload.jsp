@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@include file="header.jsp" %>
+<%@include file="redirect.jsp" %>
 <%@ page import="imageshare.model.Group,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
-  String user = (String) session.getAttribute("user");
-  if (user == null) response.sendRedirect("index");
   List<Group> groups = OracleHandler.getInstance().getInvolvedGroups(user);
   String uploadURL = request.getRequestURL().toString();
   uploadURL = uploadURL.substring(0, uploadURL.lastIndexOf("/")) + "/directoryUpload";

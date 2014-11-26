@@ -4,7 +4,7 @@
 <%@ page import="imageshare.model.Group,imageshare.model.Image,imageshare.oraclehandler.OracleHandler,java.util.List,java.util.ArrayList"%>
 <%
 	String user = (String) session.getAttribute("user");
-	if (user == null) response.sendRedirect("index");
+	if (user == null) { response.sendRedirect("index"); return; }
 	List<Image> popularImages = OracleHandler.getInstance().getImagesByPopularity(user);
 	int numPopularImages = OracleHandler.getInstance().getNumberOfPopularImages(user);
 	List<Image> allImages = OracleHandler.getInstance().getAllImages(user);

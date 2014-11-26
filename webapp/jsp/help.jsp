@@ -111,8 +111,26 @@
 	    <p>TODO</p>
 
 	    <h1 id="data">Data Analysis</h1>
-	    <p>TODO</p>
-
+	    <h3>Data Analysis</h3>
+	      <p>This module can be accessed <a href="dataanalysis">here</a> once 
+	         logged in admin or via the navigation bar > statistics</p>
+	      <h4>Images Per User</h4>
+	      <p>This option allows the admin to gather a drill down analysis of the 
+	      	number of images belonging to each user. To view this data, in the 
+	      	"Images Per User" section, the admin will specify a period of which
+	      	they want to view and click "Search".</p>
+	      <h4>Images Per Subject</h4>
+	      <p>This option allows the admin to gather a drill down analysis of the
+	      	number of images published per subject for all subjects. To view this 
+	      	data, in the "Images Per Subject" section, the admin has to specify a
+	      	period of which they want to view and click "Search"</p>
+	      <h4>Custom Parameter Search</h4>
+	      <p>This option allows the admin to gather a drill down analysis of the
+	      	number of images in the system by specifying custom criteria. The criteria
+	      	includes the period, subject(s) and/or user(s) of which the admin wants 
+	      	to search. To view this data, in the "Custom Parameter Search" section, the
+	      	admin has to specify the period, but will have the option to filter by
+	      	subject(s) and/or user(s) and click "Search".</p>
 	</div>
 
 	<div class="container">

@@ -5,15 +5,11 @@ import static org.junit.Assert.assertTrue;
 import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -15,7 +15,9 @@ import javax.servlet.http.HttpSession;
 
 public class GroupsServlet extends HttpServlet {
 
-	private static final String GROUPS_JSP = "groupsview";
+    private static final long serialVersionUID = 1L;
+
+    private static final String GROUPS_JSP = "groupsview";
 
 	OracleHandler database;
 	String user = "";
@@ -35,7 +37,6 @@ public class GroupsServlet extends HttpServlet {
 
 		try {
 			group_list = database.getGroups(user);
-			//database.closeConnection();
 
 			writeGroupsJSP(request, response, group_list);
 		}
@@ -114,16 +115,7 @@ public class GroupsServlet extends HttpServlet {
 				return;
 			}
 		}
-		//checkNewGroup(request, response);
-		//		if (request.getParameter("submitGrp") == null)
-		//		{
 		response.sendRedirect("groups");
-		//		}
-		//		else if(request.getParameter("backGrp") == null)
-		//		{
-		//			RequestDispatcher requestDispatcher = request.getRequestDispatcher(GROUPS_JSP);    
-		//			requestDispatcher.forward(request, response);
-		//		}
 	}
 
 	/**
@@ -217,43 +209,6 @@ public class GroupsServlet extends HttpServlet {
 		}
 		request.getSession(true).setAttribute("groupcount", Integer.toString(grpList.size()));
 		request.getSession(true).setAttribute("groupBodyHTML", bodyHTML);
-	}
-
-	/**
-	 * Checks to see if a group name has been entered in the
-	 * "new_group" box
-	 * @param HttpServletRequest
-	 */
-	public void checkNewGroup(HttpServletRequest request, HttpServletResponse response) {
-
-		//			bodyHTML = 
-		//					"<form id='addGroupForm' class='well' method='post'" +
-		//							"action='" +  GROUPS_JSP + "' role='form''>" +
-		//							"<div class='row'>" +
-		//							"<div class='col-md-6 col-md-offset-3'>" +
-		//							"<h3 class='text-danger'>Please enter a valid group name</h3>" +
-		//							"<div class='form-group'>" +
-		//							"<p>Enter a name for your new group:</p>" +
-		//							"<input class='form-control' name='query' type='text'" +
-		//							"placeholder='group name...'>" +
-		//							"</div>" +
-		//							"</div>" +
-		//							"</div>" +
-		//							"<div class='span7 text-center'>" +
-		//							"<div class='btn-group'>" +
-		//							"<button id='submitGrp' type='submit'" +
-		//							"class='btn btn-primary' data-backdrop='static'>Submit" +
-		//							"</button>" +
-		//							"<button id='backGrp' type='submit'" +
-		//							"class='btn btn-primary' data-backdrop='static'>Back" +
-		//							"</button>" +
-		//							"</div>" +
-		//							"</div>" +
-		//							"</form>";
-
-		//		request.getSession(true).setAttribute("bodyHTML", bodyHTML);
-		//		RequestDispatcher requestDispatcher = request.getRequestDispatcher(GROUPS_JSP);    
-
 	}
 }
 

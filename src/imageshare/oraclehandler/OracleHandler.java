@@ -512,7 +512,8 @@ public class OracleHandler {
 			String name = rs.getString("group_name");
 			int id = rs.getInt("group_id");
 			Date date = rs.getDate("date_created");
-			groups.add(new Group(id, user, name, date));
+			String username = rs.getString("user_name");
+			groups.add(new Group(id, username, name, date));
 		}
 
 		return groups;     

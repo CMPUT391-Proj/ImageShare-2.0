@@ -61,7 +61,6 @@
 		  Gallery's section on Image Updating</a></p>
 
 	    <h1 id="upload">Photo Upload</h1>
-	    <h3 id="singleUpload">Single Photo Upload</h3>
 		  <p>This module can be accessed <a href="imageupload">here</a> 
 		  	once logged in or via the navigation bar > Upload Image.</p>
 		  <p>Select the images to be uploaded and then fill in the 

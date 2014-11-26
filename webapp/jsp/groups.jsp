@@ -127,7 +127,7 @@ hgroup h2.lead {
 								a name for your new group: </label>
 							<div class="col-sm-9">
 								<input type="text" name="groupname" class="form-control"
-									placeholder="Group Name" id="groupname">
+									placeholder="Group Name" id="groupname" required>
 							</div>
 						</div>
 					</div>

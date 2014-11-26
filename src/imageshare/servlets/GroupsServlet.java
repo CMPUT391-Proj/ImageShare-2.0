@@ -54,20 +54,26 @@ public class GroupsServlet extends HttpServlet {
 			response.sendRedirect("index");
 			return;
 		};
-		
-	    HttpSession session = request.getSession();
+
+		HttpSession session = request.getSession();
 
 		if (request.getParameter("submitGrp") != null) {
 			String new_group = request.getParameter("groupname");
-			try {
-				database.storeNewGroup(user, new_group);
-			} catch (Exception e) {
-			    if (e instanceof SQLIntegrityConstraintViolationException)
-			        session.setAttribute("error", "Error: Group name must be unique.");
-			    else
-			        session.setAttribute("error", e.toString());
-			    response.sendRedirect(GROUPS_JSP);
-			    return;
+			if(!new_group.equals("")){
+				try {
+					database.storeNewGroup(user, new_group);
+				} catch (Exception e) {
+					if (e instanceof SQLIntegrityConstraintViolationException)
+						session.setAttribute("error", "Error: Group name must be unique.");
+					else
+						session.setAttribute("error", e.toString());
+					response.sendRedirect(GROUPS_JSP);
+					return;
+				}
+			}
+			else
+			{
+	            session.setAttribute("error", "Group name cannot be empty");
 			}
 		}
 		else if(request.getParameter("addmember") != null) {
@@ -77,9 +83,9 @@ public class GroupsServlet extends HttpServlet {
 				try {
 					database.add_friend(Integer.parseInt(groupId), request.getParameter("listadd"));
 				} catch (Exception e) {
-                    session.setAttribute("error", e.toString());
-                    response.sendRedirect(GROUPS_JSP);
-                    return;
+					session.setAttribute("error", e.toString());
+					response.sendRedirect(GROUPS_JSP);
+					return;
 				}
 			}
 		}
@@ -90,9 +96,9 @@ public class GroupsServlet extends HttpServlet {
 				try {
 					database.delete_friend(Integer.parseInt(groupId), request.getParameter("listdelete"));
 				} catch (Exception e) {
-                    session.setAttribute("error", e.toString());
-                    response.sendRedirect(GROUPS_JSP);
-                    return;
+					session.setAttribute("error", e.toString());
+					response.sendRedirect(GROUPS_JSP);
+					return;
 				}
 			}
 
@@ -103,9 +109,9 @@ public class GroupsServlet extends HttpServlet {
 			try {
 				database.delete_group(delete_group);
 			} catch (Exception e) {
-                session.setAttribute("error", e.toString());
-                response.sendRedirect(GROUPS_JSP);
-                return;
+				session.setAttribute("error", e.toString());
+				response.sendRedirect(GROUPS_JSP);
+				return;
 			}
 		}
 		//checkNewGroup(request, response);

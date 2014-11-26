@@ -5,8 +5,14 @@
 <%
 	String username = (String) session.getAttribute("user");
 
+	if (username == null) { response.sendRedirect("index"); return; }
+
 	User user = OracleHandler.getInstance().getUser(username);
-	Person person = OracleHandler.getInstance().getPerson(username);
+	Person person = null;
+
+	if (!username.equals("admin")) {
+		person = OracleHandler.getInstance().getPerson(username);
+	}
 %>
 <body>
 	<%@include file="navbar.jsp" %>
@@ -30,7 +36,7 @@
 						<div class="form-group">
 							<label for="username" class="col-sm-3 control-label">Username</label>
 							<div class="col-sm-7">
-								<% out.println("<input type=\"text\" name=\"username\" class=\"form-control\" id=\"username\" value=\""+user.getUsername()+"\" readonly>"); %>
+								<input type="text" name="username" class="form-control" id="username1" readonly>
 							</div>
 						</div>
 						<div class="form-group">
@@ -140,14 +146,21 @@
 		});
 
 		$(document).ready(function() {
-			// username doesn't set for some reason
-			//$('#username').val(<% out.print("'"+user.getPassword()+"'"); %>);
-			$('#password').val(<% out.print("'"+user.getPassword()+"'"); %>);
-			$('#firstname').val(<% out.print("'"+person.getFirstname()+"'"); %>);
-			$('#lastname').val(<% out.print("'"+person.getLastname()+"'"); %>);
-			$('#address').val(<% out.print("'"+person.getAddress()+"'"); %>);
-			$('#email').val(<% out.print("'"+person.getEmail()+"'"); %>);
-			$('#phone').val(<% out.print("'"+person.getPhone()+"'"); %>);
+			var username = <% out.print("'"+user.getUsername()+"'"); %>;
+			var password = <% out.print("'"+user.getPassword()+"'"); %>;
+			var firstname = <% if (person != null) { out.print("'"+person.getFirstname()+"'"); } else { out.print("''"); } %>;
+			var lastname = <% if (person != null) { out.print("'"+person.getLastname()+"'"); } else { out.print("''"); } %>;
+			var address = <% if (person != null) { out.print("'"+person.getAddress()+"'"); } else { out.print("''"); } %>;
+			var email = <% if (person != null) { out.print("'"+person.getEmail()+"'"); } else { out.print("''"); } %>;
+			var phone = <% if (person != null) { out.print("'"+person.getPhone()+"'"); } else { out.print("''"); } %>;
+
+			$('#username1').val(username);
+			$('#password').val(password);
+			$('#firstname').val(firstname);
+			$('#lastname').val(lastname);
+			$('#address').val(address);
+			$('#email').val(email);
+			$('#phone').val(phone);
 		});
 
 		$('#edit-password,#edit-firstname,#edit-lastname,#edit-address,#edit-email,#edit-phone').on('click', function() {

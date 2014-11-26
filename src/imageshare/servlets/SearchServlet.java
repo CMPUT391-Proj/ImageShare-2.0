@@ -56,7 +56,8 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		String[] keywordsList;
+				
 		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
@@ -107,7 +108,7 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		// rank
 		else {
 			orderStr = "Rank";
-			order = "order by 1 DESC";
+			order = "order by score DESC";
 		}
 
 		/*
@@ -115,9 +116,10 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 		 * only keyword search to get resultset of query
 		 */
 		if (!(keywords.equals(""))) {
+			keywordsList = keywords.split("\\s+");
 			if((fromDate.equals("")) || (toDate.equals(""))) {
 				try {
-					results = database.getImagesByKeywords(user, keywords, order);
+					results = database.getImagesByKeywords(user, keywordsList, order);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -127,9 +129,9 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 				writeThumbnails(request, response);
 			}
 			else {
-				try {       
+				try {
 					results = database.getImagesByDateAndKeywords(user, fromdatesql, 
-							todatesql, keywords, order);
+							todatesql, keywordsList, order);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

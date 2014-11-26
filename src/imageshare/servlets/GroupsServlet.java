@@ -73,7 +73,7 @@ public class GroupsServlet extends HttpServlet {
 			}
 			else
 			{
-	            session.setAttribute("error", "Group name cannot be empty");
+				session.setAttribute("error", "Group name cannot be empty");
 			}
 		}
 		else if(request.getParameter("addmember") != null) {
@@ -165,12 +165,15 @@ public class GroupsServlet extends HttpServlet {
 
 			// fill add listbox with existing group members
 			for (int j = 0; j < members.size(); j++) {
-				bodyHTML =  bodyHTML +"<option id='"+members.get(j)+"' name='"+members.get(j)+"' value='" + members.get(j) + "'>" + members.get(j) + "</option>";
+				if(!members.get(j).equals(user)){
+					bodyHTML =  bodyHTML +"<option id='"+members.get(j)+"' name='"+members.get(j)+"' value='" + members.get(j) + "'>" + members.get(j) + "</option>";
+				}
 			}
 
 			bodyHTML =  bodyHTML + "</select>" +
 					"<button id='deletemember' name='deletemember' type='submit' class='btn btn-primary btn-sm' data-backdrop='static'>Delete</button>" +
 					"<select class='form-control' id='listadd' name='listadd'>";
+
 			// fill delete listbox with nonexisting users
 			try {
 				members = database.getUsersNotInGroup((grpList.get(i).getGroupId()));
@@ -178,7 +181,9 @@ public class GroupsServlet extends HttpServlet {
 				e1.printStackTrace();
 			}
 			for (int k = 0; k < members.size(); k++) {
-				bodyHTML =  bodyHTML +"<option id='"+members.get(k)+"' name='"+members.get(k)+"' value='" + members.get(k) + "'>" + members.get(k) + "</option>";
+				if(!members.get(k).equals(user)){
+					bodyHTML =  bodyHTML +"<option id='"+members.get(k)+"' name='"+members.get(k)+"' value='" + members.get(k) + "'>" + members.get(k) + "</option>";
+				}
 			}
 
 			try {

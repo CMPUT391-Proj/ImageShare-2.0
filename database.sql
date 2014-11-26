@@ -4,8 +4,8 @@ DROP TABLE groups CASCADE CONSTRAINTS;
 DROP TABLE persons CASCADE CONSTRAINTS;
 DROP TABLE users CASCADE CONSTRAINTS;
 DROP TABLE imagepopularity CASCADE CONSTRAINTS;
-DROP SEQUENCE image_sequence;
 DROP SEQUENCE group_id_sequence;
+DROP SEQUENCE image_sequence;
 
 CREATE TABLE users (
    user_name varchar(24),
@@ -68,9 +68,9 @@ CREATE TABLE images (
 
 CREATE TABLE imagepopularity (
    photo_id int,
-   hits int
+   hits int,
    PRIMARY KEY (photo_id),
-   FOREIGN KEY (photo_id) REFERENCES images,
+   FOREIGN KEY (photo_id) REFERENCES images
 ) tablespace c391ware;
 
 CREATE INDEX myimageindex ON images(description) INDEXTYPE IS CTXSYS.CONTEXT;

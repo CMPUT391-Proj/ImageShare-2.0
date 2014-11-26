@@ -54,7 +54,17 @@
 	    <h3>Login</h3>
 	      <p>See <a href="#login">User Management's section on Login</a></p>
 	   	<h3>Manage Groups</h3> 
-		  <p>TODO</p>
+		  <p>This module can be accessed <a href="groupsview">here</a>
+		  	once logged in or via the navigation bar > Groups.</p>
+		  <p>To create a new group, enter a unique group name and click
+		  	"Create a New Group". You should now see the new group you 
+		  	created on the same page.</p>
+		  <p>To delete a group, click "Delete Group" under the group 
+		  	you are interested in deleting.</p>
+		  <p>To add a member to the group, choose the member you wish to add
+		  	in the drop down list and click "Add"</p>
+		  <p>To delete a member in the group, choose the member you wish
+		  	to delete in the drop down list and click "Delete"</p>
 		<h3>Setting a Photo's Security</h3>
 		  <p>See <a href="#imagepermissions">Photo Upload's section on 
 		  Image Permissions</a> and <a href="#permissionupdate">

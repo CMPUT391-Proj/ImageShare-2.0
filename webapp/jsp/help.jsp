@@ -118,7 +118,17 @@
 		  	to save these changes.</p>
 
 	    <h1 id="search">Search</h1>
-	    <p>TODO</p>
+	    <p>To search, enter an optional comma separated list of keywords. 
+	    	If you would like to specify the range of dates, you can also
+	    	supply the start date and end dates. Dates and keywords are
+	    	both optional. If you do not supply either, all images that
+	    	you have permission to view will be returned by the query.</p>
+	    <p>You must choose to sort by descending time, ascending time, or
+	    	rank. Choosing descending time will sort the images by date in
+	    	a descending fashion; vice versa for ascending time. Rank sorts
+	    	the images based on the ranking formula provided in class. 
+	    <p>Hit submit to start the search once your criteria is filled out.
+	    	Your search results are now visible below.</p>
 
 	    <h1 id="data">Data Analysis</h1>
 	    <h3>Data Analysis</h3>

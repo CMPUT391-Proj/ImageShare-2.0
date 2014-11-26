@@ -20,6 +20,7 @@ public class Image {
 	private BufferedImage thumbnail;
 	private BufferedImage image;
 	private int hits;
+	private int score;
 	
     public Image(String ownerName, int permitted, String subject, String place,
             Date date, String description, BufferedImage thumbnail,
@@ -33,6 +34,21 @@ public class Image {
         this.description = description;
         this.thumbnail = thumbnail;
         this.image = image;
+    }
+    
+    public Image(String ownerName, int permitted, String subject, String place,
+            Date date, String description, BufferedImage thumbnail,
+            BufferedImage image, int score) {
+        this.photoId = 0;
+        this.ownerName = ownerName;
+        this.permitted = permitted;
+        this.subject = subject;
+        this.place = place;
+        this.date = date;
+        this.description = description;
+        this.thumbnail = thumbnail;
+        this.image = image;
+        this.score = score;
     }
 
 	// getters
@@ -117,5 +133,13 @@ public class Image {
 	
 	public void setHits(int hits) {
 	    this.hits = hits;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 }

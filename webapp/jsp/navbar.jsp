@@ -11,6 +11,8 @@
             <a class="navbar-brand" href="gallery"><i class="glyphicon glyphicon-home white"></i> ImageShare</a>
         </div>
 
+        <% if (navbarUser != null) { %>
+
         <ul class="nav navbar-nav">
             <li><a href="imageupload">Upload</a></li>
             <li><a href="groups">Groups</a></li>
@@ -36,6 +38,8 @@
                     <li class="divider"></li>
                     <li><a href="dataanalysis"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
                     <li class="divider"></li>
+                    <li><a href="help"><span class="glyphicon glyphicon-wrench pull-right"></span>Help</a></li>
+                    <li class="divider"></li>
                     <li><a href="logout"><span class="glyphicon glyphicon-log-out pull-right"></span>Sign Out</a></li>
               </ul>
             </li>
@@ -45,6 +49,8 @@
         <ul class="nav navbar-nav pull-right">
             <li><p class="navbar-text" id='username'><a href="userprofile"><% out.println(navbarUser); %></a></p></li>
         </ul>
+
+        <% } %>
 
     </div>
 </div>

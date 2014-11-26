@@ -30,12 +30,13 @@ public class RegistrationServlet extends HttpServlet {
     private static final String EMAIL = "email";
     private static final String PHONE = "phone";
     
+    private static final String EMPTY_FIELD_ERROR = "Fields cannot be left empty.";
     private static final String PASSWORD_ERROR = "The passwords don't match.";
     private static final String INSERT_USER_ERROR = "A user with the same username exists.";
 	private static final String INSERT_PERSON_ERROR = "A person with the same email already exists.";
     
 	private static final String REGISTRATION_JSP = "registration";
-	private static final String IMAGE_UPLOAD_JSP = "imageupload"; // should be changed
+	private static final String IMAGE_UPLOAD_JSP = "imageupload";
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -50,6 +51,11 @@ public class RegistrationServlet extends HttpServlet {
 		String phone = req.getParameter(PHONE);
 		
 		try {
+			if (username.length() == 0 || password.length() == 0 || firstname.length() == 0 || 
+				lastname.length() == 0 || address.length() == 0 || email.length() == 0 || phone.length() == 0) {
+				throw new Exception(EMPTY_FIELD_ERROR);
+			}
+			
 			User user = OracleHandler.getInstance().getUser(username);
 			Person person = OracleHandler.getInstance().getPersonByEmail(email);
 			
@@ -74,7 +80,7 @@ public class RegistrationServlet extends HttpServlet {
 			req.getSession(true).setAttribute("user", username);
 		} catch (Exception e) {
 			req.getSession(true).setAttribute("error", e.toString());
-			resp.sendRedirect("search");
+			resp.sendRedirect(REGISTRATION_JSP);
 			return;
 		}
 		

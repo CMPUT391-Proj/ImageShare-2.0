@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -88,63 +87,6 @@ public class OracleHandler {
         stmt.executeUpdate();
         stmt.execute("commit");
     }
-
-    /**
-     * @param statement
-     *            Query statement use to query Oracle database
-     */
-	public Vector<Vector<String>> retrieveResultSet(String statement) throws Exception {
-        Vector<Vector<String>> resultVector = null;
-
-        PreparedStatement stmt = getInstance().conn.prepareStatement(statement);
-        ResultSet rset = stmt.executeQuery(statement);
-
-        ResultSetMetaData rsmd = rset.getMetaData();
-        resultVector = new Vector<Vector<String>>();
-
-        int colCount = rsmd.getColumnCount();
-
-        // algorithm could be improved.
-        // if unknown oracle type comes up, google the type number and add it
-        // to the else if statements
-        while (rset.next()) {
-            Vector<String> resultRow = new Vector<String>();
-
-            for (int i = 1; i <= colCount; i++) {
-                if (rsmd.getColumnType(i) == Types.INTEGER) {
-                    resultRow.add("" + rset.getInt(i));
-                } else if (rsmd.getColumnType(i) == Types.VARCHAR) {
-                    resultRow.add(rset.getString(i));
-                } else if (rsmd.getColumnType(i) == Types.TIMESTAMP) {
-                    resultRow.add(rset.getTimestamp(i).toString());
-                } else {
-                    throw new Exception("UKNOWN ORACLE TYPE: "
-                            + rsmd.getColumnType(i));
-                }
-            }
-
-            resultVector.add(resultRow);
-        }
-
-        stmt.close();
-
-        return resultVector;
-	}
-
-    /**
-     * Executes a generic query.
-     * 
-     * @param query
-     *            sql to execute
-     * @return the result set
-     * @throws Exception
-     *             exception if there was trouble executed the query. Caller
-     *             expected to handle.
-     */
-    public ResultSet executeQuery(String query) throws Exception {
-        PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        return stmt.executeQuery(query);
-    }
     
     private List<Image> retrieveImagesFromResultSet(ResultSet rs)
             throws Exception {
@@ -178,16 +120,24 @@ public class OracleHandler {
      * @throws Exception
      */
     public List<Image> getAllImages(String user) throws Exception {
-        String query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
-                + "OR i.permitted = 1 OR i.permitted IN "
-                + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
-                + "and user_name = ?) "
-                + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
-                + "group_id = i.permitted AND friend_id = ?)";
+        String query;
+        
+        if (user.equalsIgnoreCase("admin")) {
+            query = "SELECT * FROM images";
+        } else {  
+            query = "SELECT distinct * FROM images i WHERE i.owner_name = ? "
+                    + "OR i.permitted = 1 OR i.permitted IN "
+                    + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+                    + "and user_name = ?) "
+                    + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+                    + "group_id = i.permitted AND friend_id = ?)";
+        }
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
-        stmt.setString(3, user);
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
         return retrieveImagesFromResultSet(rs);
@@ -204,15 +154,17 @@ public class OracleHandler {
 
         int imageID = oracleHandler.nextImageID();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baosImage = new ByteArrayOutputStream();
 
-        ImageIO.write(image.getImage(), "jpg", baos);
+        ImageIO.write(image.getImage(), "jpg", baosImage);
         InputStream imageInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosImage.toByteArray());
 
-        ImageIO.write(image.getThumbnail(), "jpg", baos);
+        ByteArrayOutputStream baosThumbnail = new ByteArrayOutputStream();
+        
+        ImageIO.write(image.getThumbnail(), "jpg", baosThumbnail);
         InputStream thumbnailInputStream = new ByteArrayInputStream(
-                baos.toByteArray());
+                baosThumbnail.toByteArray());
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
         stmt.setInt(1, imageID);
@@ -222,8 +174,8 @@ public class OracleHandler {
         stmt.setString(5, image.getPlace());
         stmt.setDate(6, new Date(image.getDate().getTime()));
         stmt.setString(7, image.getDescription());
-        stmt.setBinaryStream(8, imageInputStream);
-        stmt.setBinaryStream(9, thumbnailInputStream);
+        stmt.setBinaryStream(8, thumbnailInputStream);
+        stmt.setBinaryStream(9, imageInputStream);
 
         stmt.executeUpdate();
         
@@ -236,7 +188,8 @@ public class OracleHandler {
      */
     public int nextImageID() throws Exception {
         String sql = "SELECT image_sequence.nextval from dual";
-        ResultSet rs = executeQuery(sql);
+        PreparedStatement ps = getInstance().conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
         rs.next();
         return rs.getInt(1);
     }
@@ -285,7 +238,15 @@ public class OracleHandler {
      * @throws Exception 
      */
     public List<Image> getImagesByPopularity(String user) throws Exception {
-        String query = "SELECT * FROM images i "
+        String query;
+        
+        if (user.equalsIgnoreCase("admin"))
+            query = "SELECT * FROM images i "
+                    + "LEFT JOIN imagepopularity p "
+                    + "on p.photo_id = i.photo_id "
+                    + "ORDER BY p.hits DESC";
+        else {
+            query = "SELECT * FROM images i "
                         + "LEFT JOIN imagepopularity p "
                         + "ON p.photo_id = i.photo_id "
                         + "WHERE i.owner_name = ? "
@@ -303,11 +264,15 @@ public class OracleHandler {
                         + "AND friend_id  = ? "
                         + ") "
                         + "ORDER BY p.hits DESC ";
+        }
 
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
-        stmt.setString(3, user);
+        
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
 
@@ -340,17 +305,45 @@ public class OracleHandler {
     /**
      * @return the number of popular images, usually 5 but more if there are
      *         ties.
+     * @param user
      */
-    public int getNumberOfPopularImages() throws Exception {
+    public int getNumberOfPopularImages(String user) throws Exception {
         Map<Integer, Integer> hitMap = new HashMap<Integer, Integer>();
         int count = 0;
         
-        String query = "select p.hits from imagepopularity p "
+        String query;
+        if (user.equalsIgnoreCase("admin")) {
+            query = "select p.hits from imagepopularity p "
                 + "order by p.hits desc";
+        } else {
+            query = "SELECT p.hits FROM images i "
+                    + "LEFT JOIN imagepopularity p "
+                    + "ON p.photo_id = i.photo_id "
+                    + "WHERE i.owner_name = ? "
+                    + "OR i.permitted     = 1 "
+                    + "OR i.permitted    IN "
+                    + "(SELECT group_id "
+                    + "FROM groups "
+                    + "WHERE group_id = i.permitted "
+                    + "AND user_name  = ? "
+                    + ") "
+                    + "OR i.permitted IN "
+                    + "(SELECT group_id "
+                    + "FROM group_lists "
+                    + "WHERE group_id = i.permitted "
+                    + "AND friend_id  = ? "
+                    + ") "
+                    + "ORDER BY p.hits DESC ";
+        }
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+            stmt.setString(3, user);
+        }
         
+        ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             int hits = rs.getInt("hits");
             if (hitMap.containsKey(hits)) {
@@ -408,7 +401,6 @@ public class OracleHandler {
             throw new InvalidParameterException("Photo id does not exist!");
         }
     }
-    
     
     /**
      * Update the image from the provided photo id.
@@ -498,13 +490,21 @@ public class OracleHandler {
     public List<Group> getInvolvedGroups(String user) throws Exception {
         List<Group> groups = new ArrayList<Group>();
         
-        String query = "SELECT * FROM groups WHERE group_id in "
+        String query;
+        if (user.equalsIgnoreCase("admin")) {
+            query = "SELECT * FROM groups where group_id != 1 "
+                    + "and group_id != 2";
+        } else {
+            query = "SELECT * FROM groups WHERE group_id in "
                 + "(SELECT group_id FROM group_lists where "
                 + "friend_id = ? ) OR " + "user_name = ?";
+        }
         
         PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-        stmt.setString(1, user);
-        stmt.setString(2, user);
+        if (!user.equalsIgnoreCase("admin")) {
+            stmt.setString(1, user);
+            stmt.setString(2, user);
+        }
         
         ResultSet rs = stmt.executeQuery();
         
@@ -869,40 +869,7 @@ public class OracleHandler {
     }
 	
 	// Data Analytics Section
-	/* Deprecated
-	public String getImagesPerUser() throws Exception {
-		String query = 
-			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
-			"FROM USERS U "+
-			"LEFT JOIN "+
-			"  ( "+
-			"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
-			"    FROM IMAGES "+
-			"    GROUP BY OWNER_NAME "+
-			"  ) IMAGE_COUNT "+
-			"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
-			"ORDER BY COUNT DESC, U.USER_NAME";
-		
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		
-		JSONObject jsonResultObj = new JSONObject();
-		JSONArray jsonArray = new JSONArray();
-		
-		ResultSet rs = stmt.executeQuery();
-		while(rs.next()) {
-			JSONObject tempJsonObj = new JSONObject();
-			
-			tempJsonObj.put("username", rs.getString(1));
-			tempJsonObj.put("count", rs.getInt(2));
-			jsonArray.put(tempJsonObj);
-		}
-		
-		jsonResultObj.put("result", jsonArray);
-		
-		return jsonResultObj.toString();
-	}
-	*/
-	public String getImagesPerUser() throws Exception {
+	public JSONObject getImagesPerUserOLD() throws Exception {
 		String query = 
 			"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
 			"FROM USERS U "+
@@ -920,22 +887,160 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
-	public String getImagesPerSubject() throws Exception {
+	public JSONObject getImagesPerSubject() throws Exception {
 		String query = 
 			"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
 			"FROM IMAGES "+
 			"GROUP BY SUBJECT "+
-			"ORDER BY COUNT DESC, SUBJECT";
+			"ORDER BY SUBJECT";
 		
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		
-		return generateJsonFromPreparedStatement(stmt);
+		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
-	public String getAllUsers() throws Exception {
-		return "";
+	public JSONObject getImagesPerUser() throws Exception {
+		String query = 
+			"SELECT OWNER_NAME, COUNT(*) AS COUNT "+ 
+			"FROM IMAGES "+
+			"GROUP BY OWNER_NAME "+
+			"ORDER BY OWNER_NAME";
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
 	}
 	
+	public JSONObject getAnalyticsForYear(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE %s " +
+			"AND %s "+
+			"%s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'yyyy') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'yyyy') ", 
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+
+	public JSONObject getAnalyticsForMonth(String fromDate, String toDate, String subjectList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE %s " +
+			"AND %s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			fromDateQuery, toDateQuery, 
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+	
+	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
+			"AND %s "+
+			"AND %s "+
+			"%s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
+			year, fromDateQuery, toDateQuery, 
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
+
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+
+	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
+			"AND TO_CHAR(TRUNC(TIMING), 'MM')=%s "+
+			"AND %s "+
+			"AND %s "+
+			"%s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ",
+			year, month,
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""),
+			(usernameList != null ? String.format("AND OWNER_NAME IN (%s)", usernameList) : ""));
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+	
+	public JSONObject getAnalyticsForDay(String fromDate, String toDate, String subjectList) throws Exception {
+		String fromDateQuery = null;
+		String toDateQuery = null;
+		
+		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
+		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
+		
+		String query = 
+			String.format(
+			"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
+			"FROM IMAGES "+
+			"WHERE %s "+
+			"AND %s "+
+			"%s %s %s %s "+
+			"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
+			"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ", 
+			fromDateQuery, toDateQuery,
+			(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
+		
+		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
+		
+		return generateJsonFromPreparedStatementNEW(stmt);
+	}
+//////////////////////
     /**
      * Returns the images by keywords
      * @param String keywords, String order
@@ -996,7 +1101,31 @@ public class OracleHandler {
 		return images;
     }
 	
-	private String generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
+	private JSONObject generateJsonFromPreparedStatementNEW(PreparedStatement stmt) throws Exception {
+		JSONObject jsonResultObj = new JSONObject();
+		JSONArray jsonRecordList = new JSONArray();
+		
+		ResultSet rs = stmt.executeQuery();
+		ResultSetMetaData rsmd = rs.getMetaData();
+		
+		int columnCount = rsmd.getColumnCount();
+		
+		while(rs.next()) {
+			JSONObject jsonRecordData = new JSONObject();
+			
+			for (int i=1; i<=columnCount; i++) {
+				jsonRecordData.put(rsmd.getColumnName(i), getResultSetColData(rs, rsmd.getColumnType(i), i));
+			}
+			
+			jsonRecordList.put(jsonRecordData);
+		}
+		
+		jsonResultObj.put("result", jsonRecordList);
+		
+		return jsonResultObj;
+	}
+    
+	private JSONObject generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonRecordList = new JSONArray();
 		
@@ -1033,7 +1162,7 @@ public class OracleHandler {
 		
 		jsonResultObj.put("result", jsonRecordList);
 		
-		return jsonResultObj.toString();
+		return jsonResultObj;
 	}
 	
 	private String getResultSetColData(ResultSet rs, int type, int col) throws Exception {

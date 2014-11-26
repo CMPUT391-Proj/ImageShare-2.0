@@ -5,9 +5,7 @@
 <%
 	String user = (String) session.getAttribute("user");
 	if (user == null) response.sendRedirect("index");
-	List<Group> groups = OracleHandler.getInstance().getGroups(user);
-	String error = (String) session.getAttribute("error");
-	session.setAttribute("error", null);
+	List<Group> groups = OracleHandler.getInstance().getInvolvedGroups(user);
 %>
 <style>
 	#upload {
@@ -27,7 +25,8 @@
 		</div>
 	</div>	
 
-	<% if (error != null) out.println("<tr>" + error + "</tr>"); %>
+	<%@include file="error.jsp"%>
+	<%@include file="success.jsp"%>
 
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3">
@@ -81,7 +80,7 @@
 								</label>
 							</div>
 							<% for (Group group : groups) {
-								out.println("<div class='radio'><label><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "</input></label></div>");
+								out.println("<div class='radio'><label><input type='radio' name='permissions' value='" + group.getGroupId() + "'>" + group.getGroupname() + "<small class='text-muted'> " + group.getUsername() + "</small></input></label></div>");
 							} %>
 						</div>
 					</div>

@@ -43,6 +43,7 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
     private static final String USER = "user";
     
     private static final String DIR_UPLOAD_JSP = "directoryupload";
+    private static final String DIR_SUCCESSFUL = "The image files have been uploaded.";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -127,9 +128,12 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
                 OracleHandler.getInstance().storeImage(image);
             } catch (Exception e) {
                 req.getSession(true).setAttribute("error", e.toString());
+                resp.sendRedirect(DIR_UPLOAD_JSP);
+                return;
             }
         }
 
+        session.setAttribute("success", DIR_SUCCESSFUL);
         resp.sendRedirect(DIR_UPLOAD_JSP);
     }
 

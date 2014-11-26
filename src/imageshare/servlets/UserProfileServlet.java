@@ -33,6 +33,9 @@ public class UserProfileServlet extends HttpServlet {
     private static final String EMPTY_PASSWORD_ERROR = "Password cannot be left empty.";
     private static final String EMPTY_FIELD_ERROR = "Fields cannot be left empty.";
     private static final String EMAIL_IN_USE_ERROR = "Email is already in use with another user.";
+    private static final String ADMIN_PERSON_ERROR = "Admin personal details cannot be changed.";
+    
+    private static final String SUCCESS_MESSAGE = "Update profile success";
     
 	private static final String USER_PROFILE_JSP = "userprofile";
 	
@@ -73,9 +76,15 @@ public class UserProfileServlet extends HttpServlet {
 				}
 				
 				OracleHandler.getInstance().updatePerson(person);
+			} else {
+				if (firstname.length() > 0 || lastname.length() > 0 || address.length() > 0 || 
+					email.length() > 0 || phone.length() > 0) {
+					throw new Exception(ADMIN_PERSON_ERROR);
+				}
 			}
-
+			
 			OracleHandler.getInstance().updateUser(user);
+			req.getSession(true).setAttribute("success", "");
 		} catch (Exception e) {
 			req.getSession(true).setAttribute("error", e.toString());
 			resp.sendRedirect(USER_PROFILE_JSP);

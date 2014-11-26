@@ -97,7 +97,7 @@ public class DataAnalysisServlet extends HttpServlet {
     		
     		if (searchType.equals(CUSTOM_SEARCH)) {
     			result = customAnalytics(fromDate, toDate, subjectListFormatted, usernameListFormatted);
-    			req.getSession(true).setAttribute("testtitle", "Custom Search");
+    			req.getSession(true).setAttribute("testtitle", "Custom Combined Search");
     			req.getSession(true).setAttribute("search", "customsearch");
     		} 
     		else if (searchType.equals(IMAGES_PER_USER)) {

@@ -15,7 +15,9 @@ import javax.servlet.http.HttpSession;
 
 public class GroupsServlet extends HttpServlet {
 
-	private static final String GROUPS_JSP = "groupsview";
+    private static final long serialVersionUID = 1L;
+
+    private static final String GROUPS_JSP = "groupsview";
 
 	OracleHandler database;
 	String user = "";

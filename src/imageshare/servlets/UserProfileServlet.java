@@ -35,8 +35,6 @@ public class UserProfileServlet extends HttpServlet {
     private static final String EMAIL_IN_USE_ERROR = "Email is already in use with another user.";
     private static final String ADMIN_PERSON_ERROR = "Admin personal details cannot be changed.";
     
-    private static final String SUCCESS_MESSAGE = "Update profile success";
-    
 	private static final String USER_PROFILE_JSP = "userprofile";
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)

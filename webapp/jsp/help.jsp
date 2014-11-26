@@ -125,7 +125,7 @@
 	      	data, in the "Images Per Subject" section, the admin has to specify a
 	      	period of which they want to view and click "Search"</p>
 	      <h4>Custom Parameter Search</h4>
-	      <p>This option allows the admin to gather a drill down analysis of the
+	      <p>This option allows the admin to gather a combined drill down analysis of the
 	      	number of images in the system by specifying custom criteria. The criteria
 	      	includes the period, subject(s) and/or user(s) of which the admin wants 
 	      	to search. To view this data, in the "Custom Parameter Search" section, the

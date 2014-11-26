@@ -17,7 +17,7 @@
             <li><a href="imageupload">Upload</a></li>
             <li><a href="groups">Groups</a></li>
             <li><a href="search">Search</a></li>
-            <li><a href="dataanalysis">Statistics</a></li>
+            <% if (navbarUser.equals("admin")) out.println("<li><a href=\"dataanalysis\">Statistics</a></li>"); %>
         </ul>
 
         <div class="navbar-collapse collapse pull-right">
@@ -33,8 +33,7 @@
                     <li><a href="search"><span class="glyphicon glyphicon-search pull-right"></span>Search</a></li>
                     <li class="divider"></li>
                     <li><a href="groups"><span class="glyphicon glyphicon-user pull-right"></span>Groups</a></li>
-                    <li class="divider"></li>
-                    <li><a href="dataanalysis"><span class="glyphicon glyphicon-stats pull-right"></span>User Stats</a></li>
+                    <% if (navbarUser.equals("admin")) out.println(" <li class=\"divider\"></li><li><a href=\"dataanalysis\"><span class=\"glyphicon glyphicon-stats pull-right\"></span>User Stats</a></li>"); %>
                     <li class="divider"></li>
                     <li><a href="help"><span class="glyphicon glyphicon-wrench pull-right"></span>Help</a></li>
                     <li class="divider"></li>

@@ -868,7 +868,12 @@ public class OracleHandler {
 		stmt.executeUpdate();
 	}
 
-	// Data Analytics Section
+	/**
+	 * Generates json objec of images per subject
+	 * 
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	public JSONObject getImagesPerSubject() throws Exception {
 		String query = 
 				"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
@@ -881,6 +886,12 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
+	/**
+	 * Generates json object of images per user
+	 * 
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	public JSONObject getImagesPerUser() throws Exception {
 		String query = 
 				"SELECT OWNER_NAME, COUNT(*) AS COUNT "+ 
@@ -893,6 +904,16 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
+	/**
+	 * Generates json object for data analytics for a given year with constraints from date, to date, subject list, username list
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param subjectList
+	 * @param usernameList
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	public JSONObject getAnalyticsForYear(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
@@ -919,6 +940,17 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
+	/**
+	 * Generates json object for data analytics for a given month with constraints year, from date, to date, subject list, username list
+	 * 
+	 * @param year
+	 * @param fromDate
+	 * @param toDate
+	 * @param subjectList
+	 * @param usernameList
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
@@ -947,6 +979,19 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
+	/**
+	 * Generates json object for data analytics for a given day given constraints year, month, from date, to date,
+	 * subjectslist and userlist
+	 * 
+	 * @param year
+	 * @param month
+	 * @param fromDate
+	 * @param toDate
+	 * @param subjectList
+	 * @param usernameList
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
 		String fromDateQuery = null;
 		String toDateQuery = null;
@@ -975,7 +1020,6 @@ public class OracleHandler {
 		return generateJsonFromPreparedStatement(stmt);
 	}
 
-	//////////////////////
 	/**
 	 * Returns the images by keywords
 	 * @param String keywords, String order
@@ -1182,6 +1226,14 @@ public class OracleHandler {
 		return images;
 	}
 
+	/**
+	 * A json object with a list will be generated. Each item in the list represents a record in the database.
+	 * Each item in the list will have key value pairs which will map to the database columns with its column data.
+	 * 
+	 * @param stmt
+	 * @return JSONObject
+	 * @throws Exception
+	 */
 	private JSONObject generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonRecordList = new JSONArray();
@@ -1206,6 +1258,16 @@ public class OracleHandler {
 		return jsonResultObj;
 	}
 
+	/**
+	 * Given a result set, the type of the column, and the column number, a resulting string
+	 * of the data in that column is returned in a string format
+	 * 
+	 * @param rs
+	 * @param type
+	 * @param col
+	 * @return String
+	 * @throws Exception
+	 */
 	private String getResultSetColData(ResultSet rs, int type, int col) throws Exception {
 		String data;
 

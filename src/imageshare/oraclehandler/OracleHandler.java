@@ -33,8 +33,8 @@ import org.json.JSONObject;
 public class OracleHandler {
 
 	private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
+	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // use for University
+	//private static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1525:CRS"; // use for SSH
 	private static final String USERNAME = "jyuen";
 	private static final String PASSWORD = "pass2014";
 
@@ -869,24 +869,6 @@ public class OracleHandler {
 	}
 
 	// Data Analytics Section
-	public JSONObject getImagesPerUserOLD() throws Exception {
-		String query = 
-				"SELECT U.USER_NAME, NVL(IMAGE_COUNT.IMG_COUNT, 0) AS COUNT "+
-						"FROM USERS U "+
-						"LEFT JOIN "+
-						"  ( "+
-						"   SELECT OWNER_NAME, COUNT(*) AS IMG_COUNT "+
-						"    FROM IMAGES "+
-						"    GROUP BY OWNER_NAME "+
-						"  ) IMAGE_COUNT "+
-						"ON U.USER_NAME = IMAGE_COUNT.OWNER_NAME "+
-						"ORDER BY COUNT DESC, U.USER_NAME";
-
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-
-		return generateJsonFromPreparedStatement(stmt);
-	}
-
 	public JSONObject getImagesPerSubject() throws Exception {
 		String query = 
 				"SELECT NVL(SUBJECT,'NO_SUBJECT') AS SUBJECT, COUNT(*) AS COUNT "+
@@ -896,7 +878,7 @@ public class OracleHandler {
 
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 
-		return generateJsonFromPreparedStatementNEW(stmt);
+		return generateJsonFromPreparedStatement(stmt);
 	}
 
 	public JSONObject getImagesPerUser() throws Exception {
@@ -908,7 +890,7 @@ public class OracleHandler {
 
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 
-		return generateJsonFromPreparedStatementNEW(stmt);
+		return generateJsonFromPreparedStatement(stmt);
 	}
 
 	public JSONObject getAnalyticsForYear(String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
@@ -934,31 +916,7 @@ public class OracleHandler {
 
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 
-		return generateJsonFromPreparedStatementNEW(stmt);
-	}
-
-	public JSONObject getAnalyticsForMonth(String fromDate, String toDate, String subjectList) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-
-		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-
-		String query = 
-				String.format(
-						"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
-								"FROM IMAGES "+
-								"WHERE %s " +
-								"AND %s "+
-								"%s "+
-								"GROUP BY TO_CHAR(TRUNC(TIMING), 'MM') "+
-								"ORDER BY TO_CHAR(TRUNC(TIMING), 'MM') ", 
-								fromDateQuery, toDateQuery, 
-								(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
-
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-
-		return generateJsonFromPreparedStatementNEW(stmt);
+		return generateJsonFromPreparedStatement(stmt);
 	}
 
 	public JSONObject getAnalyticsForMonthByYear(int year, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
@@ -986,7 +944,7 @@ public class OracleHandler {
 
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 
-		return generateJsonFromPreparedStatementNEW(stmt);
+		return generateJsonFromPreparedStatement(stmt);
 	}
 
 	public JSONObject getAnalyticsForDayByYearByMonth(int year, int month, String fromDate, String toDate, String subjectList, String usernameList) throws Exception {
@@ -1014,32 +972,9 @@ public class OracleHandler {
 
 		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 
-		return generateJsonFromPreparedStatementNEW(stmt);
+		return generateJsonFromPreparedStatement(stmt);
 	}
 
-	public JSONObject getAnalyticsForDay(String fromDate, String toDate, String subjectList) throws Exception {
-		String fromDateQuery = null;
-		String toDateQuery = null;
-
-		fromDateQuery = String.format("TIMING >= TO_DATE('%s', 'yyyy-MM-dd')", fromDate);
-		toDateQuery = String.format("TIMING <= TO_DATE('%s', 'yyyy-MM-dd')", toDate);
-
-		String query = 
-				String.format(
-						"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
-								"FROM IMAGES "+
-								"WHERE %s "+
-								"AND %s "+
-								"%s %s %s %s "+
-								"GROUP BY TO_CHAR(TRUNC(TIMING), 'dd') " +
-								"ORDER BY TO_CHAR(TRUNC(TIMING), 'dd') ", 
-								fromDateQuery, toDateQuery,
-								(subjectList != null ? String.format("AND SUBJECT IN (%s)", subjectList) : ""));
-
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-
-		return generateJsonFromPreparedStatementNEW(stmt);
-	}
 	//////////////////////
 	/**
 	 * Returns the images by keywords
@@ -1247,7 +1182,7 @@ public class OracleHandler {
 		return images;
 	}
 
-	private JSONObject generateJsonFromPreparedStatementNEW(PreparedStatement stmt) throws Exception {
+	private JSONObject generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
 		JSONObject jsonResultObj = new JSONObject();
 		JSONArray jsonRecordList = new JSONArray();
 
@@ -1264,46 +1199,6 @@ public class OracleHandler {
 			}
 
 			jsonRecordList.put(jsonRecordData);
-		}
-
-		jsonResultObj.put("result", jsonRecordList);
-
-		return jsonResultObj;
-	}
-
-	private JSONObject generateJsonFromPreparedStatement(PreparedStatement stmt) throws Exception {
-		JSONObject jsonResultObj = new JSONObject();
-		JSONArray jsonRecordList = new JSONArray();
-
-		ResultSet rs = stmt.executeQuery();
-		ResultSetMetaData rsmd = rs.getMetaData();
-
-		int columnCount = rsmd.getColumnCount();
-
-		JSONArray jsonColNameList = new JSONArray();
-		for (int i=1; i<=columnCount; i++) {
-			JSONObject jsonCol = new JSONObject();
-
-			jsonCol.put("data", rsmd.getColumnName(i));
-			jsonCol.put("heading", 1);
-
-			jsonColNameList.put(jsonCol);
-		}
-		jsonRecordList.put(jsonColNameList);
-
-		while(rs.next()) {
-			JSONArray jsonRecord = new JSONArray();
-
-			for (int i=1; i<=columnCount; i++) {
-				JSONObject jsonRecordData = new JSONObject();
-
-				jsonRecordData.put("data", getResultSetColData(rs, rsmd.getColumnType(i), i));
-				jsonRecordData.put("heading", 0);
-
-				jsonRecord.put(jsonRecordData);
-			}
-
-			jsonRecordList.put(jsonRecord);
 		}
 
 		jsonResultObj.put("result", jsonRecordList);

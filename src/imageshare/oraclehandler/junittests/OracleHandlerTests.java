@@ -23,7 +23,7 @@ public class OracleHandlerTests {
 	
 	private static final Random rand = new Random();
 	private static final int randInt = rand.nextInt(500);
-	/*
+	
 	@Test
 	public void oracleInsertUsers() {
 		try {
@@ -35,35 +35,6 @@ public class OracleHandlerTests {
         }
 		
 		System.out.println("FINISHED oracleInsertUsers");
-	}
-	
-	@Test
-	public void oracleSelectUsers() {
-		Vector<Vector<String>> users;
-            try {
-                users = OracleHandler.getInstance().retrieveResultSet("SELECT * FROM USERS");
-    		
-    		for (Vector<String> record : users) {
-    			String recordString = "";
-    			
-    			for (String recordCol : record) {
-    				if (recordString.isEmpty() == false) {
-    					recordString = recordString.concat(", "+recordCol);
-    				} else {
-    					recordString = recordCol;
-    				}
-    			}
-    			
-    			System.out.println(record.size()+" : "+recordString);
-    		}
-    	
-    		assertNotNull(users);
-    		assertTrue(users.size() > 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	
-		System.out.println("FINISHED oracleSelectUsers");
 	}
 	
 	@Test
@@ -97,7 +68,7 @@ public class OracleHandlerTests {
 	@Test
 	public void ImagesPerUser() {
 		try {
-			String result = OracleHandler.getInstance().getImagesPerUser();
+			String result = OracleHandler.getInstance().getImagesPerUser().toString();
 			
 			assertTrue(result.length() > 0);
 			
@@ -107,52 +78,6 @@ public class OracleHandlerTests {
 		}
 		
 		System.out.println("FINISHED ImagesPerUser");
-	}
-	
-	
-	@Test
-	public void oracleGetAnalyticsByYear() {
-		try {
-            String result = OracleHandler.getInstance().getAnalyticsForYear("2006-05-21", "2014-11-24").toString();
-      
-            System.out.println(result);
-            
-            assertTrue(result.length() > 0);
-		} catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		System.out.println("FINISHED oracleGetAnalyticsByYear");
-	}
-	
-	@Test
-	public void oracleGetAnalyticsByMonth() {
-		try {
-            String result = OracleHandler.getInstance().getAnalyticsForMonth("2014-05-21", "2014-11-24").toString();
-      
-            System.out.println(result);
-            
-            assertTrue(result.length() > 0);
-		} catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		System.out.println("FINISHED oracleGetAnalyticsByMonth");
-	}
-	
-	@Test
-	public void oracleGetAnalyticsByDay() {
-		try {
-            String result = OracleHandler.getInstance().getAnalyticsByDay("2014-05-21", "2014-11-24").toString();
-      
-            System.out.println(result);
-            
-            assertTrue(result.length() > 0);
-		} catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		System.out.println("FINISHED oracleGetAnalyticsByDay");
 	}
 	
 	@Test
@@ -188,7 +113,6 @@ public class OracleHandlerTests {
 		
 		System.out.println("FINISHED generateAnalytics");
 	}
-	*/
 	
 	private JSONObject convertDaysToWeeksJson(int year, int month, JSONObject dayJsonResult) {
 		JSONArray dayJsonArray = dayJsonResult.getJSONArray("result");

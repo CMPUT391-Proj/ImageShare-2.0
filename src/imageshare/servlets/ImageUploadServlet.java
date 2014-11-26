@@ -6,6 +6,7 @@ import imageshare.oraclehandler.OracleHandler;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,13 +41,13 @@ public class ImageUploadServlet extends HttpServlet {
     private static final String EXT_JPG = ".jpg";
     private static final String EXT_GIF = ".gif";
 
-    private static final String FILE_ERROR = "A file with the correct extension (.jpg / .gif) must be used.";
+    private static final String FILE_ERROR = "At least one file with the correct extension (.jpg / .gif) must be used.";
     private static final String RETRIEVE_USER_ERROR = "Unable to get the current logged in user.";
 
     private static final int THUMBNAIL_SHRINK_FACTOR = 10;
     
     private static final String IMAGE_UPLOAD_JSP = "imageupload";
-    private static final String IMAGE_SUCCESSFUL = "The image file has been uploaded.";
+    private static final String IMAGE_SUCCESSFUL = "The image files have been uploaded.";
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -58,11 +59,12 @@ public class ImageUploadServlet extends HttpServlet {
         String description = null;
         Date date = null;
         int security = 2;
-        FileItem file = null;
         
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
 
+        List<FileItem> files = new ArrayList<FileItem>();
+        
         /*
          * Attempt to read in the file items from the .jsp form
          */
@@ -98,21 +100,16 @@ public class ImageUploadServlet extends HttpServlet {
 
                     String fileName = fileItem.getName().trim().toLowerCase();
 
-                    if (!fileName.endsWith(EXT_JPG) && !fileName.endsWith(EXT_GIF)) {
-                        // file has an incorrect extension - must stop the
-                        // request.
-                        throw new FileUploadException(FILE_ERROR);
+                    if (fileName.endsWith(EXT_JPG) || fileName.endsWith(EXT_GIF)) {
+                        files.add(fileItem);
                     }
-
-                    file = fileItem;
                 }
             }
 
-            // Get the logged in user
             user = (String) req.getSession().getAttribute(USER);
             if (user == null)
                 throw new FileUploadException(RETRIEVE_USER_ERROR);
-            if (file == null)
+            if (files.isEmpty())
                 throw new FileUploadException(FILE_ERROR);
             
         } catch (Exception e) { 
@@ -121,19 +118,21 @@ public class ImageUploadServlet extends HttpServlet {
             return;
         }
 
-        BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
-        BufferedImage thumbnail = ImageUploadServlet.shrink(bufferedImage);
-
-        Image image = new Image(user, security, subject, location, date,
-                description, thumbnail, bufferedImage);
-
-        try {
-            // store image
-            OracleHandler.getInstance().storeImage(image);
-        } catch (Exception e) {
-            req.getSession(true).setAttribute("error", e.toString());
-            resp.sendRedirect(IMAGE_UPLOAD_JSP);
-            return;
+        for (FileItem file : files) {
+            BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+            BufferedImage thumbnail = ImageUploadServlet.shrink(bufferedImage);
+    
+            Image image = new Image(user, security, subject, location, date,
+                    description, thumbnail, bufferedImage);
+    
+            try {
+                // store image
+                OracleHandler.getInstance().storeImage(image);
+            } catch (Exception e) {
+                req.getSession(true).setAttribute("error", e.toString());
+                resp.sendRedirect(IMAGE_UPLOAD_JSP);
+                return;
+            }
         }
 
         req.getSession(true).setAttribute("success", IMAGE_SUCCESSFUL);

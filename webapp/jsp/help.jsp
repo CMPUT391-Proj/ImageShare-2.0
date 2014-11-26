@@ -64,27 +64,15 @@
 	    <h3 id="singleUpload">Single Photo Upload</h3>
 		  <p>This module can be accessed <a href="imageupload">here</a> 
 		  	once logged in or via the navigation bar > Upload Image.</p>
-		  <p>Select the image to be uploaded and then fill in the 
-		  	information in the remainder of the form. A image file
+		  <p>Select the images to be uploaded and then fill in the 
+		  	information in the remainder of the form. At least one image file
 		  	with the extension .jpg or .gif must be provided. All 
 		  	other information is optional. If a date is not provided
-		  	the date which the image is uploaded will be used. If a
-		  	image file is not provided or a file with the incorrect
-		  	extension is used, you will be notified of the error.</p>
-		<h3 id="dirUpload">Directory Upload</h3>
-		  <p>This module can be accessed <a href="directoryupload">here</a>  
-		  	once logged in or via the navigation bar > Upload Folder. 
-		  	The browser which you use must support the IcedTea applet for image uploading.</p>
-		  <p>To upload a directory or multiple files, used the IcedTea
-		  	applet to choose the correct directory / files. Click
-		  	"Upload" in the applet to load the images. To complete the 
-		  	upload, fill in the optional information in the form and
-		  	hit "Submit". If not at least one file is provided with
-		  	the correct .jpg or .gif extension, you will be notified
-		  	of the error.</p> 
+		  	the date which the images are uploaded will be used. If not at
+		  	least one image file is provided with the correct
+		  	extension, you will be notified of the error.</p>
 		<h3 id="imagepermissions">Image Permissions</h3>
-		  <p>In both <a href="#singleUpload">Single Photo Upload</a>
-		  	and <a href="#dirUpload">Directory Upload</a>, you will
+		  <p>In <a href="#singleUpload">Photo Upload</a>, you will
 		  	notice a field called Permissions. Here you are able to
 		  	set which groups are able to view an image. If you don't
 		  	change the selection, private is selected by default. This
@@ -94,7 +82,7 @@
 	    
 	    <h1 id="display">Gallery</h1>
 	    <h3>Viewing</h3>
-		  <p>This module can be accessed <a href="directoryupload">here</a>  
+		  <p>This module can be accessed <a href="gallery">here</a>  
 		  	once logged in or via the navigation bar > Gallery.</p>
 		  <p>By clicking on any of the thumbnails, you are able to
 		  	see more information about that image, as well as see

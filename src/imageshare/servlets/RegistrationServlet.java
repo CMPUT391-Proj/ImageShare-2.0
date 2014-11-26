@@ -5,7 +5,6 @@ import imageshare.model.User;
 import imageshare.oraclehandler.OracleHandler;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -86,5 +85,4 @@ public class RegistrationServlet extends HttpServlet {
 		
 		resp.sendRedirect(IMAGE_UPLOAD_JSP);
 	}
-
 }

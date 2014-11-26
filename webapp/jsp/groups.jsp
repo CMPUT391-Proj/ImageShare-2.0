@@ -103,6 +103,7 @@ hgroup h2.lead {
 
 <html lang="en">
 <%@include file="header.jsp"%>
+<%@include file="redirect.jsp" %>
 <body>
 	<%@include file="navbar.jsp"%>
 
@@ -112,6 +113,8 @@ hgroup h2.lead {
 			<p id="titleLeft">Share images with groups.</p>
 		</div>
 	</div>
+
+	<%@include file="error.jsp" %>
 
 	<div class="container">
 

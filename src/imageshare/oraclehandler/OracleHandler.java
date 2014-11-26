@@ -892,7 +892,7 @@ public class OracleHandler {
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'yyyy') AS YEAR, COUNT(*) AS COUNT "+
-								"FROM IMAGES "+
+								"FROM (SELECT OWNER_NAME, NVL(SUBJECT, 'NO_SUBJECT') AS SUBJECT, TIMING FROM IMAGES) "+
 								"WHERE TIMING >= TO_DATE('%s', 'yyyy-MM-dd') " +
 								"AND TIMING <= TO_DATE('%s', 'yyyy-MM-dd') "+
 								"%s "+
@@ -923,7 +923,7 @@ public class OracleHandler {
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'MM') AS MONTH, COUNT(*) AS COUNT "+
-								"FROM IMAGES "+
+								"FROM (SELECT OWNER_NAME, NVL(SUBJECT, 'NO_SUBJECT') AS SUBJECT, TIMING FROM IMAGES) "+
 								"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
 								"AND TIMING >= TO_DATE('%s', 'yyyy-MM-dd') "+
 								"AND TIMING <= TO_DATE('%s', 'yyyy-MM-dd') "+
@@ -958,7 +958,7 @@ public class OracleHandler {
 		String query = 
 				String.format(
 						"SELECT TO_CHAR(TRUNC(TIMING), 'dd') AS DAY, COUNT(*) AS COUNT "+
-								"FROM IMAGES "+
+								"FROM (SELECT OWNER_NAME, NVL(SUBJECT, 'NO_SUBJECT') AS SUBJECT, TIMING FROM IMAGES) "+
 								"WHERE TO_CHAR(TRUNC(TIMING), 'yyyy')=%s "+
 								"AND TO_CHAR(TRUNC(TIMING), 'MM')=%s "+
 								"AND TIMING >= TO_DATE('%s', 'yyyy-MM-dd') "+

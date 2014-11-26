@@ -611,33 +611,6 @@ public class OracleHandler {
 	}
 
 	/**
-	 * Returns all groupLists in a group
-	 * @param int group_id
-	 * @throws Exception 
-	 * @returns ArrayList<String>
-	 */
-	public List<GroupList> getGroupsLists(int group_id) throws Exception {
-
-		List<GroupList> groupLists = new ArrayList<GroupList>();
-
-		String query = "SELECT * "
-				+ "FROM group_lists "
-				+ "WHERE group_id = "
-				+ group_id;
-
-		PreparedStatement stmt = getInstance().conn.prepareStatement(query);
-		ResultSet rs = stmt.executeQuery();
-
-		while (rs.next()) {
-			String friendId = rs.getString("friend_id");
-			Date dateAdded = rs.getDate("date_added");
-			String notice = rs.getString("notice");
-			groupLists.add(new GroupList(friendId, dateAdded, notice));
-		}
-		return groupLists;
-	}
-
-	/**
 	 * Returns all usernames in a group
 	 * @param int group_id
 	 * @throws Exception 

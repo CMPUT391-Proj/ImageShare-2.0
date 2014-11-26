@@ -68,14 +68,15 @@
 		</div>
 	</div>
 	<div class="container">
-				<%= (String) request.getSession(false).getAttribute("galHTML") %>
+		<%= (String) request.getSession(false).getAttribute("galHTML") %>
 	</div>
-
-
-	<div class="container">
-		<hr>
-		<%@include file="footer.jsp"%>
 	</div>
 </body>
+</footer>
+<div class="container">
+	<hr>
+	<%@include file="footer.jsp"%>
+</div>
+</footer>
 </html>
 

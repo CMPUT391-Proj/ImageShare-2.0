@@ -154,7 +154,7 @@ public class OracleHandlerTests {
 		
 		System.out.println("FINISHED oracleGetAnalyticsByDay");
 	}
-	*/
+	
 	@Test
 	public void generateAnalytics() {
 		try {
@@ -181,6 +181,18 @@ public class OracleHandlerTests {
             }
             
             System.out.println(yearJsonResult.toString());
+            
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		System.out.println("FINISHED generateAnalytics");
+	}
+	*/
+	@Test
+	public void test() {
+		try {
+			OracleHandler.getInstance().getImagesByKeywords("MARIO", "order by score DESC");
             
 		} catch (Exception e) {
             e.printStackTrace();

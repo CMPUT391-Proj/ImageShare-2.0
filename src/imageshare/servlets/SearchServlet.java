@@ -37,21 +37,25 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 	private String todatesql;
 	private List<Image> results = new ArrayList<Image>();
 	private String sortby;
+	private String thumbs;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		response.setContentType("text/html;charset=UTF-8");
+		user = (String) request.getSession(true).getAttribute("user");
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
 			response.sendRedirect("login.jsp");
 		};
-
+		thumbs = "";
+		request.getSession(true).setAttribute("galHTML", thumbs);
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(SEARCH_JSP);    
 		requestDispatcher.forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		//      response.setContentType("text/html");
+		String orderStr = "";
+		thumbs = "";
 		database = OracleHandler.getInstance();
 
 		keywords = request.getParameter("query");
@@ -75,121 +79,121 @@ public class SearchServlet extends HttpServlet implements SingleThreadModel {
 			e.getMessage();
 		}
 
-
 		/*
 		 * Get how query will be sorted
 		 */
-		 String order = null;
-		 // time descending
-		 if (sortby.equals("1"))
-		 {
-			 order = "order by timing DESC";
-		 }
-		 // time ascending
-		 else if (sortby.equals("2")) {
-			 order = "order by timing";
-		 }
-		 // rank
-		 else {
-			 order = "order by 1 DESC";
-		 }
+		String order = null;
+		// time descending
+		if (sortby.equals("1"))
+		{
+			orderStr = "Most Recent Time First";
+			order = "order by timing DESC";
+		}
+		// time ascending
+		else if (sortby.equals("2")) {
+			orderStr = "Most Recent Time Last";
+			order = "order by timing";
+		}
+		// rank
+		else {
+			orderStr = "Rank";
+			order = "order by 1 DESC";
+		}
 
-		 //        /*
-		 //         * The user has to input from and to dates otherwise
-		 //         * only keyword search to get resultset of query
-		 //         */
-		 if (!(keywords.equals(""))) {
-			 if((fromDate.equals("")) || (toDate.equals(""))) {
-				 try {
-					 results = database.getImagesByKeywords(keywords, order);
-				 } catch (Exception e) {
-					 // TODO Auto-generated catch block
-					 e.printStackTrace();
-				 }
-				 //out.println("Your results for: '" + keywords + "'");
-			 }
-			 else {
-				 try {
-					 results = database.getImagesByDateAndKeywords(fromdatesql, 
-							 todatesql, keywords, order);
-				 } catch (Exception e) {
-					 // TODO Auto-generated catch block
-					 e.printStackTrace();
-				 }
+		/*
+		 * The user has to input from and to dates otherwise
+		 * only keyword search to get resultset of query
+		 */
+		if (!(keywords.equals(""))) {
+			if((fromDate.equals("")) || (toDate.equals(""))) {
+				try {
+					results = database.getImagesByKeywords(keywords, order);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				thumbs = thumbs + "<h3>Your results for: <strong class='text-primary'>" + keywords + "</strong>" + 
+				" ordered by <strong class='text-success'>" + orderStr + "</strong></h3>";
+				writeThumbnails(request, response);
+			}
+			else {
+				try {       
+					results = database.getImagesByDateAndKeywords(fromdatesql, 
+							todatesql, keywords, order);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				 //                out.println("Your results for: '" + keywords + "' Between: "
-				 //                            + fromDate + " and " + toDate);
-			 }
-		 }
-		 else if (!((fromDate.equals("")) || (toDate.equals("")))) {
+				thumbs = thumbs + "<h3>Your results for <strong class='text-primary'>" + keywords + "</strong>" + 
+						" between <strong class='text-warning'>" +
+						fromDate + "</strong> and <strong class='text-warning'>" + toDate + "</strong>" +
+						" ordered by <strong class='text-success'> " + orderStr + "</strong></h3>";
+				writeThumbnails(request, response);
+			}
+		}
+		else if (!((fromDate.equals("")) || (toDate.equals("")))) {
 
-			 if (!(order.equals("order by 1 DESC"))) {
+			if (!(order.equals("order by 1 DESC"))) {
 
-				 try {
-					 results = database.getImagesByDate(fromdatesql, todatesql, order);
-				 } catch (Exception e) {
-					 // TODO Auto-generated catch block
-					 e.printStackTrace();
-				 }
-				 //                out.println("Your results for dates between: " + fromDate
-				 //                            + " and " + toDate);
-			 }
-			 else {
-				 //                out.println("<b>Cannot sort by rank with just time, please"
-				 //                            + " sort differently or add keywords</b>");
-			 }
-		 } 
-		 else {
-			 //out.println("<b>Please enter a search query</b>");
-		 }
-		 
-		 // Generate and append all user visible thumbnails to the page.
-		 String	thumbs = "<div class='row'><h1>Search Results</h1></div><div id='gal' class='list-group gallery'>" +
-		 		"<div id='gal' class='list-group gallery'>";
-		 for (int i = 0; i < results.size(); ++i) {
-			 String getURL = "thumbnail?" + results.get(i).getPhotoId(); 
-			 String editURL = "updateimage?" + results.get(i).getPhotoId(); 
-			 String displayURL = "display?" + results.get(i).getPhotoId(); 
+				try {
+					results = database.getImagesByDate(fromdatesql, todatesql, order);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				thumbs = thumbs + "<h3>Your results for images between <strong class='text-warning'>" + fromDate
+						+ "</strong> and <strong class='text-warning'>" + toDate + "</strong>" +
+						" ordered by <strong class='text-success'>" + orderStr + "</strong></h3>";
+				writeThumbnails(request, response);
+			}
+			else {
+				thumbs = thumbs + "<h3><p class='text-danger'>Cannot sort by rank with just time, please" +
+						" sort differently or add keywords </p></h3>";
+			}
+		} 
+		else {
+			thumbs = thumbs + "<h3><p class='text-danger'>Please enter a valid search query</p></h3>";
+		}
 
-			 thumbs = thumbs + "<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'>";
+		request.getSession(true).setAttribute("galHTML", thumbs);
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher(SEARCH_JSP);    
+		requestDispatcher.forward(request, response);
+	}
 
-			 if (results.get(i).getOwnerName().equals(user)) {  
-				 thumbs = thumbs + "<a href='" + 
-						 editURL +
-						 "'><strong class=\'text-muted\'>Edit</strong></a>";
-			 } 
+	private void writeThumbnails(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
-			 thumbs = thumbs + "<div id='" +
-					 Integer.toString(results.get(i).getPhotoId()) +
-					 "'><a class='thumbnail fancybox' href='" +
-					 displayURL +
-					 "'><img class='img-responsive' alt='' src='" +
-					 getURL +
-					 "'/></a></div></div></div>";
+		// Generate and append all user visible thumbnails to the page.
+		thumbs = thumbs + "<hgroup class='mb20'><h3 class='lead'>" +
+				"<strong class='text-danger'>" +
+				Integer.toString(results.size()) +
+				"</strong> images were found: </h3></hgroup><div id='gal' class='list-group gallery'>";
 
-		 }
-		 request.getSession(true).setAttribute("galHTML", thumbs);
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher(SEARCH_JSP);    
-			requestDispatcher.forward(request, response);
+		for (int i = 0; i < results.size(); ++i) {
+			String getURL = "thumbnail?" + results.get(i).getPhotoId(); 
+			String editURL = "updateimage?" + results.get(i).getPhotoId(); 
+			String displayURL = "display?" + results.get(i).getPhotoId(); 
 
-		 //            while(rset.next()) {
-		 //                pid = (rset.getObject(2)).toString();
-		 //                // specify the servlet for the image
-		 //                out.println("<a href=\"/c391proj/browsePicture?big"
-		 //                            + pid + "\">");
-		 //                // specify the servlet for the thumbnail
-		 //                out.println("<img src=\"/c391proj/browsePicture?"
-		 //                            + pid + "\"></a>");
-		 //            }
-		 //        } 
-		 //        catch (Exception e) {
-		 //            e.getStackTrace();
-		 //        }
-		 //        
-		 //        //database.close_db();
-		 //        out.print("</body>");
-		 //        out.print("</html>");
-		 //        out.close();
+			thumbs = thumbs + "<div class=\'col-sm-3 col-xs-5 col-md-2 col-lg-2\'>"+
+					"<small class=\'text-muted\'>"+
+					Integer.toString(i+1) + "<br></small>" +
+					"<small class=\'text-muted\'>"+"Ranking: "  + Integer.toString(results.get(i).getScore()) +  "<br></small>" +
+					"<small class=\'text-muted\'>"+"Date Created:" + results.get(i).getDate().toString() +  "<br></small>";
+			if (results.get(i).getOwnerName().equals(user)) {  
+				thumbs = thumbs + "<a href='" + 
+						editURL +
+						"'><strong class=\'text-muted\'>Edit</strong></a>";
+			} 
 
+			thumbs = thumbs + "<div id='" +
+					Integer.toString(results.get(i).getPhotoId()) +
+					"'><a class='thumbnail fancybox' href='" +
+					displayURL +
+					"'><img class='img-responsive' alt='' src='" +
+					getURL +
+					"'/></a></div></div>";
+
+		}
 	}
 }

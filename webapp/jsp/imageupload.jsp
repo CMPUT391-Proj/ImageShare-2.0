@@ -38,7 +38,7 @@
 					<div class="form-group">
 						<label for="filepath" class="col-sm-3 control-label">File Path</label>
 						<div class="col-sm-9">
-							<input type="file" name="filepath" class="form-control" placeholder="filepath" id="filepath">
+							<input type="file" multiple name="filepath" class="form-control" placeholder="filepath" id="filepath">
 						</div>
 					</div>
 					<div class="form-group">

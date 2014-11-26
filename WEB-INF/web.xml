@@ -69,7 +69,6 @@
 		<url-pattern>/groupsview</url-pattern>
 	</servlet-mapping> 				
 
-<!-- data analysis -->
 	<servlet>
 		<servlet-name>DataAnalysis</servlet-name>
 		<jsp-file>/webapp/jsp/dataanalysis.jsp</jsp-file>
@@ -80,53 +79,13 @@
 	</servlet-mapping> 	
 
 	<servlet>
-		<servlet-name>DataAnalysis_ImagesPerUser</servlet-name>
-		<jsp-file>/webapp/jsp/dataanalysis/imagesperuser.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DataAnalysis_ImagesPerUser</servlet-name>
-		<url-pattern>/dataanalysis/imagesperuser</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>DataAnalysis_ImagesPerSubject</servlet-name>
-		<jsp-file>/webapp/jsp/dataanalysis/imagespersubject.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DataAnalysis_ImagesPerSubject</servlet-name>
-		<url-pattern>/dataanalysis/imagespersubject</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
-		<jsp-file>/webapp/jsp/dataanalysis/customanalysis.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DataAnalysis_CustomAnalysis</servlet-name>
-		<url-pattern>/dataanalysis/customanalysis</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>DataAnalysisServlet</servlet-name>
-		<servlet-class>imageshare.servlets.DataAnalysisServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DataAnalysisServlet</servlet-name>
-		<url-pattern>/dataanalysisservlet</url-pattern>
-	</servlet-mapping> 	
-
-
-
-
-	<servlet>
-		<servlet-name>DataAnalysis_DataReport</servlet-name>
+		<servlet-name>DataReport</servlet-name>
 		<jsp-file>/webapp/jsp/datareport.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>DataAnalysis_DataReport</servlet-name>
+		<servlet-name>DataReport</servlet-name>
 		<url-pattern>/datareport</url-pattern>
 	</servlet-mapping>
-<!-- end data analysis -->
 
 	<servlet>
 		<servlet-name>Gallery</servlet-name>
@@ -228,6 +187,15 @@
 		<servlet-name>UpdateImageServlet</servlet-name>
 		<url-pattern>/updateImage</url-pattern>
 	</servlet-mapping>	
+
+	<servlet>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<servlet-class>imageshare.servlets.DataAnalysisServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataAnalysisServlet</servlet-name>
+		<url-pattern>/dataanalysisservlet</url-pattern>
+	</servlet-mapping> 	
 
 	<servlet>
 		<servlet-name>LogoutServlet</servlet-name>

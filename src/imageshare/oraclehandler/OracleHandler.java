@@ -1047,16 +1047,28 @@ public class OracleHandler {
 	  * @throws Exception 
      @ @return List<Image>
 	  */
-	 public List<Image> getImagesByKeywords(String keywords, String order) throws Exception {
+	 public List<Image> getImagesByKeywords(String user, String keywords, String order) throws Exception {
 
-		 String query = "SELECT * FROM " +
+		 String permissionsSet = "";
+		 if (user.equalsIgnoreCase("admin")) {
+			 permissionsSet = "SELECT * FROM images";
+		 }
+		 else {  
+			 permissionsSet = "SELECT distinct * FROM images i WHERE i.owner_name = '" + user + "' "
+					 + "OR i.permitted = 1 OR i.permitted IN "
+					 + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+					 + "and user_name = '" + user + "') "
+					 + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+					 + "group_id = i.permitted AND friend_id = '" + user + "')";
+		 }
+		 
+		 String query = "SELECT distinct * FROM " +
 				 "((SELECT score(1)*6 + score(2)*3 + score(3) AS score, photo_id " +
 				 "FROM images " +
 				 "WHERE ((contains(subject, '" + keywords + "', 1) > 0) OR (contains(place, '" + keywords + "', 2) > 0) " +
 				 "OR (contains(description, '" + keywords + "', 3) > 0)) " + order +") t1 " +
-				 "inner join images t2 on t1.photo_id = t2.photo_id)" +
-				 "" + order;
-
+				 "inner join (" + permissionsSet + ") t2 on t1.photo_id = t2.photo_id) " + order;
+		 
 		 PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		 ResultSet rs =  stmt.executeQuery();
 
@@ -1097,9 +1109,23 @@ public class OracleHandler {
 	  * @return ResultSet
 	  * @throws List<Image> 
 	  */
-	 public List<Image> getImagesByDate(String fromdate, String todate, String order) throws Exception {
-		 String query = "SELECT * FROM images WHERE (timing BETWEEN '"
+	 public List<Image> getImagesByDate(String user, String fromdate, String todate, String order) throws Exception {
+		 
+		 String query = "";
+		 if (user.equalsIgnoreCase("admin")) {
+			 query = "SELECT * FROM images";
+		 }
+		 else {  
+			 query = "SELECT distinct * FROM images i WHERE i.owner_name = '" + user + "' "
+					 + "OR i.permitted = 1 OR i.permitted IN "
+					 + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+					 + "and user_name = '" + user + "') "
+					 + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+					 + "group_id = i.permitted AND friend_id = '" + user + "') "
+					 + "AND (timing BETWEEN '"
 				 + fromdate + "' AND '" + todate + "') " + order;
+		 }
+		 
 		 PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		 ResultSet rs =  stmt.executeQuery();
 		 List<Image> images = retrieveImagesFromResultSet(rs);
@@ -1117,17 +1143,29 @@ public class OracleHandler {
 	  * @return ResultSet
 	  * @throws Exception 
 	  */
-	 public List<Image> getImagesByDateAndKeywords(String fromdate, String todate, 
+	 public List<Image> getImagesByDateAndKeywords(String user, String fromdate, String todate, 
 			 String keywords, String order) throws Exception {
 
+		 String permissionsSet = "";
+		 if (user.equalsIgnoreCase("admin")) {
+			 permissionsSet = "SELECT * FROM images";
+		 }
+		 else {  
+			 permissionsSet = "SELECT distinct * FROM images i WHERE i.owner_name = '" + user + "' "
+					 + "OR i.permitted = 1 OR i.permitted IN "
+					 + "(SELECT group_id FROM groups WHERE group_id = i.permitted "
+					 + "and user_name = '" + user + "') "
+					 + "OR i.permitted IN (SELECT group_id FROM group_lists WHERE "
+					 + "group_id = i.permitted AND friend_id = '" + user + "')";
+		 }
+		 
 		 String query = "SELECT * FROM " +
 				 "((SELECT score(1)*6 + score(2)*3 + score(3) AS score, photo_id " +
 				 "FROM images " +
 				 "WHERE ((timing BETWEEN '" + fromdate + "' AND '" + todate +  " ') " +
 				 "AND (contains(subject, '" + keywords + "', 1) > 0) OR (contains(place, '" + keywords + "', 2) > 0) " +
 				 "OR (contains(description, '" + keywords + "', 3) > 0)) " + order +") t1 " +
-				 "inner join images t2 on t1.photo_id = t2.photo_id)" +
-				 "" + order;
+				 "inner join (" + permissionsSet + ") t2 on t1.photo_id = t2.photo_id) " + order;
 
 		 PreparedStatement stmt = getInstance().conn.prepareStatement(query);
 		 ResultSet rs =  stmt.executeQuery();

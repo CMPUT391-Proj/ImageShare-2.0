@@ -37,6 +37,7 @@ public class GroupsServlet extends HttpServlet {
 		/* if no user logged in, redirect to login page */
 		if (user == null) {
 			response.sendRedirect("login.jsp");
+			return;
 		};
 
 		try {
@@ -55,6 +56,13 @@ public class GroupsServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		user = (String) request.getSession(true).getAttribute("user");
+		/* if no user logged in, redirect to login page */
+		if (user == null) {
+			response.sendRedirect("login.jsp");
+			return;
+		};
+		
 		if (request.getParameter("submitGrp") != null) {
 			String new_group = request.getParameter("groupname");
 			try {

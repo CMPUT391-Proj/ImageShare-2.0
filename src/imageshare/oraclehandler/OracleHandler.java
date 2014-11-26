@@ -937,12 +937,12 @@ public class OracleHandler {
 	}
 	
     /**
-     * Returns the resultset of the search by keywords
+     * Returns the images by keywords
      * @param String keywords, String order
      * @throws Exception 
      @ @return List<Image>
      */
-    public List<Image> getResultByKeywords(String keywords, String order) throws Exception {
+    public List<Image> getImagesByKeywords(String keywords, String order) throws Exception {
         String query = "SELECT score(1)*6 + score(2)*3 + score(3) AS score, "
                         + "photo_id FROM images WHERE "
                         + "((contains(subject, '"+ keywords + "', 1) > "
@@ -956,7 +956,7 @@ public class OracleHandler {
      }
     
     /**
-     * Returns results through search by date
+     * Returns images through search by date
      * @param String fromdate, String todate, String order
      * @return ResultSet
      * @throws List<Image> 
@@ -972,7 +972,7 @@ public class OracleHandler {
     }
     
     /**
-     * Returns the resultset of the search by keywords and date
+     * Returns the image of the search by keywords and date
      *
      * Rank(photo_id) = 6*frequency(subject) + 3*frequency(location)
      * + frequency(description)
@@ -981,7 +981,7 @@ public class OracleHandler {
      * @return ResultSet
      * @throws Exception 
      */
-    public List<Image> getResultsByDateAndKeywords(String fromdate, String todate, String keywords, String order) throws Exception {
+    public List<Image> getImagesByDateAndKeywords(String fromdate, String todate, String keywords, String order) throws Exception {
         String query = "SELECT score(1)*6 + score(2)*3 + score(3) AS score, "
                         + "photo_id FROM images WHERE "
                         + "((timing BETWEEN '" + fromdate + "' AND '" + todate

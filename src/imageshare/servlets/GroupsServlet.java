@@ -58,7 +58,7 @@ public class GroupsServlet extends HttpServlet {
 		if (request.getParameter("submitGrp") != null) {
 			String new_group = request.getParameter("groupname");
 			try {
-				database.storeNewGroup("admin", new_group);
+				database.storeNewGroup(user, new_group);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

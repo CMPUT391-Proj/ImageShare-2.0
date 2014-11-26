@@ -67,7 +67,6 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
              * Retrieve the files from the session attribute
              */
             files = (List<FileItem>) session.getAttribute(IMAGES);
-            //req.getSession().setAttribute(IMAGES, null);
 
             if (files == null)
                 throw new FileUploadException(FILE_ERROR);
@@ -137,8 +136,6 @@ public class DirectoryUploadDetailsServlet extends HttpServlet {
         resp.sendRedirect(DIR_UPLOAD_JSP);
     }
 
-    // TODO prob can abstract this method later so theres no repeat
-    // functionality with ImageUploadServlet
     private static BufferedImage shrink(BufferedImage image) {
         int width = image.getWidth() / THUMBNAIL_SHRINK_FACTOR;
         int height = image.getHeight() / THUMBNAIL_SHRINK_FACTOR;

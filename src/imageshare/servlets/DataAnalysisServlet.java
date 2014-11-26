@@ -22,7 +22,6 @@ public class DataAnalysisServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     private static final String USERNAME = "username";
-    private static final String CURRENT_PAGE = "page";
     private static final String FROM_DATE = "datefrom";
     private static final String TO_DATE = "dateto";
     private static final String SEARCH_TYPE = "searchtype";
@@ -31,6 +30,12 @@ public class DataAnalysisServlet extends HttpServlet {
 	
     private static final String ADMIN = "admin";
     
+    private static final String IMAGES_PER_SUBJ = "imagespersubject";
+    private static final String IMAGES_PER_USER = "imagesperuser";
+    private static final String CUSTOM_SEARCH = "customsearch";
+    
+    private static final String UNKNOWN_REPORT_TYPE_ERROR = "Unknown report type.";
+    
     private static final String DATA_ANALYSIS_ROOT_JSP = "dataanalysis";
     private static final String DATA_REPORT_JSP = "datareport";
     
@@ -38,7 +43,6 @@ public class DataAnalysisServlet extends HttpServlet {
             throws ServletException, IOException {
     	
     	String username = req.getParameter(USERNAME);
-    	String currentPage = req.getParameter(CURRENT_PAGE);
     	String fromDate = req.getParameter(FROM_DATE);
     	String toDate = req.getParameter(TO_DATE);
     	String searchType = req.getParameter(SEARCH_TYPE);
@@ -87,23 +91,23 @@ public class DataAnalysisServlet extends HttpServlet {
     		
     		JSONObject result = null;
     		
-    		if (searchType.equals("customsearch")) {
+    		if (searchType.equals(CUSTOM_SEARCH)) {
     			result = customAnalytics(fromDate, toDate, subjectListFormatted, usernameListFormatted);
     			req.getSession(true).setAttribute("testtitle", "Custom Search");
     			req.getSession(true).setAttribute("search", "customsearch");
     		} 
-    		else if (searchType.equals("imagesperuser")) {
+    		else if (searchType.equals(IMAGES_PER_USER)) {
     			result = imagesPerUser(fromDate, toDate);
     			req.getSession(true).setAttribute("testtitle", "Images Per User");
     			req.getSession(true).setAttribute("search", "imagesperuser");
     		}
-    		else if (searchType.equals("imagespersubject")) {
+    		else if (searchType.equals(IMAGES_PER_SUBJ)) {
     			result = imagesPerSubject(fromDate, toDate);
     			req.getSession(true).setAttribute("testtitle", "Images Per Subject");
     			req.getSession(true).setAttribute("search", "imagespersubject");
     		}
     		else {
-    			throw new Exception("Unknown test type.");
+    			throw new Exception(UNKNOWN_REPORT_TYPE_ERROR);
     		}
     		
             req.getSession(true).setAttribute("customjson", result.toString());
@@ -114,7 +118,7 @@ public class DataAnalysisServlet extends HttpServlet {
     		return;
     	}
     	
-    	resp.sendRedirect("datareport");
+    	resp.sendRedirect(DATA_REPORT_JSP);
     }
     
     private JSONObject imagesPerUser(String fromDate, String toDate) throws Exception {

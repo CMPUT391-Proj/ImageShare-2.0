@@ -6,8 +6,16 @@
 	// check user is admin
 	String username = (String) session.getAttribute("user");
 
+	if (username == null || !username.equals("admin")) { response.sendRedirect("gallery"); return; }
 %>
-
+<style>
+	.search-group {
+		float: right;
+	}
+	.reset {
+		margin-right: 2px;
+	}
+</style>
 <body>
 	<%@include file="navbar.jsp" %>
 
@@ -34,18 +42,20 @@
 							<div class="col-sm-8">
 								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="date" class="col-sm-4 control-label">To Date:</label>
-							<div class="col-sm-8">
-								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							</div>
+							<div class="form-group">
+								<label for="date" class="col-sm-4 control-label">To Date:</label>
+								<div class="col-sm-8">
+									<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+								</div>
+							</div>
+							<input type="hidden" name="username" value=<% out.print(username); %>>
+							<input type="hidden" name="searchtype" value="imagesperuser">
+							<div class="search-group">
+								<button type="reset" class="btn btn-default reset">Reset</button>
+								<button type="submit" class="btn btn-primary">Search</button>
 							</div>
 						</div>
-						<input type="hidden" name="username" value=<% out.print(username); %>>
-						<input type="hidden" name="searchtype" value="imagesperuser">
-						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
-						</div>
-						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
 
 					</div>
 				</div>
@@ -63,24 +73,26 @@
 					<div class="panel-heading">Images Per Subject</div>
 						<div class="panel-body">
 
-						<div class="form-horizontal">
-						<div class="form-group">
-							<label for="date" class="col-sm-4 control-label">From Date:</label>
-							<div class="col-sm-8">
-								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							<div class="form-horizontal">
+							<div class="form-group">
+								<label for="date" class="col-sm-4 control-label">From Date:</label>
+								<div class="col-sm-8">
+									<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="date" class="col-sm-4 control-label">To Date:</label>
+								<div class="col-sm-8">
+									<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+								</div>
+							</div>
+							<input type="hidden" name="username" value=<% out.print(username); %>>
+							<input type="hidden" name="searchtype" value="imagespersubject">
+							<div class="search-group">
+								<button type="reset" class="btn btn-default reset">Reset</button>
+								<button type="submit" class="btn btn-primary">Search</button>
 							</div>
 						</div>
-						<div class="form-group">
-							<label for="date" class="col-sm-4 control-label">To Date:</label>
-							<div class="col-sm-8">
-								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
-							</div>
-						</div>
-						<input type="hidden" name="username" value=<% out.print(username); %>>
-						<input type="hidden" name="searchtype" value="imagespersubject">
-						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
-						</div>
-						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
 
 					</div>
 				</div>
@@ -98,37 +110,40 @@
 					<div class="panel-heading">Custom Parameter Search</div>
 						<div class="panel-body">
 
-						<div class="form-horizontal">
-						<div class="form-group">
-							<label for="date" class="col-sm-4 control-label">From Date:</label>
-							<div class="col-sm-8">
-								<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							<div class="form-horizontal">
+							<div class="form-group">
+								<label for="date" class="col-sm-4 control-label">From Date:</label>
+								<div class="col-sm-8">
+									<input type="date" name="datefrom" class="form-control" placeholder="YYYY-MM-DD" id="date">
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="date" class="col-sm-4 control-label">To Date:</label>
-							<div class="col-sm-8">
-								<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+							<div class="form-group">
+								<label for="date" class="col-sm-4 control-label">To Date:</label>
+								<div class="col-sm-8">
+									<input type="date" name="dateto" class="form-control" placeholder="YYYY-MM-DD" id="date">
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="subjectlist" class="col-sm-4 control-label">Subject List (comma separated)</label>
-							<div class="col-sm-8">
-								<input type="text" name="subjectlist" class="form-control" placeholder="Subject List" id="subject">
+							<div class="form-group">
+								<label for="subjectlist" class="col-sm-4 control-label">Subject List (comma separated)</label>
+								<div class="col-sm-8">
+									<input type="text" name="subjectlist" class="form-control" placeholder="Subject List" id="subject">
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="usernamelist" class="col-sm-4 control-label">Username List (comma separated)</label>
-							<div class="col-sm-8">
-								<input type="text" name="usernamelist" class="form-control" placeholder="Username List" id="subject">
+							<div class="form-group">
+								<label for="usernamelist" class="col-sm-4 control-label">Username List (comma separated)</label>
+								<div class="col-sm-8">
+									<input type="text" name="usernamelist" class="form-control" placeholder="Username List" id="subject">
+								</div>
 							</div>
-						</div>
 
-						<input type="hidden" name="username" value=<% out.print(username); %>>
-						<input type="hidden" name="searchtype" value="customsearch">
-						<button type="submit" class="btn btn-primary pull-right">Update Page</button>
+							<input type="hidden" name="username" value=<% out.print(username); %>>
+							<input type="hidden" name="searchtype" value="customsearch">
+							<div class="search-group">
+								<button type="reset" class="btn btn-default reset">Reset</button>
+								<button type="submit" class="btn btn-primary">Search</button>
+							</div>
 						</div>
-						<button type="reset" class="btn btn-default pull-right">Reset Page</button>
+						
 
 					</div>
 				</div>

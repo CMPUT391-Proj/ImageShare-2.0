@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
 	private static final String INSERT_PERSON_ERROR = "A person with the same email already exists.";
     
 	private static final String REGISTRATION_JSP = "registration";
-	private static final String IMAGE_UPLOAD_JSP = "imageupload";
+	private static final String GALLERY_JSP = "gallery";
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -83,6 +83,6 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		
-		resp.sendRedirect(IMAGE_UPLOAD_JSP);
+		resp.sendRedirect(GALLERY_JSP);
 	}
 }

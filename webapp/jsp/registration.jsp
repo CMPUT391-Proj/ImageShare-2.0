@@ -2,8 +2,6 @@
 <html lang="en">
 <%@include file="header.jsp" %>
 <body>
-	<%@include file="navbar.jsp" %>
-
 	<div class="jumbotron">
 		<div class="container">
 			<h1>Registration</h1>
@@ -69,9 +67,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-footer">
-						<!-- Should probably pulled-right, but ruins formatting -->
-						<button type="submit" class="btn btn-primary">Save changes</button>
+					<div class="panel-footer" style="height:55px;">
+						<div class="pull-right">
+							<button type="reset" class="btn btn-default">Reset</button>
+							<button type="submit" class="btn btn-primary">Register</button>
+						</div>
 					</div>
 				</div>
 			</form>

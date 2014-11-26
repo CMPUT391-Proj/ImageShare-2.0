@@ -5,6 +5,9 @@
 <%
 	// check user is admin
 	String username = (String) session.getAttribute("user");
+
+	if (username == null || !username.equals("admin")) { response.sendRedirect("gallery"); return; }
+
 	String testtitle = (String) session.getAttribute("testtitle");
 	String customjson = (String) session.getAttribute("customjson");
 	String search = (String) session.getAttribute("search");

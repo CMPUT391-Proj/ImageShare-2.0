@@ -18,6 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Generates data analytics given a date, subject, and/or username
+ * 
+ */
 public class DataAnalysisServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
